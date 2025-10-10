@@ -34,7 +34,11 @@ export default function RootLayout({
         name="apple-mobile-web-app-status-bar-style"
         content="black-translucent"
       />
-      <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+      <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png" />
+      <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png" />
+      <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152.png" />
+      <link rel="apple-touch-icon" sizes="120x120" href="/icons/icon-120.png" />
+      <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512.png" />
 
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
