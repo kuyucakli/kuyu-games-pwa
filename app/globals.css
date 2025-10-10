@@ -30,5 +30,6 @@ button {
   align-items: center;
   justify-content: center;
   height: 48px;
-  width: 100px;
+  width: 200px;
+  background-color: var(--color-slate-900);
 }
