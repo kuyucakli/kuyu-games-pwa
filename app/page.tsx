@@ -25,6 +25,7 @@ function PushNotificationManager() {
   const [subscription, setSubscription] = useState<PushSubscription | null>(
     null
   );
+
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -52,6 +53,7 @@ function PushNotificationManager() {
       ),
     });
     setSubscription(sub);
+
     const serializedSub = JSON.parse(JSON.stringify(sub));
     await subscribeUser(serializedSub);
   }
@@ -137,6 +139,15 @@ function InstallPrompt() {
   );
 }
 
+type BeforeInstallPromptEvent = Event & {
+  readonly platforms: string[];
+  readonly userChoice: Promise<{
+    outcome: "accepted" | "dismissed";
+    platform: string;
+  }>;
+  prompt(): Promise<void>;
+};
+
 export default function Page() {
   return (
     <div>
@@ -144,4 +155,27 @@ export default function Page() {
       <InstallPrompt />
     </div>
   );
+}
+
+async function checkNotificationPermission() {
+  // Case 1: Browser-level
+  if (!("Notification" in window)) {
+    return "unsupported";
+  }
+
+  // Case 2: Permission API result
+  const permission = Notification.permission;
+
+  // Case 3: System-level — try requesting permission if default
+  if (permission === "default") {
+    try {
+      const result = await Notification.requestPermission();
+      return result; // "granted" | "denied"
+    } catch {
+      // This often happens when macOS blocks Chrome globally
+      return "blocked-system";
+    }
+  }
+
+  return permission;
 }
