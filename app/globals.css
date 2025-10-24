@@ -31,5 +31,7 @@ button {
   justify-content: center;
   height: 48px;
   width: 200px;
-  background-color: var(--color-slate-900);
+  background-color: var(--color-orange-600);
+  border-radius: 8px;
+  cursor: pointer;
 }
