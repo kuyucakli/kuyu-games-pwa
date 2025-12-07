@@ -18,9 +18,14 @@ const emailSchema = z
     z.toLowerCase()
   );
 
-export const LoginSchema = z.object({
+const LoginSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
 });
 
-export type loginDataType = z.infer<typeof LoginSchema>;
+type loginDataType = z.infer<typeof LoginSchema>;
+type emailInput = z.infer<typeof emailSchema>;
+type passwordInput = z.infer<typeof passwordSchema>;
+
+export { LoginSchema };
+export type { loginDataType, emailInput, passwordInput };

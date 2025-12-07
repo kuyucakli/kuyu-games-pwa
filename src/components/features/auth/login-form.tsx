@@ -7,7 +7,7 @@ import { login } from "@/lib/actions/auth";
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 
-export function LoginForm({ message }: { message?: string }) {
+export function LoginForm({ message }: { message?: string | string[] }) {
   const [state, action, pending] = useActionState(login, {
     values: { email: "", password: "" },
     errors: {},

@@ -210,9 +210,6 @@ export class Game {
           new THREE.Vector3(vel.x, vel.y, vel.z)
         );
       }
-
-      // Optional: scale sparkle brightness slightly with speed
-      this.sparkleSystem.points.material.size = 0.04 + intensity * 0.02; // subtle size increase
     }
 
     this.sparkleSystem.update(dt);
