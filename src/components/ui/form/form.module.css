@@ -1,0 +1,30 @@
+.Form {
+  border: 1px solid var(--color-neutral-600);
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+  padding: 12px;
+}
+.Form label {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
+
+.Form input {
+  padding: 12px;
+  border: 1px solid var(--color-neutral-600);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  min-height: 48px;
+}
+
+.Form button {
+  width: 100%;
+}
+
+.FormError {
+  color: var(--color-red-500);
+  font-size: var(--text-xs);
+}

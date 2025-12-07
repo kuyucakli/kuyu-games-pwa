@@ -1,0 +1,58 @@
+.Shimmer {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(to right, #e6e6e6 5%, #cccccc 25%, #e6e6e6 35%);
+  background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.Loader {
+  width: 32px;
+  height: 32px;
+  display: inline-block;
+  position: relative;
+}
+.Loader::after,
+.Loader::before {
+  content: "";
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid white;
+  position: absolute;
+  left: 0;
+  top: 0;
+  animation: anim-loader 1s linear infinite forwards;
+  transform: scale(0);
+}
+.Loader::after {
+  animation-delay: 0.5s;
+}
+
+@keyframes anim-loader {
+  0% {
+    transform: scale(0);
+    background: #ffffff;
+  }
+  50% {
+    transform: scale(0.4);
+    background: #ffffff;
+  }
+  80% {
+    border-color: white;
+  }
+  100% {
+    transform: scale(1);
+    background: #ffffff00;
+    border-color: #ffffff00;
+  }
+}
