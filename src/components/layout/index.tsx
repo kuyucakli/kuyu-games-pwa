@@ -1,14 +1,7 @@
-import Link from "next/link";
-import { IconMoreHorizontal } from "../ui/icons";
-import { ProfileDropDown } from "../features/auth/profile-dropdown";
+import { ReactNode } from "react";
 
-export function HeaderMain() {
+export function HeaderMain({ children }: { children: ReactNode }) {
   return (
-    <header className="fixed top-8 z-40 right-8 flex gap-8 ">
-      <Link href="/select-game">
-        <IconMoreHorizontal />
-      </Link>
-      <ProfileDropDown />
-    </header>
+    <header className="fixed top-8  right-8 flex gap-8 z-40">{children}</header>
   );
 }

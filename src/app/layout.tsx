@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { HeaderMain } from "@/components/layout";
-import { Toaster } from "@/components/ui/sonner";
+import { ProfileDropDown } from "@/components/features/auth/profile-dropdown";
+import Link from "next/link";
+import { IconMoreHorizontal } from "@/components/ui/icons";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,12 +48,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased dark`}
       >
-        <div id="root">
-          <HeaderMain />
-          <main>{children}</main>
-        </div>
+        <div id="root">{children}</div>
         {modal}
-        <Toaster />
       </body>
     </html>
   );

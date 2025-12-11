@@ -4,16 +4,20 @@ import {
   ButtonHTMLAttributes,
   LinkHTMLAttributes,
   PropsWithChildren,
+  ReactElement,
 } from "react";
 import styles from "./buttons.module.css";
 import Link from "next/link";
 import { useFormStatus } from "react-dom";
 import { ShimmerLoader } from "../shimmer";
 export function Button({
+  icon,
   type,
   className,
   children,
-}: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>>) {
+}: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>> & {
+  icon: ReactElement<SVGElement>;
+}) {
   const { pending } = useFormStatus();
   return (
     <button
@@ -21,6 +25,7 @@ export function Button({
       className={`${styles.Button} ${className}`}
       disabled={pending}
     >
+      {icon}
       <span className={styles.ButtonContent}>
         <span className={styles.LoaderIconContainer}>
           {pending && <ShimmerLoader />}
@@ -41,6 +46,21 @@ export function LinkButton({
   }
   return (
     <Link href={href} className={`${styles.LinkButton} ${className}`}>
+      {children}
+    </Link>
+  );
+}
+
+export function TextLink({
+  href,
+  className,
+  children,
+}: PropsWithChildren<LinkHTMLAttributes<HTMLLinkElement>>) {
+  if (!href) {
+    throw new Error("Text link needs href value.");
+  }
+  return (
+    <Link href={href} className={`text-sm text-neutral-400  ${className}`}>
       {children}
     </Link>
   );

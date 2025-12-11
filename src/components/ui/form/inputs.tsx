@@ -3,25 +3,36 @@ import styles from "./form.module.css";
 
 type InputTextProps = PropsWithChildren<
   InputHTMLAttributes<HTMLInputElement> & {
-    error?: string[];
+    error?: string[] | string;
   }
 >;
 
 export function InputText({
   id,
-  className,
-  children,
   type,
   error,
   placeholder,
+  ...rest
 }: InputTextProps) {
+  let errorMessage;
+
+  if (Array.isArray(error)) {
+    errorMessage = error.map((e) => <span key={e}>{e}</span>);
+  } else {
+    errorMessage = error;
+  }
+
   return (
     <label htmlFor={id}>
       <span>{id}</span>
-      <input id={id} name={id} type={type} placeholder={placeholder} />
-      <p className={`${styles.FormError}`}>
-        {error && error.map((e) => <span key={e}>{e}</span>)}
-      </p>
+      <input
+        id={id}
+        name={id}
+        type={type}
+        placeholder={placeholder}
+        {...rest}
+      />
+      <p className={`${styles.FormError}`}>{errorMessage}</p>
     </label>
   );
 }

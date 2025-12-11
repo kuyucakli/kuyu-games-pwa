@@ -10,6 +10,7 @@ import {
 import { HTMLAttributes } from "react";
 import { createClient } from "@/lib/utils/supabase/server";
 import { LogoutForm } from "./logout-form";
+import { IconRobot } from "@/components/ui/icons";
 
 export async function ProfileDropDown({
   className,
@@ -23,8 +24,9 @@ export async function ProfileDropDown({
   return (
     <div className={`${className}`}>
       <DropdownMenu>
-        <DropdownMenuTrigger>
-          <p>{data?.user ? data.user.email : "Anonymous User"}</p>
+        <DropdownMenuTrigger className="flex gap-2 items-center text-xs">
+          <IconRobot />
+          <span>{data?.user ? data.user.email : "Anonymous user"}</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           {data?.user ? (

@@ -10,22 +10,36 @@ const passwordSchema = z
   })
   .trim();
 
-const emailSchema = z
-  .string()
-  .check(
-    z.trim(),
-    z.email({ message: "Please enter a valid email." }),
-    z.toLowerCase()
-  );
+const emailInputSchema = z.email("Please enter a valid email.");
 
-const LoginSchema = z.object({
-  email: emailSchema,
+const loginSchema = z.object({
+  email: emailInputSchema,
   password: passwordSchema,
 });
 
-type loginDataType = z.infer<typeof LoginSchema>;
-type emailInput = z.infer<typeof emailSchema>;
-type passwordInput = z.infer<typeof passwordSchema>;
+const forgotPasswordSchema = z.object({
+  email: emailInputSchema,
+});
 
-export { LoginSchema };
-export type { loginDataType, emailInput, passwordInput };
+const updatePasswordSchema = z
+  .object({
+    password: passwordSchema,
+    confirmPassword: passwordSchema,
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match.",
+    path: ["confirmPassword"], // attach error to the correct field
+  });
+
+type loginDataType = z.infer<typeof loginSchema>;
+type EmailInput = z.infer<typeof emailInputSchema>;
+type ForgotPassword = z.infer<typeof forgotPasswordSchema>;
+type UpdatePassword = z.infer<typeof updatePasswordSchema>;
+
+export {
+  loginSchema,
+  updatePasswordSchema,
+  emailInputSchema,
+  forgotPasswordSchema,
+};
+export type { loginDataType, EmailInput, ForgotPassword, UpdatePassword };

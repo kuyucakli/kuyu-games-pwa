@@ -17,7 +17,9 @@ export class Table {
       "https://res.cloudinary.com/derfbfm9n/image/upload/v1761994782/game-objects-terrain-test_qfbwlx.glb"
     );
 
-    const tableMesh = gltf.scene.getObjectByName("table-plane") as THREE.Mesh;
+    const tableMesh = gltf.scene.getObjectByName("Table_Plane") as THREE.Mesh;
+    const planeMesh = gltf.scene.getObjectByName("Plane") as THREE.Mesh;
+
     if (!tableMesh) {
       console.error("No mesh named 'table-plane' found in GLB");
       return;
@@ -25,6 +27,7 @@ export class Table {
 
     tableMesh.traverse((o: any) => {
       if (o.isMesh) {
+        console.log(o);
         o.castShadow = true;
         o.receiveShadow = true;
       }
@@ -32,7 +35,6 @@ export class Table {
 
     // Add table mesh to group
     this.tableGroup.add(tableMesh);
-
     // // Create a wall mesh relative to the table
     // const wallMesh = new THREE.Mesh(
     //   new THREE.BoxGeometry(2, 2, 8),
@@ -45,7 +47,7 @@ export class Table {
     // Position the whole group in the scene
     this.tableGroup.position.set(...position);
     scene.add(this.tableGroup);
-
+    scene.add(planeMesh);
     // Prepare the table's trimesh collider
     tableMesh.updateWorldMatrix(true, true);
     const geom = tableMesh.geometry.clone();

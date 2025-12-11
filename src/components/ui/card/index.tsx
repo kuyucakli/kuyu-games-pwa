@@ -1,9 +1,10 @@
 import { HtmlHTMLAttributes, PropsWithChildren } from "react";
+import styles from "./index.module.css";
 
 function Card({
   children,
 }: PropsWithChildren<HtmlHTMLAttributes<HTMLDivElement>>) {
-  return <div>{children}</div>;
+  return <div className={styles.Card}>{children}</div>;
 }
 
 function CardHeader({
@@ -15,7 +16,7 @@ function CardHeader({
 function CardTitle({
   children,
 }: PropsWithChildren<HtmlHTMLAttributes<HTMLHeadingElement>>) {
-  return <h1 className="text-3xl">{children}</h1>;
+  return <h1 className="text-3xl mb-4">{children}</h1>;
 }
 
 function CardDescription({
@@ -27,13 +28,13 @@ function CardDescription({
 function CardContent({
   children,
 }: PropsWithChildren<HtmlHTMLAttributes<HTMLDivElement>>) {
-  return <div>{children}</div>;
+  return <div className={styles.CardContent}>{children}</div>;
 }
 
 function CardFooter({
   children,
 }: PropsWithChildren<HtmlHTMLAttributes<HTMLDivElement>>) {
-  return <footer>{children}</footer>;
+  return <footer className={styles.CardFooter}>{children}</footer>;
 }
 
 function CardActions({
@@ -42,4 +43,12 @@ function CardActions({
   return <div>{children}</div>;
 }
 
-export { Card, CardActions, CardHeader, CardTitle, CardContent, CardFooter };
+export {
+  Card,
+  CardActions,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+  CardDescription,
+};

@@ -18,7 +18,7 @@ export const gameEvents = mitt<GameEvents>();
 export class Game {
   private scene: THREE.Scene;
   private camera: THREE.PerspectiveCamera;
-  private controls: OrbitControls;
+  private controls: OrbitControls | null;
   private renderer: THREE.WebGLRenderer;
   private world: any;
   private RAPIER: any;
@@ -48,7 +48,7 @@ export class Game {
       container.clientHeight
     );
 
-    this.controls = this.setupControls();
+    this.controls = null; // this.setupControls();
   }
 
   async init() {
@@ -82,22 +82,29 @@ export class Game {
 
   private setupCamera(w: number, h: number) {
     const camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 100);
-    camera.position.set(0, 2, 0);
+
+    camera.position.set(0, 16, 0);
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
     return camera;
   }
 
   private setupScene() {
-    this.scene.background = new THREE.Color(0x777777);
+    this.scene.background = new THREE.Color(0xff0000);
   }
 
   private setupLights() {
     const light = new THREE.DirectionalLight(0xffffff, 1.2);
-    light.position.set(5, 10, 5);
+    light.position.set(0, 12, -6);
     light.castShadow = true;
 
     // --- Increase shadow map resolution ---
-    light.shadow.mapSize.width = 4096;
-    light.shadow.mapSize.height = 4096;
+    light.shadow.mapSize.width = 1024 * 2;
+    light.shadow.mapSize.height = 1024 * 2;
+    light.shadow.radius = 0.2;
+    light.shadow.blurSamples = 2;
+    light.shadow.bias = -0.0004;
+    // light.shadow.camera.near = 0;
+    // light.shadow.camera.far = 100;
 
     // --- Expand the shadow camera bounds ---
     const cam = light.shadow.camera as THREE.OrthographicCamera;
@@ -109,11 +116,8 @@ export class Game {
     cam.far = 30;
     cam.updateProjectionMatrix();
 
-    // --- (Optional) Softer shadows ---
-    light.shadow.radius = 4;
-
     // --- Add a slight ambient fill light ---
-    const ambient = new THREE.AmbientLight(0xffffff, 0.2);
+    const ambient = new THREE.AmbientLight(0xffffff, 0.35);
     this.scene.add(ambient);
 
     this.scene.add(light);
@@ -137,13 +141,13 @@ export class Game {
   };
 
   private addBall(position: [number, number, number] = [0, 1, 0]) {
-    const radius = 0.3;
+    const radius = 0.28;
 
     const geometry = new THREE.SphereGeometry(radius, 32, 32);
     const material = new THREE.MeshStandardMaterial({
       color: 0xcccccc,
       metalness: 0.8,
-      roughness: 0.3,
+      roughness: 0.2,
     });
 
     const mesh = new THREE.Mesh(geometry, material);
@@ -156,6 +160,16 @@ export class Game {
         .setTranslation(...position)
         .setCcdEnabled(true)
     );
+
+    // Outline (backside scaled)
+    const outlineMat = new THREE.MeshBasicMaterial({
+      color: 0x888888,
+      side: THREE.BackSide,
+    });
+
+    const outline = new THREE.Mesh(geometry.clone(), outlineMat);
+    outline.scale.set(1.08, 1.08, 1.08); // outline thickness
+    mesh.add(outline); // attach so that it rotates/moves with the ball
 
     const colliderDesc = this.RAPIER.ColliderDesc.ball(radius)
       .setMass(1)
@@ -239,7 +253,7 @@ export class Game {
     this.checkCollisions();
     this.renderer.render(this.scene, this.camera);
     //this.debugRenderer.update();
-    this.controls.update();
+    //this.controls.update();
 
     this.rafId = requestAnimationFrame(this.animate);
   }

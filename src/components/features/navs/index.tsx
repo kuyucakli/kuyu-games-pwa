@@ -4,7 +4,8 @@ import { MotionIntro1 } from "../motion-intros";
 export function GameSelectionNav() {
   return (
     <>
-      <div className="w-dvw h-dvh flex flex-col items-center justify-center relative  gap-8 z-10">
+      <MotionIntro1 />
+      <div className="w-dvw h-dvh flex flex-col items-center justify-center relative  gap-8">
         <h1 className="text-4xl text-white">Select a game </h1>
         <nav>
           <LinkButton href="/pinball">Pinball</LinkButton>
@@ -13,7 +14,6 @@ export function GameSelectionNav() {
         <PushMessage /> */}
         </nav>
       </div>
-      <MotionIntro1 />
     </>
   );
 }
