@@ -4,20 +4,20 @@ Being a pwa this project is being developed with next.js.
 
 ## To do:
 
-- [ ] feat: forgot password
-- [ ] calculate and show tilt angles on mobile?
+- [ ] feat: implement lock tilt of the table
+- [ ] feat: calculate and show tilt angles on mobile
 - [ ] feat: detect aspect ratio and adjust camera rotation according to aspect ratio
 - [ ] feat: implement timer for games
 - [ ] feat: implement ball sensors
 - [ ] feat: add levels
 - [ ] feat: add scores
-- [ ] feat: implement lock tilt of the table
 - [ ] feat: (account) add profile section
 - [ ] feat: (game) add settings for audio
 - [x] Add "rapier" rust physics library
 - [x] Connect "rapier" with three.js
 - [x] Create .glb models
 - [ ] Auth system, clerk? (Supabase)
+- [ ] feat: forgot password
 
 ## PWA steps
 

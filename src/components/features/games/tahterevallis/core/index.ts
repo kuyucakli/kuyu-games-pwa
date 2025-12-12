@@ -31,6 +31,7 @@ export class Game {
   private sparkleSystem!: SparkleSystem;
   private lastTime = performance.now();
   private smoothedSpeed: number;
+  private isPortraitMode: boolean;
 
   constructor(container: HTMLElement) {
     this.container = container;
@@ -42,11 +43,12 @@ export class Game {
     this.dynamicBodies = [];
     this.container.appendChild(this.renderer.domElement);
     this.smoothedSpeed = 0;
-
+    this.isPortraitMode = container.clientHeight / container.clientWidth > 1;
     this.camera = this.setupCamera(
       container.clientWidth,
       container.clientHeight
     );
+    this.updateCameraForAspect(container.clientWidth, container.clientHeight);
 
     this.controls = null; // this.setupControls();
   }
@@ -80,11 +82,24 @@ export class Game {
     return controls;
   }
 
+  private updateCameraForAspect(width: number, height: number) {
+    if (!this.isPortraitMode) {
+      this.camera.position.set(0, 16, 0);
+      this.camera.lookAt(0, 0, 0);
+    } else {
+      this.camera.position.set(0, 16, 0);
+      this.camera.lookAt(0, 0, 0);
+      this.camera.rotation.set(
+        this.camera.rotation.x,
+        this.camera.rotation.y,
+        this.camera.rotation.z + Math.PI / 2
+      );
+    }
+  }
+
   private setupCamera(w: number, h: number) {
     const camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 100);
 
-    camera.position.set(0, 16, 0);
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
     return camera;
   }
 
@@ -232,10 +247,22 @@ export class Game {
       const maxTiltX = Math.PI / 12;
       const maxTiltZ = Math.PI / 12;
 
-      const targetTiltX = maxTiltX * this.mouse.y;
-      const targetTiltZ = maxTiltZ * this.mouse.x;
+      // Normalize input
+      let tiltxInput = this.mouse.y;
+      let tiltzInput = this.mouse.x;
 
-      // Smooth lerp
+      if (this.isPortraitMode) {
+        // rotate mouse vector 90° clockwise
+        const rotatedX = tiltzInput;
+        const rotatedZ = -tiltxInput;
+
+        tiltxInput = rotatedX;
+        tiltzInput = rotatedZ;
+      }
+
+      const targetTiltX = maxTiltX * tiltxInput;
+      const targetTiltZ = maxTiltZ * tiltzInput;
+
       const tiltX = THREE.MathUtils.lerp(
         this.table.tableGroup.rotation.x,
         targetTiltX,

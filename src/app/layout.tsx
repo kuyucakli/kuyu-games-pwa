@@ -5,6 +5,7 @@ import { HeaderMain } from "@/components/layout";
 import { ProfileDropDown } from "@/components/features/auth/profile-dropdown";
 import Link from "next/link";
 import { IconMoreHorizontal } from "@/components/ui/icons";
+import { PWAInstallBanner } from "@/components/features/banners/pwa-banner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,9 +33,8 @@ export default function RootLayout({
     <html lang="en">
       <meta name="theme-color" content="#000000" />
 
-      {/* iOS support */}
-      <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-title" content="Kuyu Games" />
+      <meta name="mobile-web-app-capable" content="yes" />
+      <meta name="mobile-web-app-title" content="Kuyu Games" />
       <meta
         name="apple-mobile-web-app-status-bar-style"
         content="black-translucent"
@@ -48,6 +48,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased dark`}
       >
+        <PWAInstallBanner />
         <div id="root">{children}</div>
         {modal}
       </body>

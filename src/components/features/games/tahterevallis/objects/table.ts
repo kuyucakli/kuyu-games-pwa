@@ -27,7 +27,6 @@ export class Table {
 
     tableMesh.traverse((o: any) => {
       if (o.isMesh) {
-        console.log(o);
         o.castShadow = true;
         o.receiveShadow = true;
       }

@@ -11,7 +11,7 @@ export function PWAInstallBanner() {
   if (dismissed || !isPromptInstallReady) return null;
 
   const handleInstall = async () => {
-    const choice = await promptInstall();
+    await promptInstall();
     setDismissed(true);
   };
 

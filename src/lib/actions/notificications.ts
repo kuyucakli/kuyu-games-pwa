@@ -61,8 +61,6 @@ export async function sendNotification(message: string) {
     .from("push_subscriptions_table")
     .select("endpoint, p256dh, auth_key");
 
-  console.log(data, "----");
-
   for (const record of data ?? []) {
     const subscription: PushSubscription = {
       endpoint: record.endpoint,
