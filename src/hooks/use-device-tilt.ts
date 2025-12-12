@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function useDeviceTilt() {
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [tiltAngles, setTiltAngles] = useState([0, 0]);
+  const needsUpdate = useRef(false);
+  const pendingTiltAngles = useRef([0, 0]);
 
   useEffect(() => {
+    let raf: number;
     function requestIOSPermission() {
       const D = DeviceOrientationEvent as any;
 
@@ -31,16 +34,28 @@ export function useDeviceTilt() {
       const normX = Math.max(-1, Math.min(1, x / 45));
       const normY = Math.max(-1, Math.min(1, y / 45));
 
-      setTilt({ x: normX, y: normY });
+      pendingTiltAngles.current = [normX, normY];
+      needsUpdate.current = true;
     }
+
+    function loop() {
+      if (needsUpdate.current) {
+        needsUpdate.current = false;
+        setTiltAngles(pendingTiltAngles.current);
+      }
+      raf = requestAnimationFrame(loop);
+    }
+
+    raf = requestAnimationFrame(loop);
 
     window.addEventListener("click", requestIOSPermission, { once: true });
     window.addEventListener("deviceorientation", handleOrientation);
 
     return () => {
       window.removeEventListener("deviceorientation", handleOrientation);
+      cancelAnimationFrame(raf);
     };
   }, []);
 
-  return tilt;
+  return tiltAngles;
 }
