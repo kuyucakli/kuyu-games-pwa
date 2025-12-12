@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { HTMLAttributes } from "react";
-import { createClient } from "@/lib/utils/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { LogoutForm } from "./logout-form";
 import { IconRobot } from "@/components/ui/icons";
 
