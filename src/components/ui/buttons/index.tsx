@@ -16,7 +16,7 @@ export function Button({
   className,
   children,
 }: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>> & {
-  icon: ReactElement<SVGElement>;
+  icon?: ReactElement<SVGElement>;
 }) {
   const { pending } = useFormStatus();
   return (
