@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { useSwStore } from "./use-sw-store";
-import { subscribeUser, unsubscribeUser } from "@/lib/actions";
+import { subscribeUser, unsubscribeUser } from "@/lib/actions/notificications";
 import { urlBase64ToUint8Array } from "@/lib/utils/index";
 
 interface PushState {
