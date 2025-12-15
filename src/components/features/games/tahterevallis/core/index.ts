@@ -41,7 +41,7 @@ export class Game {
     const outofBoundsPlane = new OutofBoundsPlane();
     await outofBoundsPlane.load();
 
-    this.tiltInput.attachMouseMove(this.engine);
+    this.tiltInput.attach(this.engine);
     this.table = table.group;
     this.scene.add(table.group);
     this.scene.add(outofBoundsPlane.getMesh());

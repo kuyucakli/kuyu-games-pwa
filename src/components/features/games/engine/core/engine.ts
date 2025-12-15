@@ -21,6 +21,7 @@ export class Engine {
     this.physicsWorld = new PhysicsWorld();
     container.appendChild(this.renderer.domElement);
     window.addEventListener("resize", this.handleResize);
+    this.renderer
   }
 
   render(scene: THREE.Scene) {
