@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { Game } from "@/components/features/games/tahterevallis/core";
 import { HUDBox, HUDLayer } from "../shared/ui/heads-up-display";
-import { useDeviceTilt } from "@/hooks/use-device-tilt";
+import { Engine } from "../engine/core/engine";
 
 type GameTahterevallisSceneProps = {
   width?: `${number}${"px" | "vw" | "dvw"}`;
@@ -15,19 +15,20 @@ export default function GameTahterevallis({
   height = "100vh",
 }: GameTahterevallisSceneProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const deviceTilt = useDeviceTilt();
+
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const game = new Game(containerRef.current);
+    const engine = new Engine(containerRef.current);
+    const gameTahterevallis = new Game();
+    engine.mount(gameTahterevallis);
 
-    (async () => {
-      await game.init();
+    // (async () => {
+    //   await game.init(engine);
+    //   //game.start();
+    // })();
 
-      game.start();
-    })();
-
-    return () => game.dispose();
+    return () => engine.dispose();
   }, []);
 
   return (
@@ -36,7 +37,7 @@ export default function GameTahterevallis({
         <div className="absolute top-18 right-0 flex gap-4 p-4">
           <HUDBox
             label="score"
-            content={JSON.stringify(deviceTilt)}
+            content="100"
             className=" border-amber-100! text-orange-500! bg-amber-300!"
           />
           <HUDBox label="test" content="45" />

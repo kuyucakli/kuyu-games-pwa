@@ -9,6 +9,7 @@ export class SparkleSystem {
   private ages: Float32Array;
   private velocities: Float32Array;
   private baseColors: Float32Array;
+  private cursor = 0;
 
   constructor() {
     this.geometry = new THREE.BufferGeometry();
@@ -43,8 +44,11 @@ export class SparkleSystem {
       .position as THREE.BufferAttribute;
     const colors = this.geometry.attributes.color as THREE.BufferAttribute;
 
-    const i = this.ages.findIndex((age, idx) => age >= this.lifetimes[idx]);
-    const index = i === -1 ? Math.floor(Math.random() * this.maxCount) : i;
+    // const i = this.ages.findIndex((age, idx) => age >= this.lifetimes[idx]);
+    // const index = i === -1 ? Math.floor(Math.random() * this.maxCount) : i;
+
+    const index = this.cursor;
+    this.cursor = (this.cursor + 1) % this.maxCount;
 
     // Slightly clustered spawn around position
     positions.setXYZ(

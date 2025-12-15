@@ -1,11 +1,12 @@
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/Addons.js";
-
 import mitt from "mitt";
 import { Table } from "../objects/table";
-import { RapierDebugRenderer } from "./debug-renderer";
-import RAPIER from "@dimforge/rapier3d";
 import { SparkleSystem } from "../fx/sparkle";
+import { Engine } from "../../engine/core/engine";
+import { OutofBoundsPlane } from "../objects/outof-bounds-plane";
+import { Ball } from "../objects/ball";
+import RAPIER from "@dimforge/rapier3d";
+import { TiltInput } from "../input";
 
 export type GameEvents = {
   "score:add": number;
@@ -16,91 +17,64 @@ export type GameEvents = {
 export const gameEvents = mitt<GameEvents>();
 
 export class Game {
-  private scene: THREE.Scene;
-  private camera: THREE.PerspectiveCamera;
-  private controls: OrbitControls | null;
-  private renderer: THREE.WebGLRenderer;
-  private world: any;
-  private RAPIER: any;
-  private rafId?: number;
-  private table?: Table;
-  private container: HTMLElement;
-  private debugRenderer: any;
-  private dynamicBodies: [THREE.Object3D, RAPIER.RigidBody][];
-  private mouse = { x: 0, y: 0 };
+  private dynamicBodies: [THREE.Object3D, RAPIER.RigidBody][] = [];
+  private tiltInput = new TiltInput();
   private sparkleSystem!: SparkleSystem;
-  private lastTime = performance.now();
-  private smoothedSpeed: number;
-  private isPortraitMode: boolean;
+  private engine!: Engine;
+  private scene!: THREE.Scene;
+  private table!: any;
+  private tableRigidBody!: RAPIER.RigidBody;
+  private ballSpeeds = new Map<RAPIER.RigidBody, number>();
 
-  constructor(container: HTMLElement) {
-    this.container = container;
-    this.scene = new THREE.Scene();
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
-    this.renderer.setSize(container.clientWidth, container.clientHeight);
-    this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.dynamicBodies = [];
-    this.container.appendChild(this.renderer.domElement);
-    this.smoothedSpeed = 0;
-    this.isPortraitMode = container.clientHeight / container.clientWidth > 1;
-    this.camera = this.setupCamera(
-      container.clientWidth,
-      container.clientHeight
+  async init(engine: Engine) {
+    await engine.physicsWorld.init();
+
+    this.engine = engine;
+    this.scene = engine.scene;
+
+    this.setupCamera();
+    this.setupLights();
+
+    const table = new Table();
+    await table.load(new THREE.Vector3(0, 0, 0));
+
+    const outofBoundsPlane = new OutofBoundsPlane();
+    await outofBoundsPlane.load();
+
+    this.tiltInput.attachMouseMove(this.engine);
+    this.table = table.group;
+    this.scene.add(table.group);
+    this.scene.add(outofBoundsPlane.getMesh());
+    this.addBall(0.28);
+    this.addBall(0.28, [0, 1, 4]);
+    this.tableRigidBody = engine.physicsWorld.createKinematicTrimesh(
+      table.getColliderTrimeshLocal().vertices,
+      table.getColliderTrimeshLocal().indices,
+      new THREE.Vector3(0, 0, 0)
     );
-    this.updateCameraForAspect(container.clientWidth, container.clientHeight);
-
-    this.controls = null; // this.setupControls();
-  }
-
-  async init() {
-    // Load WASM
-    this.RAPIER = await import("@dimforge/rapier3d");
-    this.world = new this.RAPIER.World({ x: 0, y: -9.81, z: 0 });
 
     this.setupScene();
-    this.setupLights();
-    this.debugRenderer = new RapierDebugRenderer(this.scene, this.world);
-
-    this.table = new Table(this.RAPIER, this.world);
-    await this.table.load(this.scene, [0, 0, 0]);
 
     this.sparkleSystem = new SparkleSystem();
     this.scene.add(this.sparkleSystem.points);
-
-    this.addBall([-0.25, 1, 0.22]);
-    this.addBall([0.25, 1, 0.22]);
-    this.setupMouseControls();
-
-    window.addEventListener("resize", this.handleResize);
   }
 
-  private setupControls() {
-    const controls = new OrbitControls(this.camera, this.renderer.domElement);
-    controls.enableDamping = true;
-    controls.target.y = 1;
-    return controls;
-  }
-
-  private updateCameraForAspect(width: number, height: number) {
-    if (!this.isPortraitMode) {
-      this.camera.position.set(0, 16, 0);
-      this.camera.lookAt(0, 0, 0);
+  private setupCamera() {
+    const { w, h } = this.engine.viewport;
+    const camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 100);
+    if (w > h) {
+      camera.position.set(0, 16, 0);
+      camera.lookAt(0, 0, 0);
     } else {
-      this.camera.position.set(0, 16, 0);
-      this.camera.lookAt(0, 0, 0);
-      this.camera.rotation.set(
-        this.camera.rotation.x,
-        this.camera.rotation.y,
-        this.camera.rotation.z + Math.PI / 2
+      camera.position.set(0, 16, 0);
+      camera.lookAt(0, 0, 0);
+      camera.rotation.set(
+        camera.rotation.x,
+        camera.rotation.y,
+        camera.rotation.z + Math.PI / 2
       );
     }
-  }
-
-  private setupCamera(w: number, h: number) {
-    const camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 100);
-
-    return camera;
+    this.engine.registerCamera("main_perspective", camera);
   }
 
   private setupScene() {
@@ -111,7 +85,6 @@ export class Game {
     const light = new THREE.DirectionalLight(0xffffff, 1.2);
     light.position.set(0, 12, -6);
     light.castShadow = true;
-
     // --- Increase shadow map resolution ---
     light.shadow.mapSize.width = 1024 * 2;
     light.shadow.mapSize.height = 1024 * 2;
@@ -120,7 +93,6 @@ export class Game {
     light.shadow.bias = -0.0004;
     // light.shadow.camera.near = 0;
     // light.shadow.camera.far = 100;
-
     // --- Expand the shadow camera bounds ---
     const cam = light.shadow.camera as THREE.OrthographicCamera;
     cam.left = -10;
@@ -130,179 +102,139 @@ export class Game {
     cam.near = 0.5;
     cam.far = 30;
     cam.updateProjectionMatrix();
-
     // --- Add a slight ambient fill light ---
     const ambient = new THREE.AmbientLight(0xffffff, 0.35);
     this.scene.add(ambient);
-
     this.scene.add(light);
   }
 
-  private setupMouseControls() {
-    window.addEventListener("mousemove", (e) => {
-      const w = this.container.clientWidth;
-      const h = this.container.clientHeight;
-      this.mouse.x = (e.clientX / w) * 2 - 1;
-      this.mouse.y = -((e.clientY / h) * 2 - 1);
-    });
-  }
-
-  private handleResize = () => {
-    const w = this.container.clientWidth;
-    const h = this.container.clientHeight;
-    this.camera.aspect = w / h;
-    this.camera.updateProjectionMatrix();
-    this.renderer.setSize(w, h);
-  };
-
-  private addBall(position: [number, number, number] = [0, 1, 0]) {
-    const radius = 0.28;
-
-    const geometry = new THREE.SphereGeometry(radius, 32, 32);
-    const material = new THREE.MeshStandardMaterial({
-      color: 0xcccccc,
-      metalness: 0.8,
-      roughness: 0.2,
-    });
-
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.castShadow = true;
-    mesh.position.set(...position);
-    this.scene.add(mesh);
-
-    const body = this.world.createRigidBody(
-      this.RAPIER.RigidBodyDesc.dynamic()
-        .setTranslation(...position)
-        .setCcdEnabled(true)
+  private addBall(
+    radius: 0.28,
+    position: [number, number, number] = [0, 1, 0]
+  ) {
+    const ball = new Ball(radius, position);
+    this.scene.add(ball.mesh);
+    const { body } = this.engine.physicsWorld.createDynamicBall(
+      radius,
+      position
     );
-
-    // Outline (backside scaled)
-    const outlineMat = new THREE.MeshBasicMaterial({
-      color: 0x888888,
-      side: THREE.BackSide,
-    });
-
-    const outline = new THREE.Mesh(geometry.clone(), outlineMat);
-    outline.scale.set(1.08, 1.08, 1.08); // outline thickness
-    mesh.add(outline); // attach so that it rotates/moves with the ball
-
-    const colliderDesc = this.RAPIER.ColliderDesc.ball(radius)
-      .setMass(1)
-      .setRestitution(0.5)
-      .setFriction(0.8);
-
-    this.world.createCollider(colliderDesc, body);
-
-    this.dynamicBodies.push([mesh, body]);
-    return { mesh, body };
+    this.dynamicBodies.push([ball.mesh, body]);
   }
 
-  start() {
-    this.animate = this.animate.bind(this);
-    this.rafId = requestAnimationFrame(this.animate);
+  tiltTable(tiltxInput: number, tiltzInput: number) {
+    const maxTiltX = Math.PI / 12;
+    const maxTiltZ = Math.PI / 12;
+
+    const targetTiltX = maxTiltX * tiltxInput;
+    const targetTiltZ = maxTiltZ * tiltzInput;
+
+    const tiltX = THREE.MathUtils.lerp(this.table.rotation.x, targetTiltX, 0.1);
+    const tiltZ = THREE.MathUtils.lerp(this.table.rotation.z, targetTiltZ, 0.1);
+
+    this.table.rotation.x = tiltX;
+    this.table.rotation.z = tiltZ;
+
+    const q = this.table.quaternion;
+
+    this.tableRigidBody.setNextKinematicRotation(
+      new RAPIER.Quaternion(q.x, q.y, q.z, q.w)
+    );
   }
 
-  animate() {
-    const now = performance.now();
-    const dt = (now - this.lastTime) / 1000;
-    this.lastTime = now;
-    this.world.step();
+  dispose() {}
 
-    // Sync dynamic objects (like the ball)
-    for (let i = 0, n = this.dynamicBodies.length; i < n; i++) {
-      const [mesh, body] = this.dynamicBodies[i];
+  private mapTiltInput(x: number, y: number): { x: number; z: number } {
+    const { w, h } = this.engine.viewport;
+    const isPortrait = h > w;
+
+    if (!isPortrait) {
+      return {
+        x: y,
+        z: x,
+      };
+    }
+    // rotate control space 90° clockwise
+    return { x, z: y };
+  }
+
+  private emitSparkles(
+    position: THREE.Vector3,
+    velocity: RAPIER.Vector,
+    speed: number,
+    dt: number
+  ) {
+    const MIN = 1.8;
+    const MAX = 4.0;
+
+    if (speed < MIN) return;
+
+    const intensity = THREE.MathUtils.clamp((speed - MIN) / (MAX - MIN), 0, 1);
+
+    const count = Math.floor(THREE.MathUtils.lerp(1, 6, intensity));
+
+    for (let i = 0; i < count; i++) {
+      this.sparkleSystem.emit(
+        position,
+        new THREE.Vector3(velocity.x, velocity.y, velocity.z)
+      );
+    }
+  }
+
+  update(dt: number) {
+    this.engine.physicsWorld.step(dt);
+    for (const [mesh, body] of this.dynamicBodies) {
       mesh.position.copy(body.translation());
       mesh.quaternion.copy(body.rotation());
+      const v = body.linvel();
+      const speed = Math.hypot(v.x, v.y, v.z);
 
-      // --- Sparkles when speed is high ---
-      const vel = body.linvel();
-      const speed = Math.sqrt(vel.x * vel.x + vel.y * vel.y + vel.z * vel.z);
-      this.smoothedSpeed = THREE.MathUtils.lerp(this.smoothedSpeed, speed, 0.1);
+      const prev = this.ballSpeeds.get(body) ?? speed;
+      const smoothSpeed = THREE.MathUtils.lerp(prev, speed, 0.1);
+      this.ballSpeeds.set(body, smoothSpeed);
 
-      const minSpeed = 1.9; // below this → very faint sparkles
-      const maxSpeed = 3.9; // above this → full sparkle intensity
-
-      // Normalize speed into 0–1 range
-      const intensity = THREE.MathUtils.clamp(
-        (this.smoothedSpeed - minSpeed) / (maxSpeed - minSpeed),
-        0,
-        1
-      );
-
-      // Sparkle density — more emissions at higher speeds
-      const sparkleCount = Math.floor(THREE.MathUtils.lerp(1, 6, intensity));
-
-      // Emit sparkles proportional to speed
-      for (let s = 0; s < sparkleCount; s++) {
-        this.sparkleSystem.emit(
-          mesh.position,
-          new THREE.Vector3(vel.x, vel.y, vel.z)
-        );
-      }
+      this.emitSparkles(mesh.position, v, smoothSpeed, dt);
     }
-
-    this.sparkleSystem.update(dt);
-
-    if (this.table) {
-      const maxTiltX = Math.PI / 12;
-      const maxTiltZ = Math.PI / 12;
-
-      // Normalize input
-      let tiltxInput = this.mouse.y;
-      let tiltzInput = this.mouse.x;
-
-      if (this.isPortraitMode) {
-        // rotate mouse vector 90° clockwise
-        const rotatedX = tiltzInput;
-        const rotatedZ = -tiltxInput;
-
-        tiltxInput = rotatedX;
-        tiltzInput = rotatedZ;
-      }
-
-      const targetTiltX = maxTiltX * tiltxInput;
-      const targetTiltZ = maxTiltZ * tiltzInput;
-
-      const tiltX = THREE.MathUtils.lerp(
-        this.table.tableGroup.rotation.x,
-        targetTiltX,
-        0.1
-      );
-      const tiltZ = THREE.MathUtils.lerp(
-        this.table.tableGroup.rotation.z,
-        targetTiltZ,
-        0.1
-      );
-
-      this.table.tilt(tiltX, tiltZ);
-    }
-
-    this.checkCollisions();
-    this.renderer.render(this.scene, this.camera);
-    //this.debugRenderer.update();
-    //this.controls.update();
-
-    this.rafId = requestAnimationFrame(this.animate);
-  }
-
-  dispose() {
-    cancelAnimationFrame(this.rafId!);
-    this.renderer.dispose();
-  }
-
-  private checkCollisions() {
-    const coinCollected = Math.random() < 0.01;
-    if (coinCollected) {
-      gameEvents.emit("score:add", 10);
-    }
-
-    const hit = Math.random() < 0.005;
-    if (hit) {
-      gameEvents.emit("player:damage", 5);
-    }
+    const mapped = this.mapTiltInput(this.tiltInput.x, this.tiltInput.y);
+    this.tiltTable(mapped.x, mapped.z);
+    //this.sparkleSystem.update(dt);
   }
 
   reset() {
     gameEvents.emit("game:reset");
   }
 }
+
+//   // Sync dynamic objects (like the ball)
+//   for (let i = 0, n = this.dynamicBodies.length; i < n; i++) {
+//     const [mesh, body] = this.dynamicBodies[i];
+//     mesh.position.copy(body.translation());
+//     mesh.quaternion.copy(body.rotation());
+
+//     // --- Sparkles when speed is high ---
+//     const vel = body.linvel();
+//     const speed = Math.sqrt(vel.x * vel.x + vel.y * vel.y + vel.z * vel.z);
+//     this.smoothedSpeed = THREE.MathUtils.lerp(this.smoothedSpeed, speed, 0.1);
+
+//     const minSpeed = 1.9; // below this → very faint sparkles
+//     const maxSpeed = 3.9; // above this → full sparkle intensity
+
+//     // Normalize speed into 0–1 range
+//     const intensity = THREE.MathUtils.clamp(
+//       (this.smoothedSpeed - minSpeed) / (maxSpeed - minSpeed),
+//       0,
+//       1
+//     );
+
+//     // Sparkle density — more emissions at higher speeds
+//     const sparkleCount = Math.floor(THREE.MathUtils.lerp(1, 6, intensity));
+
+//     // Emit sparkles proportional to speed
+//     for (let s = 0; s < sparkleCount; s++) {
+//       this.sparkleSystem.emit(
+//         mesh.position,
+//         new THREE.Vector3(vel.x, vel.y, vel.z)
+//       );
+//     }
+//   }
+
+//   this.sparkleSystem.update(dt);
