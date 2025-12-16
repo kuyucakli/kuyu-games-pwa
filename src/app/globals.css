@@ -136,6 +136,11 @@
     height: 100%;
   }
 
+  #groot,
+  canvas {
+    touch-action: none;
+  }
+
   main {
     min-height: 100dvh;
     display: flex;
