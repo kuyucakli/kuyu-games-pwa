@@ -11,20 +11,13 @@ export class Table {
     const gltf = await GltfAssetCache.load(
       `https://res.cloudinary.com/derfbfm9n/image/upload/v1761994782/game-objects-terrain-test_qfbwlx.glb`
     );
-    gltf.scene.updateMatrixWorld;
+    const source = gltf.scene.getObjectByName("Table_Plane");
 
-    let mesh: THREE.Mesh | null = null;
-
-    gltf.scene.traverse((obj) => {
-      if (obj instanceof THREE.Mesh && obj.name === "Table_Plane") {
-        mesh = obj;
-      }
-    });
-
-    if (!mesh) {
-      throw new Error("Table_Plane mesh not found after traversal");
+    if (!(source instanceof THREE.Mesh)) {
+      throw new Error("Table_Plane mesh not found or not a Mesh");
     }
 
+    const mesh = source.clone();
     this.mesh = mesh;
     this.mesh.castShadow = false;
     this.mesh.receiveShadow = true;

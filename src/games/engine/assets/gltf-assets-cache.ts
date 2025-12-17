@@ -8,6 +8,7 @@ export class GltfAssetCache {
       const loader = new GLTFLoader();
       this.cache.set(url, loader.loadAsync(url));
     }
+
     return this.cache.get(url)!;
   }
 }

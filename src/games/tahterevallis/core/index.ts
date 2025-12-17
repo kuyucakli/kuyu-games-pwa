@@ -27,7 +27,7 @@ export class Game {
   private ballSpeeds = new Map<RAPIER.RigidBody, number>();
 
   async init(engine: Engine) {
-    await engine.physicsWorld.init();
+    //await engine.physicsWorld.init();
 
     this.engine = engine;
     this.scene = engine.scene;

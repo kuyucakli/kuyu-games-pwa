@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Game } from "@/components/features/games/tahterevallis/core";
+import { Game } from "@/games/tahterevallis/core";
 import { HUDBox, HUDLayer } from "../shared/ui/heads-up-display";
 import { Engine } from "../engine/core/engine";
 
@@ -17,18 +17,19 @@ export default function GameTahterevallis({
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    let engine: Engine | null = null;
 
-    const engine = new Engine(containerRef.current);
-    const gameTahterevallis = new Game();
-    engine.mount(gameTahterevallis);
+    (async () => {
+      if (!containerRef.current) return;
+      engine = await Engine.create(containerRef.current);
 
-    // (async () => {
-    //   await game.init(engine);
-    //   //game.start();
-    // })();
+      const game = new Game();
+      await engine.mount(game);
+    })();
 
-    return () => engine.dispose();
+    return () => {
+      engine?.dispose();
+    };
   }, []);
 
   return (

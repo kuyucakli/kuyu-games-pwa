@@ -4,13 +4,13 @@ Being a pwa this project is being developed with next.js.
 
 ## To do:
 
+- [ ] feat: add scores
+- [ ] feat: add levels
 - [ ] feat: implement lock tilt of the table
 - [ ] feat: calculate and show tilt angles on mobile
-- [ ] feat: detect aspect ratio and adjust camera rotation according to aspect ratio
+- [x] feat: detect aspect ratio and adjust camera rotation according to aspect ratio
 - [ ] feat: implement timer for games
 - [ ] feat: implement ball sensors
-- [ ] feat: add levels
-- [ ] feat: add scores
 - [ ] feat: (account) add profile section
 - [ ] feat: (game) add settings for audio
 - [x] Add "rapier" rust physics library

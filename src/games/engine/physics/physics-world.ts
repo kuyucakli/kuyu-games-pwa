@@ -1,19 +1,27 @@
 import RAPIER from "@dimforge/rapier3d";
 import { Vector3 } from "three";
 export class PhysicsWorld {
-  private world!: RAPIER.World;
+  private constructor(private readonly world: RAPIER.World) {}
 
-  public async init() {
+  static async create(): Promise<PhysicsWorld> {
     const RAPIER = await import("@dimforge/rapier3d");
-    this.world = new RAPIER.World({ x: 0, y: -9.81, z: 0 });
+    const world = new RAPIER.World({ x: 0, y: -9.81, z: 0 });
+    return new PhysicsWorld(world);
   }
-  public step(dt: number) {
+
+  step(dt: number) {
     this.world.timestep = dt;
     this.world.step();
   }
 
+  dispose() {
+    if (this.world) {
+      this.world.free();
+    }
+  }
+
   getWorld() {
-    return this.world; // optional escape hatch
+    return this.world;
   }
 
   createDynamicBall(radius: number, position: [number, number, number]) {

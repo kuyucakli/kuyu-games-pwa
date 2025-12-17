@@ -13,15 +13,20 @@ export class Engine {
   private lastTime = performance.now();
   private game?: Game;
 
-  constructor(private container: HTMLElement) {
+  constructor(private container: HTMLElement, physicsWorld: PhysicsWorld) {
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.renderer.setSize(container.clientWidth, container.clientHeight);
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.physicsWorld = new PhysicsWorld();
+    this.physicsWorld = physicsWorld;
     container.appendChild(this.renderer.domElement);
     window.addEventListener("resize", this.handleResize);
-    this.renderer
+    this.renderer;
+  }
+
+  static async create(container: HTMLDivElement): Promise<Engine> {
+    const physicsWorld = await PhysicsWorld.create();
+    return new Engine(container, physicsWorld);
   }
 
   render(scene: THREE.Scene) {
@@ -95,6 +100,7 @@ export class Engine {
     }
     this.renderer.dispose();
     window.removeEventListener("resize", this.handleResize);
+    this.physicsWorld.dispose();
     this.game?.dispose();
   }
 }
