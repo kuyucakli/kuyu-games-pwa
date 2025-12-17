@@ -1,4 +1,4 @@
-import GameTahterevallis from "@/games/tahterevallis";
+import GameTahterevallis from "@/components/features/games/tahterevallis";
 
 export default function TahterevalliHomePage() {
   return <GameTahterevallis />;

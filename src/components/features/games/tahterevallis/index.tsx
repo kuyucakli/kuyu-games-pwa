@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { Game } from "@/games/tahterevallis/core";
 import { HUDBox, HUDLayer } from "../shared/ui/heads-up-display";
-import { Engine } from "../engine/core/engine";
+import { Engine } from "@/games/engine/core/engine";
 
 type GameTahterevallisSceneProps = {
   width?: `${number}${"px" | "vw" | "dvw"}`;
