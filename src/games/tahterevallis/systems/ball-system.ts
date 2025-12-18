@@ -33,7 +33,7 @@ export class BallSystem {
   private clear() {
     for (const { mesh, body } of this.balls) {
       this.scene.remove(mesh);
-      this.physicsWorld.removeRigidBody(body);
+      // this.physicsWorld.removeRigidBody(body);
     }
 
     this.balls.length = 0;
