@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Game } from "@/games/tahterevallis/core";
+import { Game } from "@/games/tahterevallis";
 import { HUDBox, HUDLayer } from "../shared/ui/heads-up-display";
 import { Engine } from "@/games/engine/core/engine";
 

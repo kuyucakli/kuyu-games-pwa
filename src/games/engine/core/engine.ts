@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { PhysicsWorld } from "../physics/physics-world";
-import { Game } from "../../tahterevallis/core";
+import { Game } from "../../tahterevallis";
 
 export class Engine {
   readonly scene = new THREE.Scene();

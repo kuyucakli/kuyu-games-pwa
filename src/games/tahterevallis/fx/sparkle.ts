@@ -28,10 +28,10 @@ export class SparkleSystem {
     this.geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
 
     this.material = new THREE.PointsMaterial({
-      size: 0.05,
+      size: 0.07,
       vertexColors: true,
       transparent: true,
-      opacity: 0.5,
+      opacity: 0.7,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
@@ -85,6 +85,35 @@ export class SparkleSystem {
     colors.needsUpdate = true;
   }
 
+  emitBurst(
+    position: THREE.Vector3,
+    options?: {
+      count?: number;
+      speed?: number;
+      spread?: number;
+      upwardBias?: number;
+    }
+  ) {
+    const {
+      count = 40,
+      speed = 1.2,
+      spread = 1.0,
+      upwardBias = 0.6,
+    } = options ?? {};
+
+    for (let i = 0; i < count; i++) {
+      const dir = new THREE.Vector3(
+        (Math.random() - 0.5) * spread,
+        Math.random() * upwardBias,
+        (Math.random() - 0.5) * spread
+      )
+        .normalize()
+        .multiplyScalar(speed * (0.6 + Math.random() * 0.6));
+
+      this.emit(position, dir);
+    }
+  }
+
   update(delta: number) {
     const positions = this.geometry.attributes
       .position as THREE.BufferAttribute;
@@ -93,41 +122,30 @@ export class SparkleSystem {
     const colArr = colors.array as Float32Array;
 
     for (let i = 0; i < this.maxCount; i++) {
+      const lifetime = this.lifetimes[i];
+      if (lifetime <= 0) continue;
+
       const idx3 = i * 3;
+      this.ages[i] += delta;
 
-      if (this.ages[i] < this.lifetimes[i]) {
-        this.ages[i] += delta;
-        const fade = 1 - this.ages[i] / this.lifetimes[i];
-
-        // Damping motion
-        this.velocities[idx3 + 0] *= 0.95;
-        this.velocities[idx3 + 1] *= 0.95;
-        this.velocities[idx3 + 2] *= 0.95;
-
-        // Position update
-        posArr[idx3 + 0] += this.velocities[idx3 + 0] * delta * 6;
-        posArr[idx3 + 1] += this.velocities[idx3 + 1] * delta * 6;
-        posArr[idx3 + 2] += this.velocities[idx3 + 2] * delta * 6;
-
-        // 🟡 Color fade: deep orange → bright yellow → soft golden
-        const t = this.ages[i] / this.lifetimes[i];
-        const r = THREE.MathUtils.lerp(this.baseColors[idx3 + 0], 1.0, t * 0.5);
-        const g = THREE.MathUtils.lerp(
-          this.baseColors[idx3 + 1],
-          0.95,
-          t * 0.7
-        );
-        const b = THREE.MathUtils.lerp(this.baseColors[idx3 + 2], 0.4, t * 0.3);
-
-        colArr[idx3 + 0] = r * fade;
-        colArr[idx3 + 1] = g * fade;
-        colArr[idx3 + 2] = b * fade;
-      } else {
-        // Hide expired particles
-        posArr[idx3 + 0] = 9999;
-        posArr[idx3 + 1] = 9999;
-        posArr[idx3 + 2] = 9999;
+      if (this.ages[i] >= lifetime) {
+        this.lifetimes[i] = 0; // mark inactive
+        continue;
       }
+
+      const fade = 1 - this.ages[i] / lifetime;
+
+      this.velocities[idx3 + 0] *= 0.95;
+      this.velocities[idx3 + 1] *= 0.95;
+      this.velocities[idx3 + 2] *= 0.95;
+
+      posArr[idx3 + 0] += this.velocities[idx3 + 0] * delta * 6;
+      posArr[idx3 + 1] += this.velocities[idx3 + 1] * delta * 6;
+      posArr[idx3 + 2] += this.velocities[idx3 + 2] * delta * 6;
+
+      colArr[idx3 + 0] *= fade;
+      colArr[idx3 + 1] *= fade;
+      colArr[idx3 + 2] *= fade;
     }
 
     positions.needsUpdate = true;

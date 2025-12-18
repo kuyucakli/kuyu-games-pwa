@@ -1,62 +1,86 @@
 import * as THREE from "three";
 import mitt from "mitt";
-import { Table } from "../objects/table";
-import { SparkleSystem } from "../fx/sparkle";
-import { Engine } from "../../engine/core/engine";
-import { OutofBoundsPlane } from "../objects/outof-bounds-plane";
-import { Ball } from "../objects/ball";
+import { Table } from "./objects/table";
+import { SparkleSystem } from "./fx/sparkle";
+import { Engine } from "../engine/core/engine";
+import { OutofBoundsPlane } from "./objects/outof-bounds-plane";
 import RAPIER from "@dimforge/rapier3d";
-import { TiltInput } from "../input";
+import { TiltInput } from "./input";
+import { HoleSystem } from "./systems/hole-system";
+import { LEVELS_CONFIG } from "./config";
+import { BallSystem } from "./systems/ball-system";
+import { createKinematicTrimesh } from "./factories/test-factory";
 
 export type GameEvents = {
   "score:add": number;
   "player:damage": number;
   "game:reset": void;
+  "physics:collision": { c1: any; c2: any; started: boolean };
+  "goal:entered": { holeName: any; ballCollider: any };
 };
 
 export const gameEvents = mitt<GameEvents>();
 
 export class Game {
-  private dynamicBodies: [THREE.Object3D, RAPIER.RigidBody][] = [];
   private tiltInput = new TiltInput();
   private sparkleSystem!: SparkleSystem;
   private engine!: Engine;
   private scene!: THREE.Scene;
   private table!: any;
+  private holeSystem!: HoleSystem;
+  private ballSystem!: BallSystem;
   private tableRigidBody!: RAPIER.RigidBody;
-  private ballSpeeds = new Map<RAPIER.RigidBody, number>();
 
   async init(engine: Engine) {
-    //await engine.physicsWorld.init();
-
     this.engine = engine;
     this.scene = engine.scene;
 
     this.setupCamera();
     this.setupLights();
 
-    const table = new Table();
-    await table.load(new THREE.Vector3(0, 0, 0));
+    const tableInstance = new Table();
+    await tableInstance.load(new THREE.Vector3(0, 0, 0));
 
     const outofBoundsPlane = new OutofBoundsPlane();
     await outofBoundsPlane.load();
 
     this.tiltInput.attach(this.engine);
-    this.table = table.group;
-    this.scene.add(table.group);
+    this.table = tableInstance.group;
+    this.scene.add(tableInstance.group);
     this.scene.add(outofBoundsPlane.getMesh());
-    this.addBall(0.28);
-    this.addBall(0.28, [0, 1, 4]);
-    this.tableRigidBody = engine.physicsWorld.createKinematicTrimesh(
-      table.getColliderTrimeshLocal().vertices,
-      table.getColliderTrimeshLocal().indices,
-      new THREE.Vector3(0, 0, 0)
+
+    this.tableRigidBody = createKinematicTrimesh(
+      tableInstance.getColliderTrimeshLocal().vertices,
+      tableInstance.getColliderTrimeshLocal().indices,
+      new THREE.Vector3(0, 0, 0),
+      engine.physicsWorld
     );
 
     this.setupScene();
 
     this.sparkleSystem = new SparkleSystem();
     this.scene.add(this.sparkleSystem.points);
+
+    this.holeSystem = new HoleSystem(
+      this.engine.physicsWorld,
+      tableInstance,
+      this.scene
+    );
+    this.holeSystem.registerFromTable();
+    this.holeSystem.applyLevel(LEVELS_CONFIG[0]);
+
+    this.ballSystem = new BallSystem(
+      this.scene,
+      engine.physicsWorld,
+      this.sparkleSystem
+    );
+    this.ballSystem.applyLevel(LEVELS_CONFIG[0]);
+
+    gameEvents.on("goal:entered", ({ holeName, ballCollider }) => {
+      const holePos = ballCollider.position;
+      
+      this.sparkleSystem.emitBurst(new THREE.Vector3(0, 1, 2), { count: 300 }); // or trigger a burst
+    });
   }
 
   private setupCamera() {
@@ -108,19 +132,6 @@ export class Game {
     this.scene.add(light);
   }
 
-  private addBall(
-    radius: 0.28,
-    position: [number, number, number] = [0, 1, 0]
-  ) {
-    const ball = new Ball(radius, position);
-    this.scene.add(ball.mesh);
-    const { body } = this.engine.physicsWorld.createDynamicBall(
-      radius,
-      position
-    );
-    this.dynamicBodies.push([ball.mesh, body]);
-  }
-
   tiltTable(tiltxInput: number, tiltzInput: number) {
     const maxTiltX = Math.PI / 12;
     const maxTiltZ = Math.PI / 12;
@@ -141,8 +152,6 @@ export class Game {
     );
   }
 
-  dispose() {}
-
   private mapTiltInput(x: number, y: number): { x: number; z: number } {
     const { w, h } = this.engine.viewport;
     const isPortrait = h > w;
@@ -157,84 +166,17 @@ export class Game {
     return { x, z: y };
   }
 
-  private emitSparkles(
-    position: THREE.Vector3,
-    velocity: RAPIER.Vector,
-    speed: number,
-    dt: number
-  ) {
-    const MIN = 1.8;
-    const MAX = 4.0;
-
-    if (speed < MIN) return;
-
-    const intensity = THREE.MathUtils.clamp((speed - MIN) / (MAX - MIN), 0, 1);
-
-    const count = Math.floor(THREE.MathUtils.lerp(1, 6, intensity));
-
-    for (let i = 0; i < count; i++) {
-      this.sparkleSystem.emit(
-        position,
-        new THREE.Vector3(velocity.x, velocity.y, velocity.z)
-      );
-    }
-  }
-
   update(dt: number) {
     this.engine.physicsWorld.step(dt);
-    for (const [mesh, body] of this.dynamicBodies) {
-      mesh.position.copy(body.translation());
-      mesh.quaternion.copy(body.rotation());
-      const v = body.linvel();
-      const speed = Math.hypot(v.x, v.y, v.z);
-
-      const prev = this.ballSpeeds.get(body) ?? speed;
-      const smoothSpeed = THREE.MathUtils.lerp(prev, speed, 0.1);
-      this.ballSpeeds.set(body, smoothSpeed);
-
-      this.emitSparkles(mesh.position, v, smoothSpeed, dt);
-    }
+    this.ballSystem.update(dt);
     const mapped = this.mapTiltInput(this.tiltInput.x, this.tiltInput.y);
     this.tiltTable(mapped.x, mapped.z);
-    //this.sparkleSystem.update(dt);
+    this.sparkleSystem.update(dt * 2);
   }
 
   reset() {
     gameEvents.emit("game:reset");
   }
+
+  dispose() {}
 }
-
-//   // Sync dynamic objects (like the ball)
-//   for (let i = 0, n = this.dynamicBodies.length; i < n; i++) {
-//     const [mesh, body] = this.dynamicBodies[i];
-//     mesh.position.copy(body.translation());
-//     mesh.quaternion.copy(body.rotation());
-
-//     // --- Sparkles when speed is high ---
-//     const vel = body.linvel();
-//     const speed = Math.sqrt(vel.x * vel.x + vel.y * vel.y + vel.z * vel.z);
-//     this.smoothedSpeed = THREE.MathUtils.lerp(this.smoothedSpeed, speed, 0.1);
-
-//     const minSpeed = 1.9; // below this → very faint sparkles
-//     const maxSpeed = 3.9; // above this → full sparkle intensity
-
-//     // Normalize speed into 0–1 range
-//     const intensity = THREE.MathUtils.clamp(
-//       (this.smoothedSpeed - minSpeed) / (maxSpeed - minSpeed),
-//       0,
-//       1
-//     );
-
-//     // Sparkle density — more emissions at higher speeds
-//     const sparkleCount = Math.floor(THREE.MathUtils.lerp(1, 6, intensity));
-
-//     // Emit sparkles proportional to speed
-//     for (let s = 0; s < sparkleCount; s++) {
-//       this.sparkleSystem.emit(
-//         mesh.position,
-//         new THREE.Vector3(vel.x, vel.y, vel.z)
-//       );
-//     }
-//   }
-
-//   this.sparkleSystem.update(dt);
