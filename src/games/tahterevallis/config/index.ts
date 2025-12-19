@@ -23,6 +23,11 @@ export type LevelConfig = {
   balls: Ball[];
 };
 
+export const GameAssets = {
+  gameObjects: { type: "gltf", url: "/assets/game-objects.glb" },
+  introMusic: { type: "audio", url: "/audio/intro.wav" },
+} as const;
+
 export const LEVELS_CONFIG: LevelConfig[] = [
   {
     holes: { goal: ["Hole_1", "Hole_6"], trap: ["Hole_2"] },

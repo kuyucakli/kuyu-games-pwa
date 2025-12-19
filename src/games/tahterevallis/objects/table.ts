@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { GltfAssetCache } from "../../engine/assets/gltf-assets-cache";
 import RAPIER from "@dimforge/rapier3d";
+import { GLTF } from "three/examples/jsm/Addons.js";
 
 export class Table {
   public readonly group = new THREE.Group();
@@ -8,10 +8,7 @@ export class Table {
   private body!: RAPIER.RigidBody;
   private holeLocators: THREE.Object3D[] = [];
 
-  async load(position: THREE.Vector3) {
-    const gltf = await GltfAssetCache.load(
-      `https://res.cloudinary.com/derfbfm9n/image/upload/v1761994782/game-objects-terrain-test_qfbwlx.glb`
-    );
+  constructor(gltf: GLTF, position: THREE.Vector3) {
     const source = gltf.scene.getObjectByName("Table_Plane");
     const locatorsRoot = gltf.scene.getObjectByName("Locator_Holes");
     if (!locatorsRoot) {
@@ -34,6 +31,7 @@ export class Table {
 
     this.group.add(locatorsClone);
   }
+
   attachRigidBody(body: RAPIER.RigidBody) {
     this.body = body;
   }

@@ -10,6 +10,7 @@ Being a pwa this project is being developed with next.js.
 - [ ] loading orchestration
 - [ ] artdirection(background)
 
+
 - [ ] feat: add scores
 - [ ] feat: add levels
 - [ ] feat: implement lock tilt of the table

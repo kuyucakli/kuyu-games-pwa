@@ -7,9 +7,10 @@ import { OutofBoundsPlane } from "./objects/outof-bounds-plane";
 import RAPIER from "@dimforge/rapier3d";
 import { TiltInput } from "./input";
 import { HoleSystem } from "./systems/hole-system";
-import { LEVELS_CONFIG } from "./config";
+import { GameAssets, LEVELS_CONFIG } from "./config";
 import { BallSystem } from "./systems/ball-system";
 import { createKinematicTrimesh } from "./factories/test-factory";
+import { AssetManager } from "../engine/assets/asset-manager";
 
 export type GameEvents = {
   "score:add": number;
@@ -30,19 +31,23 @@ export class Game {
   private holeSystem!: HoleSystem;
   private ballSystem!: BallSystem;
   private tableRigidBody!: RAPIER.RigidBody;
+  private assetManager = new AssetManager<typeof GameAssets>();
 
   async init(engine: Engine) {
+    this.loadAssets;
+    const gameObjectsGLTF = this.assetManager.get("gameObjects");
+
     this.engine = engine;
     this.scene = engine.scene;
 
     this.setupCamera();
     this.setupLights();
 
-    const tableInstance = new Table();
-    await tableInstance.load(new THREE.Vector3(0, 0, 0));
-
-    const outofBoundsPlane = new OutofBoundsPlane();
-    await outofBoundsPlane.load();
+    const tableInstance = new Table(
+      gameObjectsGLTF,
+      new THREE.Vector3(0, 0, 0)
+    );
+    const outofBoundsPlane = new OutofBoundsPlane(gameObjectsGLTF);
 
     this.tiltInput.attach(this.engine);
     this.table = tableInstance.group;
@@ -81,6 +86,16 @@ export class Game {
 
       this.sparkleSystem.emitBurst(new THREE.Vector3(0, 1, 2), { count: 300 }); // or trigger a burst
     });
+  }
+
+  private async loadAssets() {
+    await Promise.all([
+      this.assetManager.loadGLTF(
+        "gameObjects",
+        "/assets/tahterevallis/game-objects.glb"
+      ),
+      this.assetManager.loadAudio("introMusic", "/audio/intro.wav"),
+    ]);
   }
 
   private setupCamera() {

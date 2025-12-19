@@ -1,13 +1,10 @@
 import * as THREE from "three";
-import { GltfAssetCache } from "../../engine/assets/gltf-assets-cache";
+import { GLTF } from "three/examples/jsm/Addons.js";
 
 export class OutofBoundsPlane {
   private mesh!: THREE.Mesh;
 
-  async load() {
-    const gltf = await GltfAssetCache.load(
-      `https://res.cloudinary.com/derfbfm9n/image/upload/v1761994782/game-objects-terrain-test_qfbwlx.glb`
-    );
+  constructor(gltf: GLTF) {
     const source = gltf.scene.getObjectByName("Plane");
 
     if (!(source instanceof THREE.Mesh)) {
