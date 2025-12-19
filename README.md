@@ -4,6 +4,12 @@ Being a pwa this project is being developed with next.js.
 
 ## To do:
 
+# 19-12-25
+
+- [ ] refactor(event emitting)
+- [ ] loading orchestration
+- [ ] artdirection(background)
+
 - [ ] feat: add scores
 - [ ] feat: add levels
 - [ ] feat: implement lock tilt of the table

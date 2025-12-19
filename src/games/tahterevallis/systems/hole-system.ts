@@ -3,7 +3,10 @@ import {
   createHoleIndicator,
   createHoleSensor,
 } from "../factories/hole-factory";
-import { PhysicsWorld } from "@/games/engine/physics/physics-world";
+import {
+  PhysicsWorld,
+  physicsWorldEvent,
+} from "@/games/engine/physics/physics-world";
 import { Table } from "../objects/table";
 import { HoleName, LevelConfig } from "../config";
 import { Collider } from "@dimforge/rapier3d";
@@ -27,7 +30,7 @@ export class HoleSystem {
     this.table = table;
     this.scene = scene;
 
-    gameEvents.on("physics:collision", ({ c1, c2, started }) => {
+    physicsWorldEvent.on("physics:collision", ({ c1, c2, started }) => {
       if (!started) return;
 
       const d1 = (c1 as any).userData;

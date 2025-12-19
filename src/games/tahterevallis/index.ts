@@ -78,7 +78,7 @@ export class Game {
 
     gameEvents.on("goal:entered", ({ holeName, ballCollider }) => {
       const holePos = ballCollider.position;
-      
+
       this.sparkleSystem.emitBurst(new THREE.Vector3(0, 1, 2), { count: 300 }); // or trigger a burst
     });
   }

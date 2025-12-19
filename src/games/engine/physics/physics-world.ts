@@ -1,5 +1,10 @@
 import { gameEvents } from "@/games/tahterevallis";
 import RAPIER, { EventQueue } from "@dimforge/rapier3d";
+import mitt from "mitt";
+export type PhysicsWorldEvent = {
+  "physics:collision": { c1: any; c2: any; started: boolean };
+};
+export const physicsWorldEvent = mitt<PhysicsWorldEvent>();
 
 export class PhysicsWorld {
   private constructor(
