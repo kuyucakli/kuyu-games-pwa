@@ -18,6 +18,7 @@ export type GameEvents = {
   "game:reset": void;
   "physics:collision": { c1: any; c2: any; started: boolean };
   "goal:entered": { holeName: any; ballCollider: any };
+  "assets:completed": true;
 };
 
 export const gameEvents = mitt<GameEvents>();
@@ -31,10 +32,15 @@ export class Game {
   private holeSystem!: HoleSystem;
   private ballSystem!: BallSystem;
   private tableRigidBody!: RAPIER.RigidBody;
-  private assetManager = new AssetManager<typeof GameAssets>();
+  private assetManager!: AssetManager<typeof GameAssets>;
 
   async init(engine: Engine) {
-    this.loadAssets;
+    this.assetManager = new AssetManager<typeof GameAssets>();
+    this.assetManager.events.on("allCompleted", () => {
+      gameEvents.emit("assets:completed", true);
+    });
+    await this.loadAssets();
+
     const gameObjectsGLTF = this.assetManager.get("gameObjects");
 
     this.engine = engine;
@@ -92,9 +98,12 @@ export class Game {
     await Promise.all([
       this.assetManager.loadGLTF(
         "gameObjects",
-        "/assets/tahterevallis/game-objects.glb"
+        "/assets/tahterevallis/3d/game-objects.glb"
       ),
-      this.assetManager.loadAudio("introMusic", "/audio/intro.wav"),
+      this.assetManager.loadAudio(
+        "introMusic",
+        "/assets/tahterevallis/audio/trap-intro.wav"
+      ),
     ]);
   }
 

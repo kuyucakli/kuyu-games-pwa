@@ -45,7 +45,7 @@ export class AssetManager<TAssets extends Record<string, GameAssetDescriptor>> {
   private audioLoader = new AudioLoader();
   private GLTFLoader = new GLTFLoader();
   private cache: AssetCache<TAssets> = {};
-  events = mitt<AssetLoaderEvent>();
+  public events = mitt<AssetLoaderEvent>();
   private loadedCount: number = 0;
   private queueCount: number = 0;
 
