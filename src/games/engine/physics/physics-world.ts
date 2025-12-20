@@ -1,3 +1,4 @@
+import { ColliderMeta } from "@/games/tahterevallis/types";
 import RAPIER, { EventQueue } from "@dimforge/rapier3d";
 import mitt from "mitt";
 export type PhysicsWorldEvent = {

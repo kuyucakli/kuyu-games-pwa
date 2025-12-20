@@ -1,4 +1,4 @@
-type ColliderMeta = {
+export type ColliderMeta = {
   kind: "ball" | "goal" | "trap";
   entityId: string;
 };
