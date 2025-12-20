@@ -43,6 +43,8 @@ export class AudioDirector {
     parent?: Object3D,
     opts?: { volume?: number }
   ) {
+    if (!this.camera) return;
+
     const audio = new PositionalAudio(this.listener);
     audio.setBuffer(buffer);
     audio.setRefDistance(1);
