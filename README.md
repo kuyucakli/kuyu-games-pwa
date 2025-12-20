@@ -1,7 +1,17 @@
 # Kuyu Games
 
-This project is a minimalist PWA game app.  
-It currently consists of two games: **Tahterevallis** and **Tilt**.
+A minimalist progressive web app (PWA) featuring physics-based casual games.
+The current version includes two games: **Tahterevallis** and **Tilt**.
+
+## Games
+
+### Tahterevallis
+
+A physics-driven game focused on balance and controlled motion.
+
+### Tilt
+
+A tilt-based game emphasizing precision and timing.
 
 ## Features
 
@@ -12,17 +22,15 @@ It currently consists of two games: **Tahterevallis** and **Tilt**.
 ## Tech Stack
 
 - TypeScript
+- Next.js
 - Three.js
 - Rapier
 - Vite
 - Vitest
 
-## PWA steps
+## Getting Started
 
-- User visits the PWA
-- Show PWA banner / tooltip
-- Check Service Worker support
-  - If not supported → limited PWA
-- Register Service Worker
-- Check Push API support
-  - If not supported → no push
+```bash
+npm install
+npm run dev
+```
