@@ -9,7 +9,7 @@ import {
 } from "@/games/engine/physics/physics-world";
 import { Table } from "../objects/table";
 import { HoleName, LevelConfig } from "../config";
-import RAPIER, { Collider } from "@dimforge/rapier3d";
+import { Collider } from "@dimforge/rapier3d";
 import { gameEvents } from "..";
 
 type HoleIndicator = {
@@ -30,19 +30,14 @@ export class HoleSystem {
     this.table = table;
     this.scene = scene;
 
-    physicsWorldEvent.on("physics:collision", ({ c1, c2, started }) => {
-      if (!started) return;
-
-      const d1 = (c1 as any).userData;
-      const d2 = (c2 as any).userData;
-
+    physicsWorldEvent.on("physics:collision", ({ a, b }) => {
       const isBallHole =
-        (d1?.type === "ball" && d2?.type === "hole") ||
-        (d1?.type === "hole" && d2?.type === "ball");
+        (a?.kind === "ball" && b?.kind === "goal") ||
+        (a?.kind === "goal" && b?.kind === "ball");
 
       if (!isBallHole) return;
 
-      const holeName = d1?.type === "hole" ? d1.holeName : d2.holeName;
+      const holeName = a?.kind === "goal" ? a.entityId : b.entityId;
 
       const holeIndicator = this.indicators.find(
         (i) => i.locator.name === holeName
@@ -53,7 +48,6 @@ export class HoleSystem {
 
       gameEvents.emit("goal:entered", {
         holeName,
-        ballCollider: d1?.type === "ball" ? c1 : c2,
         pos,
       });
     });
@@ -64,6 +58,10 @@ export class HoleSystem {
     locator.add(mesh);
 
     const sensor = createHoleSensor(locator, 0.1, this.world.getWorld());
+    this.world.addColliderMeta(sensor, {
+      kind: "goal",
+      entityId: locator.name,
+    });
 
     const indicator: HoleIndicator = {
       locator,

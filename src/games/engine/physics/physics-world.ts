@@ -1,15 +1,18 @@
-import { gameEvents } from "@/games/tahterevallis";
-import RAPIER, { Collider, EventQueue } from "@dimforge/rapier3d";
+import RAPIER, { EventQueue } from "@dimforge/rapier3d";
 import mitt from "mitt";
 export type PhysicsWorldEvent = {
-  "physics:collision": { c1: Collider; c2: Collider; started: boolean };
+  "physics:collision": {
+    a: ColliderMeta | undefined;
+    b: ColliderMeta | undefined;
+  };
 };
 export const physicsWorldEvent = mitt<PhysicsWorldEvent>();
 
 export class PhysicsWorld {
   private constructor(
     private readonly world: RAPIER.World,
-    private readonly eventQueue: EventQueue
+    private readonly eventQueue: EventQueue,
+    private colliderMetas = new Map<RAPIER.ColliderHandle, ColliderMeta>()
   ) {}
 
   static async create(): Promise<PhysicsWorld> {
@@ -25,17 +28,28 @@ export class PhysicsWorld {
 
     this.eventQueue.drainCollisionEvents((h1, h2, started) => {
       if (!started) return;
-      const c1 = this.world.getCollider(h1);
-      const c2 = this.world.getCollider(h2);
+      const a = this.getColliderMeta(h1);
+      const b = this.getColliderMeta(h2);
 
-      if (!c1 || !c2) return;
+      if (!a || !b) return;
 
       physicsWorldEvent.emit("physics:collision", {
-        c1,
-        c2,
-        started,
+        a,
+        b,
       });
     });
+  }
+
+  addColliderMeta(collider: RAPIER.Collider, data: ColliderMeta) {
+    this.colliderMetas.set(collider.handle, data);
+  }
+
+  getColliderMeta(handle: RAPIER.ColliderHandle) {
+    return this.colliderMetas.get(handle);
+  }
+
+  removeColliderMeta(collider: RAPIER.Collider) {
+    this.colliderMetas.delete(collider.handle);
   }
 
   dispose() {

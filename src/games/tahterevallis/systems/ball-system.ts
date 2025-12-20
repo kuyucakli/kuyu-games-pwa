@@ -2,11 +2,12 @@ import { Object3D, Scene, MathUtils, Vector3 } from "three";
 import RAPIER from "@dimforge/rapier3d";
 import { Ball } from "../objects/ball";
 import { PhysicsWorld } from "@/games/engine/physics/physics-world";
-import { createDynamicBall } from "../factories/test-factory";
+import { createDynamicBall } from "../factories/ball-factory";
 import { LevelConfig } from "../config";
 import { SparkleSystem } from "../fx/sparkle";
 
 export class BallSystem {
+  private nextBallId = 0;
   private ballSpeeds = new Map<RAPIER.RigidBody, number>();
   private balls: { mesh: Object3D; body: RAPIER.RigidBody }[] = [];
 
@@ -17,15 +18,19 @@ export class BallSystem {
   ) {}
 
   put(radius: number, position: [number, number, number] = [0, 1, 0]) {
+    const ballId = this.createBallId();
     const ball = new Ball(radius, position);
     this.scene.add(ball.mesh);
 
-    const { body } = createDynamicBall(
+    const { body, collider } = createDynamicBall(
       radius,
       position,
       this.physicsWorld.getWorld()
     );
-
+    this.physicsWorld.addColliderMeta(collider, {
+      kind: "ball",
+      entityId: ballId,
+    });
     this.balls.push({ mesh: ball.mesh, body });
     this.ballSpeeds.set(body, 0);
   }
@@ -68,6 +73,10 @@ export class BallSystem {
         new Vector3(velocity.x, velocity.y, velocity.z)
       );
     }
+  }
+
+  private createBallId() {
+    return `ball-${++this.nextBallId}`;
   }
 
   update(dt: number) {

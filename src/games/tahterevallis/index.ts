@@ -9,7 +9,7 @@ import { TiltInput } from "./input";
 import { HoleSystem } from "./systems/hole-system";
 import { GameAssets, LEVELS_CONFIG } from "./config";
 import { BallSystem } from "./systems/ball-system";
-import { createKinematicTrimesh } from "./factories/test-factory";
+import { createTableTrimesh } from "./factories/table-factory";
 import { AssetManager } from "../engine/assets/asset-manager";
 
 export type GameEvents = {
@@ -18,7 +18,6 @@ export type GameEvents = {
   "game:reset": void;
   "goal:entered": {
     holeName: string;
-    ballCollider: Collider;
     pos: THREE.Vector3;
   };
   "assets:completed": true;
@@ -63,7 +62,7 @@ export class Game {
     this.scene.add(tableInstance.group);
     this.scene.add(outofBoundsPlane.getMesh());
 
-    this.tableRigidBody = createKinematicTrimesh(
+    this.tableRigidBody = createTableTrimesh(
       tableInstance.getColliderTrimeshLocal().vertices,
       tableInstance.getColliderTrimeshLocal().indices,
       new THREE.Vector3(0, 0, 0),
@@ -90,7 +89,7 @@ export class Game {
     );
     this.ballSystem.applyLevel(LEVELS_CONFIG[0]);
 
-    gameEvents.on("goal:entered", ({ holeName, pos }) => {
+    gameEvents.on("goal:entered", ({ pos }) => {
       this.sparkleSystem.emitBurst(pos, {
         count: 600,
         speed: 2,

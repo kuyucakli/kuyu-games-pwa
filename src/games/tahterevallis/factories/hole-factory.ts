@@ -8,6 +8,7 @@ import {
 } from "three";
 
 import RAPIER from "@dimforge/rapier3d";
+import { CollisionGroup } from "../types";
 
 function createHoleIndicator(): Mesh {
   const geometry = new RingGeometry(0.05, 0.1, 32);
@@ -40,10 +41,6 @@ function createHoleSensor(
       .setSensor(true)
   );
   collider.setEnabled(false);
-  (collider as any).userData = {
-    type: "hole",
-    holeName: locator.name,
-  };
 
   return collider;
 }
