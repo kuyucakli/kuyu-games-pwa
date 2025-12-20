@@ -1,6 +1,7 @@
-# "Kuyu Games" is a minimalist game app
+# Kuyu Games
 
-Being a pwa this project is being developed with next.js. App for now compose of two games named "tahterevallis" and "tilt".
+This project is a minimalist PWA game app.  
+It currently consists of two games: **Tahterevallis** and **Tilt**.
 
 ## Features
 
