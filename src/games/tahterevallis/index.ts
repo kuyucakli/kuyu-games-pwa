@@ -4,7 +4,7 @@ import { Table } from "./objects/table";
 import { SparkleSystem } from "./fx/sparkle";
 import { Engine } from "../engine/core/engine";
 import { OutofBoundsPlane } from "./objects/outof-bounds-plane";
-import RAPIER from "@dimforge/rapier3d";
+import RAPIER, { Collider } from "@dimforge/rapier3d";
 import { TiltInput } from "./input";
 import { HoleSystem } from "./systems/hole-system";
 import { GameAssets, LEVELS_CONFIG } from "./config";
@@ -16,8 +16,11 @@ export type GameEvents = {
   "score:add": number;
   "player:damage": number;
   "game:reset": void;
-  "physics:collision": { c1: any; c2: any; started: boolean };
-  "goal:entered": { holeName: any; ballCollider: any };
+  "goal:entered": {
+    holeName: string;
+    ballCollider: Collider;
+    pos: THREE.Vector3;
+  };
   "assets:completed": true;
 };
 
@@ -87,10 +90,13 @@ export class Game {
     );
     this.ballSystem.applyLevel(LEVELS_CONFIG[0]);
 
-    gameEvents.on("goal:entered", ({ holeName, ballCollider }) => {
-      const holePos = ballCollider.position;
-
-      this.sparkleSystem.emitBurst(new THREE.Vector3(0, 1, 2), { count: 300 }); // or trigger a burst
+    gameEvents.on("goal:entered", ({ holeName, pos }) => {
+      this.sparkleSystem.emitBurst(pos, {
+        count: 600,
+        speed: 2,
+        spread: 3.0,
+        upwardBias: 2.6,
+      }); // or trigger a burst
     });
   }
 

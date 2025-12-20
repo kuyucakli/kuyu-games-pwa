@@ -1,8 +1,8 @@
 import { gameEvents } from "@/games/tahterevallis";
-import RAPIER, { EventQueue } from "@dimforge/rapier3d";
+import RAPIER, { Collider, EventQueue } from "@dimforge/rapier3d";
 import mitt from "mitt";
 export type PhysicsWorldEvent = {
-  "physics:collision": { c1: any; c2: any; started: boolean };
+  "physics:collision": { c1: Collider; c2: Collider; started: boolean };
 };
 export const physicsWorldEvent = mitt<PhysicsWorldEvent>();
 
@@ -30,28 +30,11 @@ export class PhysicsWorld {
 
       if (!c1 || !c2) return;
 
-      gameEvents.emit("physics:collision", {
+      physicsWorldEvent.emit("physics:collision", {
         c1,
         c2,
         started,
       });
-      // const c1 = this.world.getCollider(h1);
-      // const c2 = this.world.getCollider(h2);
-
-      // if (!c1 || !c2) return;
-
-      // const d1 = (c1 as any).userData;
-      // const d2 = (c2 as any).userData;
-
-      // const isBallHole =
-      //   (d1?.type === "ball" && d2?.type === "hole") ||
-      //   (d1?.type === "hole" && d2?.type === "ball");
-
-      // if (!isBallHole) return;
-
-      // const hole = d1?.type === "hole" ? d1.holeName : d2.holeName;
-
-      // console.log("Ball entered hole:", hole);
     });
   }
 

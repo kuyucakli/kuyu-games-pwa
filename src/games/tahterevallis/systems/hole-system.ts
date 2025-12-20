@@ -1,4 +1,4 @@
-import { Object3D, Scene } from "three";
+import { Object3D, Scene, Vector3 } from "three";
 import {
   createHoleIndicator,
   createHoleSensor,
@@ -9,7 +9,7 @@ import {
 } from "@/games/engine/physics/physics-world";
 import { Table } from "../objects/table";
 import { HoleName, LevelConfig } from "../config";
-import { Collider } from "@dimforge/rapier3d";
+import RAPIER, { Collider } from "@dimforge/rapier3d";
 import { gameEvents } from "..";
 
 type HoleIndicator = {
@@ -43,10 +43,18 @@ export class HoleSystem {
       if (!isBallHole) return;
 
       const holeName = d1?.type === "hole" ? d1.holeName : d2.holeName;
-      console.log(holeName, "goal");
+
+      const holeIndicator = this.indicators.find(
+        (i) => i.locator.name === holeName
+      );
+      if (!holeIndicator || !holeIndicator?.active) return;
+      const pos = new Vector3();
+      holeIndicator.locator.getWorldPosition(pos);
+
       gameEvents.emit("goal:entered", {
         holeName,
         ballCollider: d1?.type === "ball" ? c1 : c2,
+        pos,
       });
     });
   }
@@ -74,6 +82,7 @@ export class HoleSystem {
     );
     if (indicator) {
       indicator.mesh.visible = active;
+      indicator.sensor.setEnabled(true);
       indicator.active = active;
     }
   }

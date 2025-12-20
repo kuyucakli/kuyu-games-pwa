@@ -39,7 +39,7 @@ function createHoleSensor(
       .setTranslation(pos.x, pos.y, pos.z)
       .setSensor(true)
   );
-
+  collider.setEnabled(false);
   (collider as any).userData = {
     type: "hole",
     holeName: locator.name,
