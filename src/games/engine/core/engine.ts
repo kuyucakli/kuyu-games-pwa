@@ -1,14 +1,15 @@
 import * as THREE from "three";
 import { PhysicsWorld } from "../physics/physics-world";
 import { Game } from "../../tahterevallis";
+import { AudioDirector } from "../audio/audio-director";
 
 export class Engine {
-  readonly scene = new THREE.Scene();
-  readonly renderer: THREE.WebGLRenderer;
+  public readonly scene = new THREE.Scene();
+  public readonly renderer: THREE.WebGLRenderer;
   public readonly physicsWorld: PhysicsWorld;
-
   private cameras = new Map<string, THREE.Camera>();
   private activeCamera?: THREE.Camera;
+  public readonly audioDirector = new AudioDirector();
   private rafId?: number;
   private lastTime = performance.now();
   private game?: Game;
@@ -19,6 +20,7 @@ export class Engine {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.physicsWorld = physicsWorld;
+
     container.appendChild(this.renderer.domElement);
     window.addEventListener("resize", this.handleResize);
     this.renderer;
@@ -70,6 +72,7 @@ export class Engine {
     const cam = this.cameras.get(name);
     if (!cam) throw new Error(`Camera '${name}' not found`);
     this.activeCamera = cam;
+    this.audioDirector.attachCamera(cam);
   }
 
   public registerCamera(name: string, camera: THREE.Camera) {

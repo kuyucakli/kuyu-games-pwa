@@ -25,7 +25,15 @@ export type LevelConfig = {
 
 export const GameAssets = {
   gameObjects: { type: "gltf", url: "/assets/game-objects.glb" },
-  introMusic: { type: "audio", url: "/audio/intro.wav" },
+  homeIntroMusic: { type: "audio", url: "/audio/intro.wav" },
+  selectGameIntroMusic: {
+    type: "audio",
+    url: "/assets/tahterevallis/audio/trap-intro.wav",
+  },
+  goalSoundFx: {
+    type: "audio",
+    url: "/assets/tahterevallis/audio/goal-fx.wav",
+  },
 } as const;
 
 export const LEVELS_CONFIG: LevelConfig[] = [

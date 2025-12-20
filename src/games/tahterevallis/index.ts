@@ -11,6 +11,8 @@ import { GameAssets, LEVELS_CONFIG } from "./config";
 import { BallSystem } from "./systems/ball-system";
 import { createTableTrimesh } from "./factories/table-factory";
 import { AssetManager } from "../engine/assets/asset-manager";
+import { AudioSystem } from "./systems/audio-system";
+import { AudioDirector } from "../engine/audio/audio-director";
 
 export type GameEvents = {
   "score:add": number;
@@ -21,6 +23,8 @@ export type GameEvents = {
     pos: THREE.Vector3;
   };
   "assets:completed": true;
+  "audio:intro-home": void;
+  "audio:select-game": void;
 };
 
 export const gameEvents = mitt<GameEvents>();
@@ -33,8 +37,10 @@ export class Game {
   private table!: any;
   private holeSystem!: HoleSystem;
   private ballSystem!: BallSystem;
+  private audioSystem!: AudioSystem;
   private tableRigidBody!: RAPIER.RigidBody;
   private assetManager!: AssetManager<typeof GameAssets>;
+  private mainCamera!: THREE.PerspectiveCamera;
 
   async init(engine: Engine) {
     this.assetManager = new AssetManager<typeof GameAssets>();
@@ -89,6 +95,11 @@ export class Game {
     );
     this.ballSystem.applyLevel(LEVELS_CONFIG[0]);
 
+    this.audioSystem = new AudioSystem(
+      this.assetManager,
+      this.engine.audioDirector
+    );
+
     gameEvents.on("goal:entered", ({ pos }) => {
       this.sparkleSystem.emitBurst(pos, {
         count: 600,
@@ -106,8 +117,12 @@ export class Game {
         "/assets/tahterevallis/3d/game-objects.glb"
       ),
       this.assetManager.loadAudio(
-        "introMusic",
+        "homeIntroMusic",
         "/assets/tahterevallis/audio/trap-intro.wav"
+      ),
+      this.assetManager.loadAudio(
+        "goalSoundFx",
+        "/assets/tahterevallis/audio/goal-fx.wav"
       ),
     ]);
   }
@@ -127,6 +142,8 @@ export class Game {
         camera.rotation.z + Math.PI / 2
       );
     }
+
+    this.mainCamera = camera;
     this.engine.registerCamera("main_perspective", camera);
   }
 

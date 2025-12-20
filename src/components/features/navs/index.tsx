@@ -5,7 +5,7 @@ export function GameSelectionNav() {
   return (
     <>
       <MotionIntro1 />
-      <div className="w-dvw h-dvh flex flex-col items-center justify-center relative  gap-8">
+      <div className="w-dvw h-dvh flex flex-col items-center justify-center relative  gap-8 bg-[url(/assets/tahterevallis/images/bg-intro.webp)] bg-cover">
         <h1 className="text-4xl text-white">Select a game </h1>
         <nav>
           <LinkButton href="/pinball">Pinball</LinkButton>
