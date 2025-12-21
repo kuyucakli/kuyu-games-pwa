@@ -1,16 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Allerta_Stencil } from "next/font/google";
 import "./globals.css";
 import { PWAInstallBanner } from "@/components/features/banners/pwa-banner";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const allertaStencil = Allerta_Stencil({
+  weight: "400",
+  variable: "--font-allerta-stencil",
 });
 
 export const metadata: Metadata = {
@@ -41,9 +36,7 @@ export default function RootLayout({
       <link rel="apple-touch-icon" sizes="120x120" href="/icons/icon-120.png" />
       <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512.png" />
 
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased dark`}
-      >
+      <body className={`${allertaStencil.className}  antialiased dark`}>
         <PWAInstallBanner />
         <div id="root">{children}</div>
         {modal}
