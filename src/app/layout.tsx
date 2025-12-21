@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { HeaderMain } from "@/components/layout";
-import { ProfileDropDown } from "@/components/features/auth/profile-dropdown";
-import Link from "next/link";
-import { IconMoreHorizontal } from "@/components/ui/icons";
 import { PWAInstallBanner } from "@/components/features/banners/pwa-banner";
 
 const geistSans = Geist({
