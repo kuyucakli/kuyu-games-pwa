@@ -1,6 +1,12 @@
 import { HtmlHTMLAttributes, PropsWithChildren } from "react";
 import styles from "./index.module.css";
 
+function GlassCard({
+  children,
+}: PropsWithChildren<HtmlHTMLAttributes<HTMLDivElement>>) {
+  return <div className={styles.GlassCard}>{children}</div>;
+}
+
 function Card({
   children,
 }: PropsWithChildren<HtmlHTMLAttributes<HTMLDivElement>>) {
@@ -15,8 +21,15 @@ function CardHeader({
 
 function CardTitle({
   children,
+  className,
 }: PropsWithChildren<HtmlHTMLAttributes<HTMLHeadingElement>>) {
-  return <h1 className="text-3xl mb-4">{children}</h1>;
+  return (
+    <h1
+      className={`${styles.CardTitle} ${className} text-5xl mb-4 text-center`}
+    >
+      {children}
+    </h1>
+  );
 }
 
 function CardDescription({
@@ -51,4 +64,5 @@ export {
   CardContent,
   CardFooter,
   CardDescription,
+  GlassCard,
 };
