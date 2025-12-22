@@ -1,18 +1,31 @@
-import { LinkButton } from "@/components/ui/buttons";
+import { LinkButton, LinkButtonArtistic } from "@/components/ui/buttons";
 import { MotionIntro1 } from "../motion-intros";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  GlassCard,
+} from "@/components/ui/card";
 
 export function GameSelectionNav() {
   return (
     <>
       <MotionIntro1 />
       <div className="w-dvw h-dvh flex flex-col items-center justify-center relative  gap-8 bg-[url(/assets/tahterevallis/images/bg-intro.webp)] bg-cover">
-        <h1 className="text-4xl text-white">Select a game </h1>
-        <nav>
-          <LinkButton href="/pinball">Pinball</LinkButton>
-          <LinkButton href="/tahterevalli">Tahterevallis</LinkButton>
-          {/* <PWAInstallBanner />
-        <PushMessage /> */}
-        </nav>
+        <GlassCard>
+          <CardHeader>
+            <CardTitle>SELECT GAME</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <nav>
+              <LinkButtonArtistic href="/pinball">Pinball</LinkButtonArtistic>
+              <LinkButtonArtistic href="/tahterevalli">
+                Tahterevallis
+              </LinkButtonArtistic>
+            </nav>
+          </CardContent>
+        </GlassCard>
       </div>
     </>
   );

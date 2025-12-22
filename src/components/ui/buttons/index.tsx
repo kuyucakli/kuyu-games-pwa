@@ -10,6 +10,7 @@ import styles from "./buttons.module.css";
 import Link from "next/link";
 import { useFormStatus } from "react-dom";
 import { ShimmerLoader } from "../shimmer";
+import { FancyArrow } from "../fancy-arrow";
 export function Button({
   icon,
   type,
@@ -48,6 +49,20 @@ export function LinkButton({
     <Link href={href} className={`${styles.LinkButton} ${className}`}>
       {children}
     </Link>
+  );
+}
+
+export function LinkButtonArtistic(
+  props: PropsWithChildren<LinkHTMLAttributes<HTMLLinkElement>>
+) {
+  return (
+    <LinkButton
+      {...props}
+      className={`${styles.LinkButtonArtistic} text-2xl text-blue-600 relative`}
+    >
+      <FancyArrow className="absolute! top-1/2 -translate-y-1/2 left-16" />
+      {props.children}
+    </LinkButton>
   );
 }
 
