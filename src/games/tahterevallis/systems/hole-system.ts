@@ -1,4 +1,4 @@
-import { Object3D, Scene, Vector3 } from "three";
+import { Object3D, Vector3 } from "three";
 import {
   createHoleIndicator,
   createHoleSensor,
@@ -11,6 +11,7 @@ import { Table } from "../objects/table";
 import { HoleName, LevelConfig } from "../config";
 import { Collider } from "@dimforge/rapier3d";
 import { gameEvents } from "..";
+import { BallCaptureTarget } from "./ball-system";
 
 type HoleIndicator = {
   locator: Object3D;
@@ -23,12 +24,10 @@ export class HoleSystem {
   private indicators: HoleIndicator[] = [];
   private world: PhysicsWorld;
   private table;
-  private scene;
 
-  constructor(world: PhysicsWorld, table: Table, scene: Scene) {
+  constructor(world: PhysicsWorld, table: Table) {
     this.world = world;
     this.table = table;
-    this.scene = scene;
 
     physicsWorldEvent.on("physics:collision", ({ a, b }) => {
       const isBallHole =
@@ -38,16 +37,20 @@ export class HoleSystem {
       if (!isBallHole) return;
 
       const holeName = a?.kind === "goal" ? a.entityId : b.entityId;
+      const ballName = a?.kind === "ball" ? a.entityId : b.entityId;
 
       const holeIndicator = this.indicators.find(
         (i) => i.locator.name === holeName
       );
+
       if (!holeIndicator || !holeIndicator?.active) return;
+
       const pos = new Vector3();
       holeIndicator.locator.getWorldPosition(pos);
-
+      holeIndicator.active = false;
       gameEvents.emit("goal:entered", {
-        holeName,
+        ballName,
+        holeName: holeName as HoleName,
         pos,
       });
     });
@@ -91,6 +94,16 @@ export class HoleSystem {
     for (const locator of locators) {
       this.register(locator);
     }
+  }
+
+  getCaptureTarget(holeName: HoleName): BallCaptureTarget | null {
+    const indicator = this.indicators.find((i) => i.locator.name === holeName);
+    if (!indicator) return null;
+
+    return {
+      anchor: indicator.locator,
+      localOffset: new Vector3(0, -0.15, 0),
+    };
   }
 
   applyLevel(config: LevelConfig) {

@@ -24,9 +24,11 @@ export async function ProfileDropDown({
   return (
     <div className={`${className}`}>
       <DropdownMenu>
-        <DropdownMenuTrigger className="flex gap-2 items-center text-xs">
+        <DropdownMenuTrigger className="flex-col gap-2 items-center text-xs mix-blend-difference">
           <IconRobot />
-          <span>{data?.user ? data.user.email : "Anonymous user"}</span>
+          <span className="mix-blend-difference text-white">
+            {data?.user ? data.user.email : "player"}
+          </span>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           {data?.user ? (

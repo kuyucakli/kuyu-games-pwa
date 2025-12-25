@@ -2,9 +2,10 @@
   padding: 24px;
   min-width: 480px;
   min-height: 480px;
-  background: rgba(255, 255, 255, 0.35);
-  backdrop-filter: blur(7px);
-  -webkit-backdrop-filter: blur(7px);
+  background: rgba(72, 214, 209, 0.35);
+  backdrop-filter: blur(16px);
+  filter: saturate(0.1);
+  /* -webkit-backdrop-filter: blur(12px); */
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
@@ -13,6 +14,7 @@
     inset 0 0 12px 6px rgba(255, 255, 255, 0.6);
   position: relative;
   overflow: hidden;
+  animation: glass-card 2.8s infinite alternate;
 }
 
 .GlassCard::before {
@@ -55,7 +57,7 @@
 .CardHeader {
 }
 .CardTitle {
-  color: var(--color-blue-600);
+  color: var(--color-amber-100);
 }
 .CardDescription {
 }
@@ -67,4 +69,13 @@
   padding: 12px;
   display: flex;
   justify-content: center;
+}
+
+@keyframes glass-card {
+  0% {
+    filter: saturate(1.2);
+  }
+  100% {
+    filter: saturate(0.8);
+  }
 }

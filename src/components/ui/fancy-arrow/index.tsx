@@ -6,7 +6,7 @@ export const FancyArrow = ({ className }: HTMLAttributes<HTMLSpanElement>) => {
     <span className={`${styles.FancyArrow} ${className}`}>
       <span className={styles.FancyArrowDisc}></span>
       <span className={styles.FancyArrowLeg}></span>
-      <span className={styles.FancyArrowLeg}></span>
+      {/* <span className={styles.FancyArrowLeg}></span> */}
     </span>
   );
 };

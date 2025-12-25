@@ -1,21 +1,46 @@
 import { Object3D, Scene, MathUtils, Vector3 } from "three";
-import RAPIER from "@dimforge/rapier3d";
+import RAPIER, { Collider } from "@dimforge/rapier3d";
 import { Ball } from "../objects/ball";
 import { PhysicsWorld } from "@/games/engine/physics/physics-world";
 import { createDynamicBall } from "../factories/ball-factory";
-import { LevelConfig } from "../config";
-import { SparkleSystem } from "../fx/sparkle";
+import { GAME_BALLS, LevelConfig } from "../config";
+import { SparkleSystem } from "../systems/sparkle-system";
+
+export type BallCaptureTarget = {
+  anchor: Object3D; // where to attach
+  localOffset: Vector3;
+};
+
+type BallState = "inactive" | "active" | "captured";
+
+type BallEntry = {
+  id: string;
+  mesh: Object3D;
+  body: RAPIER.RigidBody;
+  collider: Collider;
+  state: BallState;
+};
 
 export class BallSystem {
   private nextBallId = 0;
   private ballSpeeds = new Map<RAPIER.RigidBody, number>();
-  private balls: { mesh: Object3D; body: RAPIER.RigidBody }[] = [];
+  private balls: {
+    mesh: Object3D;
+    body: RAPIER.RigidBody;
+    collider: Collider;
+    id: string;
+    state: BallState;
+  }[] = [];
 
   constructor(
     private scene: Scene,
     private physicsWorld: PhysicsWorld,
     private sparkleSystem: SparkleSystem
-  ) {}
+  ) {
+    for (const ball of GAME_BALLS) {
+      this.put(ball.radius, ball.position);
+    }
+  }
 
   put(radius: number, position: [number, number, number] = [0, 1, 0]) {
     const ballId = this.createBallId();
@@ -31,8 +56,47 @@ export class BallSystem {
       kind: "ball",
       entityId: ballId,
     });
-    this.balls.push({ mesh: ball.mesh, body });
+    this.balls.push({
+      mesh: ball.mesh,
+      collider,
+      body,
+      id: ballId,
+      state: "inactive",
+    });
     this.ballSpeeds.set(body, 0);
+  }
+
+  applyLevel(config: LevelConfig) {
+    for (const ball of this.balls) {
+      this.deactivateBall(ball);
+    }
+    for (let i = 0; i < config.totalBalls; i++) {
+      const ball = this.balls[i];
+      this.activateBall(ball);
+    }
+  }
+
+  private activateBall(ball: BallEntry) {
+    ball.state = "active";
+
+    ball.collider.setEnabled(true);
+    ball.body.setEnabled(true);
+
+    ball.body.setTranslation(
+      ball.body.translation(), // or reset spawn
+      true
+    );
+
+    ball.mesh.visible = true;
+  }
+
+  private deactivateBall(ball: BallEntry) {
+    ball.state = "inactive";
+
+    ball.collider.setEnabled(false);
+    ball.body.setEnabled(false);
+
+    ball.mesh.visible = false;
   }
 
   private clear() {
@@ -45,12 +109,21 @@ export class BallSystem {
     this.ballSpeeds.clear();
   }
 
-  applyLevel(config: LevelConfig) {
-    //this.clear();
+  captureBall(ballId: string, target: BallCaptureTarget) {
+    const ball = this.balls.find((b) => b.id === ballId);
+    if (!ball || ball.state != "active") return;
 
-    for (const ball of config.balls) {
-      this.put(ball.radius, ball.position);
-    }
+    // 1. Disable physics cleanly
+    ball.collider.setEnabled(false);
+    ball.body.setLinvel({ x: 0, y: 0, z: 0 }, true);
+    ball.body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+    ball.body.setEnabled(false);
+
+    target.anchor.add(ball.mesh);
+    ball.mesh.position.copy(target.localOffset);
+    ball.mesh.rotation.set(0, 0, 0);
+
+    ball.state = "captured";
   }
 
   private emitSparkles(
@@ -80,7 +153,8 @@ export class BallSystem {
   }
 
   update(dt: number) {
-    for (const { mesh, body } of this.balls) {
+    for (const { mesh, body, state } of this.balls) {
+      if (state !== "active") continue;
       mesh.position.copy(body.translation());
       mesh.quaternion.copy(body.rotation());
 

@@ -1,5 +1,4 @@
 import RAPIER from "@dimforge/rapier3d";
-import { CollisionGroup } from "../types";
 
 function createDynamicBall(
   radius: number,

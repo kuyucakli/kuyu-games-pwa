@@ -1,28 +1,30 @@
 import {
-  RingGeometry,
+  PlaneGeometry,
   Mesh,
   MeshBasicMaterial,
   DoubleSide,
   Object3D,
   Vector3,
+  AdditiveBlending,
 } from "three";
 
 import RAPIER from "@dimforge/rapier3d";
-import { CollisionGroup } from "../types";
 
 function createHoleIndicator(): Mesh {
-  const geometry = new RingGeometry(0.05, 0.1, 32);
+  const geometry = new PlaneGeometry(0.95, 0.95, 1, 1);
   const material = new MeshBasicMaterial({
-    color: 0x88ff99,
+    color: "green",
     transparent: true,
-    opacity: 0.9,
+    opacity: 1.0,
     side: DoubleSide,
     depthWrite: false,
+    blending: AdditiveBlending,
+    premultipliedAlpha: true,
   });
 
   const ring = new Mesh(geometry, material);
   ring.rotation.x = -Math.PI / 2;
-  ring.position.y = 0.002;
+  ring.position.y = -0.1;
 
   return ring;
 }
@@ -40,6 +42,7 @@ function createHoleSensor(
       .setTranslation(pos.x, pos.y, pos.z)
       .setSensor(true)
   );
+
   collider.setEnabled(false);
 
   return collider;

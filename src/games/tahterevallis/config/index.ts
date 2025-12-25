@@ -20,7 +20,7 @@ export type LevelConfig = {
     trap?: HoleName[];
     bonus?: HoleName[];
   };
-  balls: Ball[];
+  totalBalls: number;
 };
 
 export const GameAssets = {
@@ -28,7 +28,7 @@ export const GameAssets = {
   homeIntroMusic: { type: "audio", url: "/audio/intro.wav" },
   selectGameIntroMusic: {
     type: "audio",
-    url: "/assets/tahterevallis/audio/trap-intro.wav",
+    url: "/assets/tahterevallis/audio/select-game-intro.wav",
   },
   goalSoundFx: {
     type: "audio",
@@ -36,17 +36,39 @@ export const GameAssets = {
   },
 } as const;
 
+const defaultBall = {
+  color: `#ff0000`,
+  restitution: 0.2,
+  radius: 0.28,
+  position: [0, 1, 4],
+} as Ball;
+
+export const GAME_BALLS: Ball[] = [
+  defaultBall,
+  {
+    ...defaultBall,
+    position: [0, 1, -4],
+  },
+  {
+    ...defaultBall,
+    position: [1, 1, -4],
+  },
+  {
+    ...defaultBall,
+    position: [2, 1, 4],
+  },
+  {
+    ...defaultBall,
+    position: [3, 1, -4],
+  },
+  {
+    ...defaultBall,
+    position: [4, 1, -4],
+  },
+];
 export const LEVELS_CONFIG: LevelConfig[] = [
   {
     holes: { goal: ["Hole_1", "Hole_6"], trap: ["Hole_2"] },
-    balls: [
-      { color: `#ff0000`, restitution: 0.2, radius: 0.28, position: [0, 1, 4] },
-      {
-        color: `#ff0000`,
-        restitution: 0.2,
-        radius: 0.28,
-        position: [0, 1, -4],
-      },
-    ],
+    totalBalls: 2,
   },
 ];

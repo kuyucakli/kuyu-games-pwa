@@ -1,25 +1,28 @@
 import * as THREE from "three";
 import mitt from "mitt";
 import { Table } from "./objects/table";
-import { SparkleSystem } from "./fx/sparkle";
+import { SparkleSystem } from "./systems/sparkle-system";
 import { Engine } from "../engine/core/engine";
 import { OutofBoundsPlane } from "./objects/outof-bounds-plane";
-import RAPIER, { Collider } from "@dimforge/rapier3d";
+import RAPIER from "@dimforge/rapier3d";
 import { TiltInput } from "./input";
 import { HoleSystem } from "./systems/hole-system";
-import { GameAssets, LEVELS_CONFIG } from "./config";
+import { GameAssets, HoleName, LEVELS_CONFIG } from "./config";
 import { BallSystem } from "./systems/ball-system";
 import { createTableTrimesh } from "./factories/table-factory";
 import { AssetManager } from "../engine/assets/asset-manager";
 import { AudioSystem } from "./systems/audio-system";
-import { AudioDirector } from "../engine/audio/audio-director";
+import { LevelSystem } from "./systems/level-system";
 
 export type GameEvents = {
   "score:add": number;
-  "player:damage": number;
+  "ball:captureRequested": { ballName: string; holeName: string };
   "game:reset": void;
+  "level:completed": { nextLevel: number };
+  "fx:goal": THREE.Vector3;
   "goal:entered": {
-    holeName: string;
+    ballName: string;
+    holeName: HoleName;
     pos: THREE.Vector3;
   };
   "assets:completed": true;
@@ -38,6 +41,7 @@ export class Game {
   private holeSystem!: HoleSystem;
   private ballSystem!: BallSystem;
   private audioSystem!: AudioSystem;
+  private levelSystem!: LevelSystem;
   private tableRigidBody!: RAPIER.RigidBody;
   private assetManager!: AssetManager<typeof GameAssets>;
   private mainCamera!: THREE.PerspectiveCamera;
@@ -80,11 +84,7 @@ export class Game {
     this.sparkleSystem = new SparkleSystem();
     this.scene.add(this.sparkleSystem.points);
 
-    this.holeSystem = new HoleSystem(
-      this.engine.physicsWorld,
-      tableInstance,
-      this.scene
-    );
+    this.holeSystem = new HoleSystem(this.engine.physicsWorld, tableInstance);
     this.holeSystem.registerFromTable();
     this.holeSystem.applyLevel(LEVELS_CONFIG[0]);
 
@@ -100,14 +100,7 @@ export class Game {
       this.engine.audioDirector
     );
 
-    gameEvents.on("goal:entered", ({ pos }) => {
-      this.sparkleSystem.emitBurst(pos, {
-        count: 600,
-        speed: 2,
-        spread: 3.0,
-        upwardBias: 2.6,
-      }); // or trigger a burst
-    });
+    this.levelSystem = new LevelSystem(this.ballSystem, this.holeSystem);
   }
 
   private async loadAssets() {
@@ -118,7 +111,7 @@ export class Game {
       ),
       this.assetManager.loadAudio(
         "homeIntroMusic",
-        "/assets/tahterevallis/audio/trap-intro.wav"
+        "/assets/tahterevallis/audio/select-game-intro.wav"
       ),
       this.assetManager.loadAudio(
         "goalSoundFx",
@@ -153,7 +146,7 @@ export class Game {
 
   private setupLights() {
     const light = new THREE.DirectionalLight(0xffffff, 1.2);
-    light.position.set(0, 12, -6);
+    light.position.set(0, 8, -2);
     light.castShadow = true;
     // --- Increase shadow map resolution ---
     light.shadow.mapSize.width = 1024 * 2;

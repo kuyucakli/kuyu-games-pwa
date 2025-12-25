@@ -1,6 +1,6 @@
 import { ProfileDropDown } from "@/components/features/auth/profile-dropdown";
 import { HeaderMain } from "@/components/layout";
-import { IconGameList, IconMoreHorizontal } from "@/components/ui/icons";
+import { IconGameList } from "@/components/ui/icons";
 import Link from "next/link";
 import { ReactNode } from "react";
 

@@ -16,9 +16,14 @@ export default function GameTahterevallis({
   height = "100vh",
 }: GameTahterevallisSceneProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [level, setLevel] = useState(1);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     let engine: Engine | null = null;
+
+    tahterevallisEvents.on("level:completed", ({ nextLevel }) => {
+      setLevel(nextLevel);
+    });
 
     (async () => {
       if (!containerRef.current) return;
@@ -38,19 +43,20 @@ export default function GameTahterevallis({
   return (
     <>
       <HUDLayer>
-        <div className="absolute top-18 right-0 flex gap-4 p-4">
+        <div className="absolute top-2 left-2 flex gap-4 p-4">
+          <HUDBox label="level" content={level + ""} />
           <HUDBox
             label="score"
-            content={loading ? "loading" : "loaded"}
+            content={"0"}
             className=" border-amber-100! text-orange-500! bg-amber-300!"
           />
-          <HUDBox label="test" content="45" />
+          <HUDBox label="time left" content="1:20" />
         </div>
       </HUDLayer>
       <div
         ref={containerRef}
         style={{ width: `${width}`, height: `${height}` }}
-        className="relative overflow-hidden"
+        className="relative overflow-hidden bg-blue-800"
       />
     </>
   );

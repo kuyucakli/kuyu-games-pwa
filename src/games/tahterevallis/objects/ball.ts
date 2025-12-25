@@ -4,9 +4,10 @@ export class Ball {
   private position;
   private geometry;
   private material = new THREE.MeshStandardMaterial({
-    color: 0xcccccc,
-    metalness: 0.8,
-    roughness: 0.2,
+    color: 0xffffff,
+    metalness: 0.6,
+    roughness: 0.3,
+    envMapIntensity: 1.5,
   });
   public readonly mesh!: THREE.Mesh;
 
@@ -19,7 +20,7 @@ export class Ball {
     mesh.position.set(...this.position);
 
     const outlineMat = new THREE.MeshBasicMaterial({
-      color: 0x888888,
+      color: 0x000000,
       side: THREE.BackSide,
     });
 
@@ -30,21 +31,3 @@ export class Ball {
     this.mesh = mesh;
   }
 }
-
-//this.scene.add(mesh);
-
-// const body = this.world.createRigidBody(
-//   this.RAPIER.RigidBodyDesc.dynamic()
-//     .setTranslation(...position)
-//     .setCcdEnabled(true)
-// );
-
-// Outline (backside scaled)
-// const colliderDesc = this.RAPIER.ColliderDesc.ball(radius)
-//   .setMass(1)
-//   .setRestitution(0.5)
-//   .setFriction(0.8);
-
-// this.world.createCollider(colliderDesc, body);
-
-// this.dynamicBodies.push([mesh, body]);
