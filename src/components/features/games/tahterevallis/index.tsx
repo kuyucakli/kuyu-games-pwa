@@ -17,12 +17,16 @@ export default function GameTahterevallis({
 }: GameTahterevallisSceneProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [level, setLevel] = useState(1);
+  const [time, setTime] = useState("");
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     let engine: Engine | null = null;
 
     tahterevallisEvents.on("level:completed", ({ nextLevel }) => {
       setLevel(nextLevel);
+    });
+    tahterevallisEvents.on("timer:updated", (val) => {
+      setTime(val);
     });
 
     (async () => {
@@ -45,12 +49,12 @@ export default function GameTahterevallis({
       <HUDLayer>
         <div className="absolute top-2 left-2 flex gap-4 p-4">
           <HUDBox label="level" content={level + ""} />
+          <HUDBox label="time left" content={time} />
           <HUDBox
             label="score"
             content={"0"}
             className=" border-amber-100! text-orange-500! bg-amber-300!"
           />
-          <HUDBox label="time left" content="1:20" />
         </div>
       </HUDLayer>
       <div

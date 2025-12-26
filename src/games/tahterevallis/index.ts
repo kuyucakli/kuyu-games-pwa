@@ -13,6 +13,7 @@ import { createTableTrimesh } from "./factories/table-factory";
 import { AssetManager } from "../engine/assets/asset-manager";
 import { AudioSystem } from "./systems/audio-system";
 import { LevelSystem } from "./systems/level-system";
+import { TimerSystem } from "./systems/timer-system";
 
 export type GameEvents = {
   "score:add": number;
@@ -28,6 +29,7 @@ export type GameEvents = {
   "assets:completed": true;
   "audio:intro-home": void;
   "audio:select-game": void;
+  "timer:updated": string;
 };
 
 export const gameEvents = mitt<GameEvents>();
@@ -42,6 +44,7 @@ export class Game {
   private ballSystem!: BallSystem;
   private audioSystem!: AudioSystem;
   private levelSystem!: LevelSystem;
+  private timerSystem!: TimerSystem;
   private tableRigidBody!: RAPIER.RigidBody;
   private assetManager!: AssetManager<typeof GameAssets>;
   private mainCamera!: THREE.PerspectiveCamera;
@@ -101,6 +104,8 @@ export class Game {
     );
 
     this.levelSystem = new LevelSystem(this.ballSystem, this.holeSystem);
+    this.timerSystem = new TimerSystem();
+    this.timerSystem.start();
   }
 
   private async loadAssets() {
@@ -211,6 +216,7 @@ export class Game {
     const mapped = this.mapTiltInput(this.tiltInput.x, this.tiltInput.y);
     this.tiltTable(mapped.x, mapped.z);
     this.sparkleSystem.update(dt * 2);
+    this.timerSystem.update(dt);
   }
 
   reset() {
