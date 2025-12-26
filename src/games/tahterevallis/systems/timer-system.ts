@@ -13,21 +13,12 @@ export class TimerSystem {
     this.running = false;
   }
 
-  update(dt: number) {
+  update(dtSeconds: number) {
     if (!this.running) return;
-    this.elapsed += dt;
-    gameEvents.emit("timer:updated", this.getPrettyElapsed());
-  }
 
-  getPrettyElapsed() {
-    return this.getFormatted();
-  }
+    const dtMs = dtSeconds * 1000;
+    this.elapsed += dtMs;
 
-  getFormatted() {
-    const ms = Math.floor((this.elapsed % 1) * 1000);
-    const s = Math.floor(this.elapsed) % 60;
-    const m = Math.floor(this.elapsed / 60);
-
-    return `${m}:${s.toString().padStart(2, "0")}.${Math.floor(ms / 100)}`;
+    gameEvents.emit("timer:updated", this.elapsed);
   }
 }

@@ -25,8 +25,8 @@ export default function GameTahterevallis({
     tahterevallisEvents.on("level:completed", ({ nextLevel }) => {
       setLevel(nextLevel);
     });
-    tahterevallisEvents.on("timer:updated", (val) => {
-      setTime(val);
+    tahterevallisEvents.on("level:remaining-time", ({ prettyFormatted }) => {
+      setTime(prettyFormatted);
     });
 
     (async () => {

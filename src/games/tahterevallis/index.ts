@@ -15,11 +15,15 @@ import { AudioSystem } from "./systems/audio-system";
 import { LevelSystem } from "./systems/level-system";
 import { TimerSystem } from "./systems/timer-system";
 
+type GameState = "idle" | "playing" | "paused" | "level-complete" | "game-over";
+
 export type GameEvents = {
   "score:add": number;
   "ball:captureRequested": { ballName: string; holeName: string };
   "game:reset": void;
   "level:completed": { nextLevel: number };
+  "level:remaining-time": { prettyFormatted: string };
+  "level:failed": void;
   "fx:goal": THREE.Vector3;
   "goal:entered": {
     ballName: string;
@@ -29,7 +33,7 @@ export type GameEvents = {
   "assets:completed": true;
   "audio:intro-home": void;
   "audio:select-game": void;
-  "timer:updated": string;
+  "timer:updated": number;
 };
 
 export const gameEvents = mitt<GameEvents>();
@@ -48,6 +52,7 @@ export class Game {
   private tableRigidBody!: RAPIER.RigidBody;
   private assetManager!: AssetManager<typeof GameAssets>;
   private mainCamera!: THREE.PerspectiveCamera;
+  private state: GameState = "idle";
 
   async init(engine: Engine) {
     this.assetManager = new AssetManager<typeof GameAssets>();
@@ -89,23 +94,37 @@ export class Game {
 
     this.holeSystem = new HoleSystem(this.engine.physicsWorld, tableInstance);
     this.holeSystem.registerFromTable();
-    this.holeSystem.applyLevel(LEVELS_CONFIG[0]);
 
     this.ballSystem = new BallSystem(
       this.scene,
       engine.physicsWorld,
       this.sparkleSystem
     );
-    this.ballSystem.applyLevel(LEVELS_CONFIG[0]);
 
     this.audioSystem = new AudioSystem(
       this.assetManager,
       this.engine.audioDirector
     );
 
-    this.levelSystem = new LevelSystem(this.ballSystem, this.holeSystem);
     this.timerSystem = new TimerSystem();
-    this.timerSystem.start();
+    this.levelSystem = new LevelSystem(this.ballSystem, this.holeSystem);
+
+    gameEvents.on("level:completed", ({ nextLevel }) => {
+      this.state = "level-complete";
+      this.timerSystem.stop();
+
+      // small delay for FX
+      setTimeout(() => {
+        this.loadLevel(nextLevel);
+      }, 800);
+    });
+
+    gameEvents.on("level:failed", () => {
+      this.state = "game-over";
+      this.timerSystem.stop();
+    });
+
+    this.loadLevel(1);
   }
 
   private async loadAssets() {
@@ -210,7 +229,41 @@ export class Game {
     return { x, z: y };
   }
 
+  loadLevel(level: number) {
+    const config = LEVELS_CONFIG[level - 1];
+    if (!config) return;
+
+    this.state = "idle"; // prevent updates during setup
+
+    this.levelSystem.reset(level);
+
+    this.holeSystem.applyLevel(config);
+    this.ballSystem.applyLevel(config);
+
+    this.timerSystem.start();
+
+    this.state = "playing";
+  }
+
+  startGame() {
+    this.state = "playing";
+    this.timerSystem.start();
+  }
+
+  pauseGame() {
+    if (this.state !== "playing") return;
+    this.state = "paused";
+    this.timerSystem.stop();
+  }
+
+  resumeGame() {
+    if (this.state !== "paused") return;
+    this.state = "playing";
+    this.timerSystem.start();
+  }
+
   update(dt: number) {
+    if (this.state != "playing") return;
     this.engine.physicsWorld.step(dt);
     this.ballSystem.update(dt);
     const mapped = this.mapTiltInput(this.tiltInput.x, this.tiltInput.y);
