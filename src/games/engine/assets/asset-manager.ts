@@ -2,8 +2,8 @@ import { GLTFLoader, type GLTF } from "three/examples/jsm/Addons.js";
 import { TextureLoader, AudioLoader, Texture } from "three";
 import mitt from "mitt";
 
-type AssetLoaderEvent = {
-  progress: number;
+export type AssetLoaderEvent = {
+  progress: { queueCount: number; loadedCount: number; lastLoaded: string };
   allCompleted: void;
   loaded: string;
   error: { name: string; message: string };
@@ -65,8 +65,10 @@ export class AssetManager<TAssets extends Record<string, GameAssetDescriptor>> {
     return new Promise<void>((resolve, reject) => {
       if (this.cache[name]) {
         resolve();
+        return;
       }
       this.addQueueCount(1);
+      this.emitProgress();
       this.audioLoader.load(
         url,
         (data) => {
@@ -92,8 +94,10 @@ export class AssetManager<TAssets extends Record<string, GameAssetDescriptor>> {
     return new Promise<void>((resolve, reject) => {
       if (this.cache[name]) {
         resolve();
+        return;
       }
       this.addQueueCount(1);
+      this.emitProgress();
       this.GLTFLoader.load(
         url,
         (data: GLTF) => {
@@ -113,10 +117,17 @@ export class AssetManager<TAssets extends Record<string, GameAssetDescriptor>> {
   private trackProgress<K extends AssetKey<TAssets>>(name: K) {
     this.loadedCount++;
     this.events.emit("loaded", name);
-    this.events.emit("progress", this.loadedCount / this.queueCount);
-
+    this.emitProgress(name);
     if (this.loadedCount === this.queueCount) {
       this.events.emit("allCompleted");
     }
+  }
+
+  private emitProgress(lastLoaded?: string) {
+    this.events.emit("progress", {
+      queueCount: this.queueCount,
+      loadedCount: this.loadedCount,
+      lastLoaded: lastLoaded ?? "",
+    });
   }
 }

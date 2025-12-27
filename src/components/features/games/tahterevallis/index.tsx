@@ -7,6 +7,11 @@ import { Engine } from "@/games/engine/core/engine";
 import { gameEvents as tahterevallisEvents } from "@/games/tahterevallis";
 import { GameOverIntro } from "./components/intros/game-over-intro";
 import { LevelCompletedIntro } from "./components/intros/level-completed-intro";
+import {
+  AssetLoaderEvent,
+  AssetManager,
+} from "@/games/engine/assets/asset-manager";
+import { Property } from "@/lib/types/utils";
 
 type GameTahterevallisSceneProps = {
   width?: `${number}${"px" | "vw" | "dvw"}`;
@@ -18,8 +23,10 @@ export default function GameTahterevallis({
   height = "100vh",
 }: GameTahterevallisSceneProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-
   const [loading, setLoading] = useState(true);
+  const [progress, setProgress] =
+    useState<Property<AssetLoaderEvent, "progress">>();
+
   useEffect(() => {
     let engine: Engine | null = null;
 
@@ -28,6 +35,9 @@ export default function GameTahterevallis({
       engine = await Engine.create(containerRef.current);
       tahterevallisEvents.on("assets:completed", () => {
         setLoading(false);
+      });
+      tahterevallisEvents.on("assets:progress", (data) => {
+        setProgress(data);
       });
       const game = new Game();
       await engine.mount(game);
@@ -40,7 +50,7 @@ export default function GameTahterevallis({
 
   return (
     <>
-      <TahterevallisHUD />
+      <TahterevallisHUD loading={loading} progress={progress} />
       <div
         ref={containerRef}
         style={{ width: `${width}`, height: `${height}` }}
@@ -50,7 +60,13 @@ export default function GameTahterevallis({
   );
 }
 
-const TahterevallisHUD = () => {
+const TahterevallisHUD = ({
+  loading,
+  progress,
+}: {
+  loading: boolean;
+  progress: Property<AssetLoaderEvent, "progress"> | undefined;
+}) => {
   const [level, setLevel] = useState(1);
   const [time, setTime] = useState("");
   const [gameState, setGameState] = useState("");
@@ -80,9 +96,12 @@ const TahterevallisHUD = () => {
           content={"0"}
           className=" border-amber-100! text-orange-500! bg-amber-300!"
         />
-
+        <p className="text-white">
+          {loading && <span>Loading</span>}
+          {progress?.lastLoaded} : {progress?.loadedCount} /{" "}
+          {progress?.queueCount}
+        </p>
         {gameState == "level-completed" && <LevelCompletedIntro />}
-
         {gameState == "failed" && <GameOverIntro />}
       </div>
     </HUDLayer>

@@ -10,10 +10,11 @@ import { HoleSystem } from "./systems/hole-system";
 import { GameAssets, HoleName, LEVELS_CONFIG } from "./config";
 import { BallSystem } from "./systems/ball-system";
 import { createTableTrimesh } from "./factories/table-factory";
-import { AssetManager } from "../engine/assets/asset-manager";
+import { AssetLoaderEvent, AssetManager } from "../engine/assets/asset-manager";
 import { AudioSystem } from "./systems/audio-system";
 import { LevelSystem } from "./systems/level-system";
 import { TimerSystem } from "./systems/timer-system";
+import { Property } from "@/lib/types/utils";
 
 type GameState = "idle" | "playing" | "paused" | "level-complete" | "game-over";
 
@@ -31,6 +32,7 @@ export type GameEvents = {
     pos: THREE.Vector3;
   };
   "assets:completed": true;
+  "assets:progress": Property<AssetLoaderEvent, "progress">;
   "audio:intro-home": void;
   "audio:select-game": void;
   "timer:updated": number;
@@ -58,6 +60,9 @@ export class Game {
     this.assetManager = new AssetManager<typeof GameAssets>();
     this.assetManager.events.on("allCompleted", () => {
       gameEvents.emit("assets:completed", true);
+    });
+    this.assetManager.events.on("progress", (data) => {
+      gameEvents.emit("assets:progress", data);
     });
     await this.loadAssets();
 
