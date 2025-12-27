@@ -135,7 +135,11 @@
     height: 100%;
   }
 
-  #groot,
+  #root {
+    background-color: blue;
+  }
+
+  #root,
   canvas {
     touch-action: none;
   }
