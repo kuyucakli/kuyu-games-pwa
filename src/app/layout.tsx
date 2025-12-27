@@ -36,7 +36,7 @@ export default function RootLayout({
       <link rel="apple-touch-icon" sizes="120x120" href="/icons/icon-120.png" />
       <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512.png" />
 
-      <body className={`${allertaStencil.className}  antialiased light`}>
+      <body className={`${allertaStencil.className}  antialiased dark`}>
         <PWAInstallBanner />
         <div id="root">{children}</div>
         {modal}
