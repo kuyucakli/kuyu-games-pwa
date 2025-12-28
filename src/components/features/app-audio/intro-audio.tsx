@@ -1,64 +1,40 @@
 "use client";
 import { IconMusicNote, IconMusicOff } from "@/components/ui/icons";
 import { useAudioSession } from "@/store/audio-session";
-import { useGameSettings } from "@/store/game-settings";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
 export function IntroAudio() {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const [ready, setReady] = useState(false);
-  const { muted, setMuted } = useAudioSession((state) => state);
+  const { muted, setMuted } = useAudioSession();
 
-  useEffect(() => {
+  const handleUserGesture = async () => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    const onReady = () => setReady(true);
-
-    audio.addEventListener("canplaythrough", onReady);
-
-    if (audio.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA) {
-      setReady(true);
-    }
-
-    return () => {
-      audio.removeEventListener("canplaythrough", onReady);
-    };
-  }, []);
-
-  const handleUserGesture = async () => {
-    if (!audioRef.current || !ready) return;
-
     try {
-      if (muted) {
-        audioRef.current.load();
-        await audioRef.current.play();
+      if (audio.paused) {
+        await audio.play(); // queues if not ready
         setMuted(false);
       } else {
-        audioRef.current.pause();
+        audio.pause();
         setMuted(true);
       }
-    } catch (err) {
-      // autoplay policy rejection ends up here
+    } catch {
+      // autoplay policy rejection
     }
   };
 
   return (
     <div className="relative z-50 ml-4">
-      <button
-        type="button"
-        onClick={handleUserGesture}
-        className="block bg-black"
-        disabled={!ready}
-      >
+      <button type="button" onPointerDown={handleUserGesture}>
         {muted ? <IconMusicOff /> : <IconMusicNote />}
       </button>
+
       <audio
         ref={audioRef}
-        preload="auto"
+        preload="metadata"
         loop
-        autoPlay={!muted}
-        onLoadedMetadata={() => setReady(true)}
+        playsInline
         src="/assets/tahterevallis/audio/select-game-intro.wav"
       />
     </div>

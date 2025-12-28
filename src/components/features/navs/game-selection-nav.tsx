@@ -3,12 +3,10 @@ import { SelectGameIntro } from "../motion-intros/select-game-intro";
 import styles from "./navs.module.css";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
-import { IntroAudio } from "../app-audio/intro-audio";
 
 export function GameSelectionNav() {
   return (
     <div className={`${styles.GameSelectionNavContainer} animate-pulse`}>
-      <IntroAudio />
       <SelectGameIntro />
 
       <div className={`${styles.GameSelectionNavContent} `}>
