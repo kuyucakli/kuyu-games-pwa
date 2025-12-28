@@ -44,7 +44,7 @@ export function IntroAudio() {
   };
 
   return (
-    <div className="relative z-50">
+    <div className="relative z-50 ml-4">
       <button
         type="button"
         onClick={handleUserGesture}
@@ -52,7 +52,6 @@ export function IntroAudio() {
         disabled={!ready}
       >
         {muted ? <IconMusicOff /> : <IconMusicNote />}
-        {ready ? "ready" : "not ready"}
       </button>
       <audio
         ref={audioRef}
