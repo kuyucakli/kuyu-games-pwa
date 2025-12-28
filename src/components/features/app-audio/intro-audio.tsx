@@ -47,10 +47,11 @@ export function IntroAudio() {
       <button
         type="button"
         onClick={handleUserGesture}
-        className=" ml-auto mr-4 block"
+        className=" m-auto block"
         disabled={!ready}
       >
         {muted ? <IconMusicOff /> : <IconMusicNote />}
+        {ready ? "ready" : "not ready"}
       </button>
       <audio
         ref={audioRef}
