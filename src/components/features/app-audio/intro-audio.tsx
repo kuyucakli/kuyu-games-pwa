@@ -31,6 +31,7 @@ export function IntroAudio() {
 
     try {
       if (muted) {
+        audioRef.current.load();
         await audioRef.current.play();
         setMuted(false);
       } else {
@@ -47,7 +48,7 @@ export function IntroAudio() {
       <button
         type="button"
         onClick={handleUserGesture}
-        className=" m-auto block"
+        className=""
         disabled={!ready}
       >
         {muted ? <IconMusicOff /> : <IconMusicNote />}
@@ -58,6 +59,7 @@ export function IntroAudio() {
         preload="auto"
         loop
         autoPlay={!muted}
+        onLoadedMetadata={() => setReady(true)}
         src="/assets/tahterevallis/audio/select-game-intro.wav"
       />
     </div>
