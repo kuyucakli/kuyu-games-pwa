@@ -8,9 +8,10 @@ function GlassCard({
 }
 
 function Card({
+  className,
   children,
 }: PropsWithChildren<HtmlHTMLAttributes<HTMLDivElement>>) {
-  return <div className={styles.Card}>{children}</div>;
+  return <div className={`${styles.Card} ${styles.className}`}>{children}</div>;
 }
 
 function CardHeader({
@@ -26,7 +27,7 @@ function CardTitle({
 }: PropsWithChildren<HtmlHTMLAttributes<HTMLHeadingElement>>) {
   return (
     <h1
-      className={`${styles.CardTitle} ${className} text-5xl mb-4 text-center`}
+      className={`${styles.CardTitle} ${className} text-5xl mb-2 text-center`}
     >
       {children}
     </h1>

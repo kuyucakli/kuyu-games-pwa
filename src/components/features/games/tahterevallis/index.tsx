@@ -12,6 +12,7 @@ import {
   AssetManager,
 } from "@/games/engine/assets/asset-manager";
 import { Property } from "@/lib/types/utils";
+import { LoadingIntro } from "./components/intros/loading-intro";
 
 type GameTahterevallisSceneProps = {
   width?: `${number}${"px" | "vw" | "dvw"}`;
@@ -96,11 +97,16 @@ const TahterevallisHUD = ({
           content={"0"}
           className=" border-amber-100! text-orange-500! bg-amber-300!"
         />
-        <p className="text-white">
-          {loading && <span>Loading</span>}
-          {progress?.lastLoaded} : {progress?.loadedCount} /{" "}
-          {progress?.queueCount}
-        </p>
+        {loading && (
+          <LoadingIntro>
+            <p className="text-white">
+              {loading && <span>Loading: </span>}
+              {progress?.lastLoaded} : {progress?.loadedCount} /{" "}
+              {progress?.queueCount}
+            </p>
+          </LoadingIntro>
+        )}
+
         {gameState == "level-completed" && <LevelCompletedIntro />}
         {gameState == "failed" && <GameOverIntro />}
       </div>

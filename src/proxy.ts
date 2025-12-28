@@ -2,12 +2,13 @@ import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/proxy";
 
 export async function proxy(request: NextRequest) {
-  let cookie = request.cookies.get("intro_watched");
-
-  if (request.nextUrl.pathname === "/" && cookie?.value === "true") {
-    return NextResponse.redirect(new URL("/select-game", request.url));
+  if (request.nextUrl.pathname === "/") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/select-game";
+    return NextResponse.redirect(url);
   }
-  return await updateSession(request);
+
+  return updateSession(request);
 }
 
 export const config = {

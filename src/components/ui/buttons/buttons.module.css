@@ -36,6 +36,6 @@
 .LinkButtonArtistic {
   border: none;
   background-color: transparent;
-  color: var(--color-amber-100);
+  color: var(--color-white);
   height: 80px;
 }

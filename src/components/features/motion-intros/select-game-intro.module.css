@@ -1,35 +1,86 @@
-.SelectGame {
+.SelectGameIntro {
   width: 100%;
   height: 100%;
   position: absolute;
   top: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0);
+
   overflow: hidden;
 }
 
-.SelectGameBall {
-  width: 2%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background-color: blue;
+.MovingBallContainer {
   position: absolute;
-  top: 0;
-  left: 0;
-  animation: move-ball 10s infinite alternate;
+  width: 500px;
+  height: 250px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: hello 2s forwards;
 }
 
-@keyframes move-ball {
+.MovingBall {
+  position: absolute;
+  top: 0px;
+  left: 50%;
+  z-index: 1;
+  width: 50%;
+  animation: rotate-ball 30s linear infinite,
+    move 3s ease-in-out infinite alternate-reverse;
+  mix-blend-mode: color-dodge;
+}
+.MovingBallTrail {
+  position: absolute;
+  top: 5%;
+  right: 25%;
+  height: 100%;
+  transform-origin: right center;
+  animation: trail 0.1s ease-in-out infinite alternate,
+    move 3s ease-in-out infinite alternate-reverse;
+  filter: drop-shadow(2px 4px 10px #ff6b6b);
+}
+
+@keyframes hello {
   0% {
-    top: 50%;
-    left: 50%;
+    transform: translate(-100%, -50%) scale(0.4);
+    filter: blur(2);
+    opacity: 0;
   }
-  50% {
-    top: 55%;
-    left: 55%;
+  80% {
+    transform: translate(-30%, -50%) scale(0.8);
   }
   100% {
-    top: 45%;
-    left: 45%;
+    transform: translateX(-50%, -50%) scale(1);
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+
+@keyframes rotate-ball {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes move {
+  0% {
+    top: -8px;
+  }
+
+  100% {
+    top: 8px;
+  }
+}
+
+@keyframes trail {
+  0% {
+    transform: scaleX(0.95);
+  }
+
+  100% {
+    transform: scaleX(1);
   }
 }
