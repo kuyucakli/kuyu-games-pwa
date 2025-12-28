@@ -48,11 +48,10 @@ export function IntroAudio() {
       <button
         type="button"
         onClick={handleUserGesture}
-        className="block"
+        className="block bg-black"
         disabled={!ready}
       >
         {muted ? <IconMusicOff /> : <IconMusicNote />}
-        {ready ? "ready" : "not ready"}
       </button>
       <audio
         ref={audioRef}
