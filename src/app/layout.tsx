@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { Allerta_Stencil } from "next/font/google";
 import "./globals.css";
 import { PWAInstallBanner } from "@/components/features/banners/pwa-banner";
+import { HeaderMain } from "@/components/layout";
+import Link from "next/link";
+import { ProfileDropDown } from "@/components/features/auth/profile-dropdown";
+import { IconGameList } from "@/components/ui/icons";
 
 const allertaStencil = Allerta_Stencil({
   weight: "400",
@@ -38,7 +42,15 @@ export default function RootLayout({
 
       <body className={`${allertaStencil.className}  antialiased dark`}>
         <PWAInstallBanner />
-        <div id="root">{children}</div>
+        <div id="root">
+          <HeaderMain>
+            <Link href="/select-game">
+              <IconGameList />
+            </Link>
+            <ProfileDropDown />
+          </HeaderMain>
+          {children}
+        </div>
         {modal}
       </body>
     </html>
