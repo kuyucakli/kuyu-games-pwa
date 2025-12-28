@@ -34,8 +34,9 @@
 }
 
 .LinkButtonArtistic {
-  border: none;
-  background-color: transparent;
+  border: 1px dotted rgba(255, 255, 255, 0.417);
+  background-color: rgba(255, 255, 255, 0.298);
+
   color: var(--color-white);
   height: 80px;
 }

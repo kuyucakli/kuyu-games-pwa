@@ -20,6 +20,12 @@ const IconBase = ({
   );
 };
 
+const IconClose = () => (
+  <IconBase>
+    <path d="m336-280-56-56 144-144-144-143 56-56 144 144 143-144 56 56-144 143 144 144-56 56-143-144-144 144Z" />
+  </IconBase>
+);
+
 const IconMoreHorizontal = () => (
   <IconBase>
     <path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z" />
@@ -103,6 +109,18 @@ const IconLogout = () => (
   </svg>
 );
 
+const IconMusicNote = () => (
+  <IconBase>
+    <path d="M400-120q-66 0-113-47t-47-113q0-66 47-113t113-47q23 0 42.5 5.5T480-418v-422h240v160H560v400q0 66-47 113t-113 47Z" />
+  </IconBase>
+);
+
+const IconMusicOff = () => (
+  <IconBase>
+    <path d="M792-56 56-792l56-56 736 736-56 56ZM560-514l-80-80v-246h240v160H560v166ZM400-120q-66 0-113-47t-47-113q0-66 47-113t113-47q23 0 42.5 5.5T480-418v-62l80 80v120q0 66-47 113t-113 47Z" />
+  </IconBase>
+);
+
 const IconSearch = () => (
   <svg
     width="24"
@@ -143,4 +161,13 @@ const IconSettings = () => (
   </svg>
 );
 
-export { IconGameList, IconMoreHorizontal, IconHelp, IconRobot, IconSettings };
+export {
+  IconClose,
+  IconGameList,
+  IconMoreHorizontal,
+  IconMusicNote,
+  IconMusicOff,
+  IconHelp,
+  IconRobot,
+  IconSettings,
+};

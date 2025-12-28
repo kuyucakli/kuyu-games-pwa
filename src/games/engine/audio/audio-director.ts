@@ -23,6 +23,10 @@ export class AudioDirector {
     this.camera.add(this.listener);
   }
 
+  get context() {
+    return this.listener.context;
+  }
+
   unlock() {
     if (this.unlocked) return;
     this.listener.context.resume();

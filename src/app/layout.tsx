@@ -6,6 +6,7 @@ import { HeaderMain } from "@/components/layout";
 import Link from "next/link";
 import { ProfileDropDown } from "@/components/features/auth/profile-dropdown";
 import { IconGameList } from "@/components/ui/icons";
+import { NavMain } from "@/components/features/navs/nav-main";
 
 const allertaStencil = Allerta_Stencil({
   weight: "400",
@@ -44,12 +45,9 @@ export default function RootLayout({
         <PWAInstallBanner />
         <div id="root">
           <HeaderMain>
-            <Link href="/select-game">
-              <IconGameList />
-            </Link>
-            <ProfileDropDown />
+            <NavMain />
           </HeaderMain>
-          {children}
+          <main>{children}</main>
         </div>
         {modal}
       </body>

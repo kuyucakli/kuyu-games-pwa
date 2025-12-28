@@ -58,7 +58,7 @@ export function LinkButtonArtistic(
   return (
     <LinkButton
       {...props}
-      className={`${styles.LinkButtonArtistic} text-xl relative`}
+      className={`${styles.LinkButtonArtistic} text-xl relative border-2 border-white`}
     >
       <FancyArrow className="absolute! top-1/2 -translate-y-1/2 left-16" />
       {props.children}
