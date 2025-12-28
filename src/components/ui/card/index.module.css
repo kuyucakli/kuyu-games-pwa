@@ -47,7 +47,7 @@
 
 .Card {
   padding: 24px;
-  min-width: 480px;
+  max-width: 420px;
   min-height: 480px;
   border-radius: var(--radius-lg);
 }
