@@ -47,7 +47,7 @@ export function IntroAudio() {
       <button
         type="button"
         onClick={handleUserGesture}
-        className="relative z-50 right-0"
+        className="relative z-50 ml-auto mr-12 block"
         disabled={!ready}
       >
         {muted ? <IconMusicOff /> : <IconMusicNote />}
