@@ -14,9 +14,8 @@ import { AssetLoaderEvent, AssetManager } from "../engine/assets/asset-manager";
 import { AudioSystem } from "./systems/audio-system";
 import { LevelSystem } from "./systems/level-system";
 import { TimerSystem } from "./systems/timer-system";
-import { OutOfBoundsSystem } from "./systems/out-of-bounds-system";
-
 import { Property } from "@/lib/types/utils";
+import { OutOfBoundsSystem } from "./systems/out-of-bounds-system";
 
 type GameState = "idle" | "playing" | "paused" | "level-complete" | "game-over";
 
