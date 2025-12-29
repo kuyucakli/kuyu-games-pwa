@@ -21,6 +21,10 @@ type BallEntry = {
   state: BallState;
 };
 
+export interface ActiveBallQuery {
+  getActiveBalls(): readonly BallEntry[];
+}
+
 export class BallSystem {
   private nextBallId = 0;
   private ballSpeeds = new Map<RAPIER.RigidBody, number>();
@@ -73,23 +77,35 @@ export class BallSystem {
       const ball = this.balls[i];
 
       if (ball.state == "captured") {
-        this.scene.attach(ball.mesh);
+        this.resetBallAttachment(ball);
       }
 
       if (i < activeCount) {
-        const [x, y, z] = GAME_BALLS[i].initPosition;
-
-        ball.body.setTranslation({ x, y, z }, true);
-        ball.body.setLinvel({ x: 0, y: 0, z: 0 }, true);
-        ball.body.setAngvel({ x: 0, y: 0, z: 0 }, true);
-
-        ball.mesh.position.copy({ x, y, z });
-        ball.mesh.rotation.set(0, 0, 0);
-
+        this.resetBallTransform(ball, GAME_BALLS[i].initPosition);
         this.activateBall(ball);
       } else {
         this.deactivateBall(ball);
       }
+    }
+  }
+
+  private resetBallTransform(
+    ball: BallEntry,
+    initPosition: [number, number, number]
+  ) {
+    const [x, y, z] = initPosition;
+
+    ball.body.setTranslation({ x, y, z }, true);
+    ball.body.setLinvel({ x: 0, y: 0, z: 0 }, true);
+    ball.body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+
+    ball.mesh.position.copy({ x, y, z });
+    ball.mesh.rotation.set(0, 0, 0);
+  }
+
+  private resetBallAttachment(ball: BallEntry) {
+    if (ball.mesh.parent !== this.scene) {
+      this.scene.attach(ball.mesh);
     }
   }
 
@@ -154,6 +170,10 @@ export class BallSystem {
 
   private createBallId() {
     return `ball-${++this.nextBallId}`;
+  }
+
+  getActiveBalls(): readonly BallEntry[] {
+    return this.balls.filter((b) => b.state === "active");
   }
 
   update(dt: number) {

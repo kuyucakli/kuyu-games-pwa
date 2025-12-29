@@ -14,6 +14,8 @@ import { AssetLoaderEvent, AssetManager } from "../engine/assets/asset-manager";
 import { AudioSystem } from "./systems/audio-system";
 import { LevelSystem } from "./systems/level-system";
 import { TimerSystem } from "./systems/timer-system";
+import { OutOfBoundsSystem } from "./systems/out-of-bounds-system";
+
 import { Property } from "@/lib/types/utils";
 
 type GameState = "idle" | "playing" | "paused" | "level-complete" | "game-over";
@@ -31,6 +33,7 @@ export type GameEvents = {
     holeName: HoleName;
     pos: THREE.Vector3;
   };
+  "ball:out-of-bounds": { ballId: string };
   "assets:completed": true;
   "assets:progress": Property<AssetLoaderEvent, "progress">;
   "audio:intro-home": void;
@@ -60,6 +63,7 @@ export class Game {
   private audioSystem!: AudioSystem;
   private levelSystem!: LevelSystem;
   private timerSystem!: TimerSystem;
+  private outOfBoundsSystem!: OutOfBoundsSystem;
   private tableRigidBody!: RAPIER.RigidBody;
   private assetManager!: AssetManager<typeof GameAssets>;
   private mainCamera!: THREE.PerspectiveCamera;
@@ -115,6 +119,7 @@ export class Game {
       engine.physicsWorld,
       this.sparkleSystem
     );
+    this.outOfBoundsSystem = new OutOfBoundsSystem(this.ballSystem);
 
     this.audioSystem = new AudioSystem(
       this.assetManager,
@@ -137,6 +142,12 @@ export class Game {
     gameEvents.on("level:failed", () => {
       this.state = "game-over";
       this.timerSystem.stop();
+    });
+
+    gameEvents.on("ball:out-of-bounds", () => {
+      if (this.state !== "playing") return;
+
+      gameEvents.emit("level:failed");
     });
 
     this.loadLevel(1);
@@ -259,6 +270,7 @@ export class Game {
     this.levelSystem.reset(level);
     this.holeSystem.applyLevel(config);
     this.ballSystem.applyLevel(config);
+    this.outOfBoundsSystem.reset();
 
     this.timerSystem.start();
     this.state = "playing";
@@ -283,10 +295,15 @@ export class Game {
 
   update(dt: number) {
     if (this.state != "playing") return;
+
     this.engine.physicsWorld.step(dt);
+
     this.ballSystem.update(dt);
+    this.outOfBoundsSystem.update();
+
     const mapped = this.mapTiltInput(this.tiltInput.x, this.tiltInput.y);
     this.tiltTable(mapped.x, mapped.z);
+
     this.sparkleSystem.update(dt * 2);
     this.timerSystem.update(dt);
   }
