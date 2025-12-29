@@ -51,6 +51,7 @@ export class LevelSystem {
     }
     gameEvents.emit("level:remaining-time", {
       prettyFormatted: formatTimePretty(remainingTimeMs),
+      seconds: Math.max(Math.floor(remainingTimeMs / 1000), 0),
     });
   };
 

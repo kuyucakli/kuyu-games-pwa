@@ -38,18 +38,18 @@ export class BallSystem {
     private sparkleSystem: SparkleSystem
   ) {
     for (const ball of GAME_BALLS) {
-      this.put(ball.radius, ball.position);
+      this.put(ball.radius, ball.initPosition);
     }
   }
 
-  put(radius: number, position: [number, number, number] = [0, 1, 0]) {
+  put(radius: number, initPosition: [number, number, number] = [0, 1, 0]) {
     const ballId = this.createBallId();
-    const ball = new Ball(radius, position);
+    const ball = new Ball(radius, initPosition);
     this.scene.add(ball.mesh);
 
     const { body, collider } = createDynamicBall(
       radius,
-      position,
+      initPosition,
       this.physicsWorld.getWorld()
     );
     this.physicsWorld.addColliderMeta(collider, {
@@ -67,12 +67,29 @@ export class BallSystem {
   }
 
   applyLevel(config: LevelConfig) {
-    for (const ball of this.balls) {
-      this.deactivateBall(ball);
-    }
-    for (let i = 0; i < config.totalBalls; i++) {
+    const activeCount = config.totalBalls;
+
+    for (let i = 0; i < this.balls.length; i++) {
       const ball = this.balls[i];
-      this.activateBall(ball);
+
+      if (ball.state == "captured") {
+        this.scene.attach(ball.mesh);
+      }
+
+      if (i < activeCount) {
+        const [x, y, z] = GAME_BALLS[i].initPosition;
+
+        ball.body.setTranslation({ x, y, z }, true);
+        ball.body.setLinvel({ x: 0, y: 0, z: 0 }, true);
+        ball.body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+
+        ball.mesh.position.copy({ x, y, z });
+        ball.mesh.rotation.set(0, 0, 0);
+
+        this.activateBall(ball);
+      } else {
+        this.deactivateBall(ball);
+      }
     }
   }
 
@@ -82,10 +99,7 @@ export class BallSystem {
     ball.collider.setEnabled(true);
     ball.body.setEnabled(true);
 
-    ball.body.setTranslation(
-      ball.body.translation(), // or reset spawn
-      true
-    );
+    ball.body.setTranslation(ball.body.translation(), true);
 
     ball.mesh.visible = true;
   }
@@ -97,16 +111,6 @@ export class BallSystem {
     ball.body.setEnabled(false);
 
     ball.mesh.visible = false;
-  }
-
-  private clear() {
-    for (const { mesh, body } of this.balls) {
-      this.scene.remove(mesh);
-      // this.physicsWorld.removeRigidBody(body);
-    }
-
-    this.balls.length = 0;
-    this.ballSpeeds.clear();
   }
 
   captureBall(ballId: string, target: BallCaptureTarget) {

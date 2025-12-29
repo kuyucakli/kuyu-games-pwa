@@ -1,19 +1,43 @@
 .IntroContainer {
-  width: 100dvw;
-  height: 100dvh;
+  --end-duration: 0.5s;
+  --start-duration: 0.5s;
+  --level-complete-duration: 4s;
+  --container-w: 100dvw;
+  --container-h: 100dvh;
+  --z-index: 2;
+
+  width: var(--container-w);
+  height: var(--container-h);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  animation: fadeIn 4s forwards;
   opacity: 0;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   overflow: hidden;
+  z-index: var(--z-index);
+}
+
+.GameOverContainer {
+  background-color: #ff3e3e;
+  background-image: url("/assets/tahterevallis/images/tahterevallis-game-over-circle.svg");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.IntroStart {
+  animation: fadeIn var(--start-duration) ease-out forwards;
+}
+.IntroEnd {
+  animation: fadeOut var(--end-duration) forwards;
 }
 
 .LevelCompleted {
-  animation: fadeIn 4s forwards, fadeOut 2s 4s forwards;
+  animation: fadeIn var(--level-complete-duration) forwards,
+    fadeOut 2s 4s forwards;
 }
 
 @keyframes fadeIn {
@@ -25,10 +49,15 @@
 }
 
 @keyframes fadeOut {
-  from {
+  0% {
+    opacity: 1;
   }
-  to {
+  99% {
     opacity: 0;
+    width: var(--container-w);
+    height: var(--container-h);
+  }
+  100% {
     width: 0;
     height: 0;
   }

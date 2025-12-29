@@ -1,7 +1,7 @@
 type Ball = {
   color: `#${string}`;
   restitution: number;
-  position: [number, number, number];
+  initPosition: [number, number, number];
   radius: number;
 };
 
@@ -41,30 +41,30 @@ const defaultBall = {
   color: `#ff0000`,
   restitution: 0.2,
   radius: 0.28,
-  position: [0, 1, 4],
+  initPosition: [0, 1, 4],
 } as Ball;
 
 export const GAME_BALLS: Ball[] = [
   defaultBall,
   {
     ...defaultBall,
-    position: [0, 1, -4],
+    initPosition: [0, 1, -4],
   },
   {
     ...defaultBall,
-    position: [1, 1, -4],
+    initPosition: [1, 1, -4],
   },
   {
     ...defaultBall,
-    position: [2, 1, 4],
+    initPosition: [2, 1, 4],
   },
   {
     ...defaultBall,
-    position: [3, 1, -4],
+    initPosition: [3, 1, -4],
   },
   {
     ...defaultBall,
-    position: [4, 1, -4],
+    initPosition: [4, 1, -4],
   },
 ];
 export const LEVELS_CONFIG: LevelConfig[] = [
@@ -74,8 +74,8 @@ export const LEVELS_CONFIG: LevelConfig[] = [
     timeLimit: 1000 * 40,
   },
   {
-    holes: { goal: ["Hole_2", "Hole_3", "Hole_6"], trap: ["Hole_2"] },
-    totalBalls: 2,
-    timeLimit: 1000 * 40,
+    holes: { goal: ["Hole_2", "Hole_3", "Hole_6"], trap: ["Hole_4"] },
+    totalBalls: 3,
+    timeLimit: 1000 * 52,
   },
 ];

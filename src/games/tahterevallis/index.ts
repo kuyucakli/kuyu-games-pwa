@@ -23,7 +23,7 @@ export type GameEvents = {
   "ball:captureRequested": { ballName: string; holeName: string };
   "game:reset": void;
   "level:completed": { nextLevel: number };
-  "level:remaining-time": { prettyFormatted: string };
+  "level:remaining-time": { prettyFormatted: string; seconds: number };
   "level:failed": void;
   "fx:goal": THREE.Vector3;
   "goal:entered": {
@@ -40,6 +40,15 @@ export type GameEvents = {
 
 export const gameEvents = mitt<GameEvents>();
 
+export type GameBusCommands = {
+  play: void;
+  pause: void;
+  replay: void;
+};
+
+//Command events that can be emitted by foreign code
+export const gameBusCommands = mitt<GameBusCommands>();
+
 export class Game {
   private tiltInput = new TiltInput();
   private sparkleSystem!: SparkleSystem;
@@ -55,6 +64,7 @@ export class Game {
   private assetManager!: AssetManager<typeof GameAssets>;
   private mainCamera!: THREE.PerspectiveCamera;
   private state: GameState = "idle";
+  private activeLevel = 1;
 
   async init(engine: Engine) {
     this.assetManager = new AssetManager<typeof GameAssets>();
@@ -130,6 +140,10 @@ export class Game {
     });
 
     this.loadLevel(1);
+
+    gameBusCommands.on("play", () => this.resumeGame());
+    gameBusCommands.on("pause", () => this.pauseGame());
+    gameBusCommands.on("replay", () => this.loadLevel(this.activeLevel));
   }
 
   private async loadAssets() {
@@ -152,12 +166,13 @@ export class Game {
   private setupCamera() {
     const { w, h } = this.engine.viewport;
     const camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 100);
-    if (w > h) {
+    const isLandscape = w > h;
+    if (isLandscape) {
       camera.position.set(0, 16, 0);
       camera.lookAt(0, 0, 0);
     } else {
-      camera.position.set(0, 16, 0);
-      camera.lookAt(0, 0, 0);
+      camera.position.set(-1, 16, 0);
+      camera.lookAt(-1, 0, 0);
       camera.rotation.set(
         camera.rotation.x,
         camera.rotation.y,
@@ -238,15 +253,14 @@ export class Game {
     const config = LEVELS_CONFIG[level - 1];
     if (!config) return;
 
-    this.state = "idle"; // prevent updates during setup
+    this.activeLevel = level;
+    this.state = "idle";
 
     this.levelSystem.reset(level);
-
     this.holeSystem.applyLevel(config);
     this.ballSystem.applyLevel(config);
 
     this.timerSystem.start();
-
     this.state = "playing";
   }
 
