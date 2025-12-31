@@ -1,3 +1,4 @@
+import { MathUtils } from "three";
 import { Engine } from "../../engine/core/engine";
 
 export class TiltInput {
@@ -6,6 +7,7 @@ export class TiltInput {
 
   private active = false;
   private isTouch = false;
+  private useDeviceTilt = false;
 
   attach(engine: Engine) {
     const el = engine.renderer.domElement;
@@ -61,6 +63,27 @@ export class TiltInput {
       },
       { passive: true }
     );
+
+    if (typeof window !== "undefined" && "DeviceOrientationEvent" in window) {
+      // iOS requires permission
+      const maybeRequestPermission = async () => {
+        const anyDO = DeviceOrientationEvent as any;
+        if (typeof anyDO.requestPermission === "function") {
+          const result = await anyDO.requestPermission();
+          if (result === "granted") {
+            this.enableDeviceTilt();
+          }
+        } else {
+          // Android / others
+          this.enableDeviceTilt();
+        }
+      };
+
+      // Call this from a user gesture (e.g. first touch)
+      el.addEventListener("pointerdown", maybeRequestPermission, {
+        once: true,
+      });
+    }
   }
 
   reset() {
@@ -78,5 +101,23 @@ export class TiltInput {
     y = -y; // screen → game space
 
     this.y = this.isTouch ? -y : y;
+  }
+
+  private enableDeviceTilt() {
+    this.useDeviceTilt = true;
+
+    window.addEventListener("deviceorientation", (e) => {
+      if (this.active) return; // touch/mouse takes priority
+      if (!e.beta || !e.gamma) return;
+
+      // Normalize
+      const x = MathUtils.clamp(e.gamma / 45, -1, 1);
+      const y = MathUtils.clamp(e.beta / 45, -1, 1);
+
+      // Match your existing semantic:
+      // tilt device forward → table top moves away
+      this.x = x;
+      this.y = -y;
+    });
   }
 }
