@@ -145,7 +145,8 @@ export class Game {
 
     gameEvents.on("ball:out-of-bounds", () => {
       if (this.state !== "playing") return;
-
+      this.state = "game-over";
+      this.timerSystem.stop();
       gameEvents.emit("level:failed");
     });
 

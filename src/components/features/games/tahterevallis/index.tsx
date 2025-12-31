@@ -52,7 +52,7 @@ export default function GameTahterevallis({
       <div
         ref={containerRef}
         style={{ width: `${width}`, height: `${height}` }}
-        className="relative overflow-hidden bg-blue-800"
+        className="relative overflow-hidden"
       />
     </>
   );
@@ -66,14 +66,20 @@ const TahterevallisHUD = ({
   progress: Property<AssetLoaderEvent, "progress"> | undefined;
 }) => {
   const [level, setLevel] = useState(1);
-  const [remainingTimeData, setRemainingTimeData] = useState({
+  const [remainingTimeData, setRemainingTimeData] = useState<{
+    prettyFormatted: string;
+    seconds: null | number;
+  }>({
     prettyFormatted: "",
-    seconds: 0,
+    seconds: null,
   });
-  const [gameState, setGameState] = useState("");
+  const [gameState, setGameState] = useState<"failed" | "level-completed" | "">(
+    ""
+  );
 
   useEffect(() => {
     tahterevallisEvents.on("level:completed", ({ nextLevel }) => {
+      setGameState("level-completed");
       setLevel(nextLevel);
     });
     tahterevallisEvents.on(
@@ -85,11 +91,7 @@ const TahterevallisHUD = ({
     tahterevallisEvents.on("level:failed", () => {
       setGameState("failed");
     });
-
-    tahterevallisEvents.on("level:completed", () => {
-      setGameState("level-completed");
-    });
-  });
+  }, []);
 
   const requestGameReplay = () => {
     setGameState("");
@@ -104,16 +106,18 @@ const TahterevallisHUD = ({
     gameBusCommands.emit("play");
   };
 
+  console.log("game state", gameState);
   return (
     <>
       <HUDLayer>
         <div className="absolute top-2 left-2 flex gap-2 p-0">
           <HUDBox label="level" content={level + ""} />
-          {remainingTimeData.seconds < 10 && (
-            <p className="fixed top-1/2 left-1/2 -translate-1/2 text-9xl animate-pulse mix-blend-hard-light">
-              {remainingTimeData.seconds}
-            </p>
-          )}
+          {remainingTimeData.seconds != null &&
+            remainingTimeData.seconds < 10 && (
+              <p className="fixed top-1/2 left-1/2 -translate-1/2 text-9xl animate-pulse mix-blend-hard-light">
+                {remainingTimeData.seconds}
+              </p>
+            )}
           <HUDBox
             label="score"
             content={"0"}
@@ -135,7 +139,12 @@ const TahterevallisHUD = ({
           )}
         </div>
       </HUDLayer>
-      {gameState == "level-completed" && <LevelCompletedIntro />}
+      {gameState == "level-completed" && (
+        <LevelCompletedIntro
+          level={level}
+          onIntroEnded={() => setGameState("")}
+        />
+      )}
       {gameState == "failed" && (
         <GameOverIntro onRequestGameReplay={requestGameReplay} />
       )}

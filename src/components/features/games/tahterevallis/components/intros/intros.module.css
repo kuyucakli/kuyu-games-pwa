@@ -28,6 +28,15 @@
   background-repeat: no-repeat;
 }
 
+.LevelCompleted {
+  background-color: #ff3e3e;
+  /* background-color: #A5B2C3; */
+  background-image: url("/assets/tahterevallis/images/level-completed-thing.png");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 .IntroStart {
   animation: fadeIn var(--start-duration) ease-out forwards;
 }
@@ -35,9 +44,8 @@
   animation: fadeOut var(--end-duration) forwards;
 }
 
-.LevelCompleted {
-  animation: fadeIn var(--level-complete-duration) forwards,
-    fadeOut 2s 4s forwards;
+.IntroStartAndAutoEnd {
+  animation: newAnim 4s forwards;
 }
 
 @keyframes fadeIn {
@@ -50,6 +58,27 @@
 
 @keyframes fadeOut {
   0% {
+    opacity: 1;
+  }
+  99% {
+    opacity: 0;
+    width: var(--container-w);
+    height: var(--container-h);
+  }
+  100% {
+    width: 0;
+    height: 0;
+  }
+}
+
+@keyframes newAnim {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  90% {
     opacity: 1;
   }
   99% {
