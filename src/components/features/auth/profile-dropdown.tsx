@@ -1,16 +1,14 @@
 import { LinkButton } from "@/components/ui/buttons";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { HTMLAttributes } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutForm } from "./logout-form";
 import { IconRobot } from "@/components/ui/icons";
+import {
+  Popover,
+  PopoverContent,
+  PopoverHeader,
+} from "@/components/ui/popover";
+import { Avatar } from "@/components/ui/avatar";
 
 export async function ProfileDropDown({
   className,
@@ -23,30 +21,31 @@ export async function ProfileDropDown({
 
   return (
     <div className={`${className}`}>
-      <DropdownMenu>
-        <DropdownMenuTrigger className="flex-col gap-2 items-center text-xs mix-blend-difference">
+      <button popoverTarget="account-popover">
+        <Avatar>
           <IconRobot />
-          <span className="mix-blend-difference text-white">
-            {data?.user ? data.user.email : "player"}
+        </Avatar>
+      </button>
+      <Popover
+        id="account-popover"
+        className="fixed left-auto top-10 right-0 scheme-dark text-center"
+      >
+        <PopoverHeader className="flex justify-center">
+          <Avatar className="w-18!">
+            <IconRobot />
+          </Avatar>
+        </PopoverHeader>
+        <PopoverContent>
+          <span className="mix-blend-difference text-white text-sm">
+            {data?.user ? data.user.email : "player anonymous"}
           </span>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          {data?.user ? (
-            <DropdownMenuItem>
-              <LogoutForm />
-            </DropdownMenuItem>
-          ) : (
-            <>
-              <DropdownMenuItem>
-                <LinkButton href="/login">Log in</LinkButton>
-              </DropdownMenuItem>
-              <DropdownMenuLabel>
-                <LinkButton href="/signup">Sign up</LinkButton>
-              </DropdownMenuLabel>
-            </>
-          )}
-        </DropdownMenuContent>
-      </DropdownMenu>
+
+          <LinkButton href="/login">Log in</LinkButton>
+
+          <LinkButton href="/signup">Sign up</LinkButton>
+          {data?.user ? <LogoutForm /> : <></>}
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }

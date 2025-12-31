@@ -151,4 +151,8 @@
     align-items: center;
     justify-content: center;
   }
+
+  .icon {
+    color: var(--color-emerald-400);
+  }
 }

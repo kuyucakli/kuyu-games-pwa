@@ -1,7 +1,7 @@
 import { ReactElement } from "react";
 
 const IconBase = ({
-  size = "40px",
+  size = "28px",
   children,
 }: {
   size?: number | string;
@@ -9,11 +9,12 @@ const IconBase = ({
 }) => {
   return (
     <svg
+      className="icon"
       xmlns="http://www.w3.org/2000/svg"
       height={size}
       viewBox="0 -960 960 960"
       width={size}
-      fill="#888888"
+      fill="currentColor"
     >
       {children}
     </svg>
@@ -43,34 +44,23 @@ const IconRobot = () => {
 const IconGameList = () => {
   return (
     <svg
-      width="40"
-      height="40"
+      className="icon"
+      width="28"
+      height="28"
       viewBox="0 0 40 40"
-      fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinecap="round"
     >
-      <circle cx="10" cy="31" r="3" fill="#888888" />
-      <circle cx="20" cy="31" r="3" fill="#888888" />
-      <circle cx="30" cy="31" r="3" fill="#888888" />
-      <path
-        d="M8 11L16 11"
-        stroke="#888888"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <path
-        d="M10 15L16 15"
-        stroke="#888888"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <path
-        d="M12 19L14 19L16 19"
-        stroke="#888888"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <circle cx="26" cy="15" r="4.5" stroke="#888888" strokeWidth="3" />
+      <circle cx="10" cy="31" r="3" />
+      <circle cx="20" cy="31" r="3" />
+      <circle cx="30" cy="31" r="3" />
+      <path d="M8 11L16 11" />
+      <path d="M10 15L16 15" />
+      <path d="M12 19L14 19L16 19" />
+      <circle cx="26" cy="15" r="4.5" />
     </svg>
   );
 };
@@ -119,31 +109,6 @@ const IconMusicOff = () => (
   <IconBase>
     <path d="M792-56 56-792l56-56 736 736-56 56ZM560-514l-80-80v-246h240v160H560v166ZM400-120q-66 0-113-47t-47-113q0-66 47-113t113-47q23 0 42.5 5.5T480-418v-62l80 80v120q0 66-47 113t-113 47Z" />
   </IconBase>
-);
-
-const IconSearch = () => (
-  <svg
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z"
-      stroke="#929EAE"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M20.9999 21L16.6499 16.65"
-      stroke="#929EAE"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
 );
 
 const IconSettings = () => (

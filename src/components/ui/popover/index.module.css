@@ -1,0 +1,19 @@
+.Popover {
+  border-radius: 24px;
+  width: min(100%, 420px);
+  padding: 24px;
+}
+
+.PopoverHeader {
+  padding-bottom: 12px;
+}
+
+.PopoverContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.PopoverFooter {
+  padding-top: 12px;
+}
