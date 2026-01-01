@@ -1,3 +1,7 @@
+export const TABLE_WIDTH = 12; // world units (X)
+export const TABLE_HEIGHT = 18; // world units (Z)
+export const TABLE_ASPECT_RATIO = TABLE_WIDTH / TABLE_HEIGHT;
+
 type Ball = {
   color: `#${string}`;
   restitution: number;

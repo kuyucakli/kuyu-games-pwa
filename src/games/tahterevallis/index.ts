@@ -155,6 +155,32 @@ export class Game {
     gameBusCommands.on("play", () => this.resumeGame());
     gameBusCommands.on("pause", () => this.pauseGame());
     gameBusCommands.on("replay", () => this.loadLevel(this.activeLevel));
+
+    const { w, h } = this.engine.viewport;
+
+    this.fitCameraToTable(this.mainCamera, this.table, w, h, 640);
+    this.applyCameraOrientation(this.mainCamera);
+
+    screen.orientation.addEventListener("change", () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      this.mainCamera.aspect = w / h;
+      this.mainCamera.updateProjectionMatrix();
+
+      this.fitCameraToTable(this.mainCamera, this.table, w, h, 640);
+      this.applyCameraOrientation(this.mainCamera);
+    });
+  }
+
+  private applyCameraOrientation(camera: THREE.PerspectiveCamera) {
+    const { w, h } = this.engine.viewport;
+    const isPortrait = h > w;
+
+    if (isPortrait) {
+      // Rotate camera so Z becomes horizontal axis on screen
+      camera.rotation.z = Math.PI / 2;
+    }
   }
 
   private async loadAssets() {
@@ -176,20 +202,9 @@ export class Game {
 
   private setupCamera() {
     const { w, h } = this.engine.viewport;
-    const camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 100);
-    const isLandscape = w > h;
-    if (isLandscape) {
-      camera.position.set(0, 16, 0);
-      camera.lookAt(0, 0, 0);
-    } else {
-      camera.position.set(-1, 16, 0);
-      camera.lookAt(-1, 0, 0);
-      camera.rotation.set(
-        camera.rotation.x,
-        camera.rotation.y,
-        camera.rotation.z + Math.PI / 2
-      );
-    }
+
+    const camera = new THREE.PerspectiveCamera(56, w / h, 0.1, 100);
+    camera.lookAt(0, 0, 0);
 
     this.mainCamera = camera;
     this.engine.registerCamera("main_perspective", camera);
@@ -251,13 +266,13 @@ export class Game {
     const isPortrait = h > w;
 
     if (!isPortrait) {
-      return {
-        x: y,
-        z: x,
-      };
+      // Landscape: tilt forward/back → X rotation, left/right → Z rotation
+      return { x: y, z: x };
+    } else {
+      // Portrait: camera rotated 90°, swap X and Z properly
+      // New axes: screen up/down → table Z rotation, screen left/right → table X rotation
+      return { x: x, z: -y };
     }
-    // rotate control space 90° clockwise
-    return { x, z: y };
   }
 
   loadLevel(level: number) {
@@ -292,6 +307,108 @@ export class Game {
     this.state = "playing";
     this.timerSystem.start();
   }
+
+  fitCameraToTable(
+    camera: THREE.PerspectiveCamera,
+    table: THREE.Object3D,
+    viewportW: number,
+    viewportH: number,
+    maxTablePx = 600,
+    offset = 1.1 // e.g., 10% padding around table
+  ) {
+    const box = new THREE.Box3().setFromObject(table);
+    const size = new THREE.Vector3();
+    const center = new THREE.Vector3();
+    box.getSize(size);
+    box.getCenter(center);
+
+    const isPortrait = viewportH > viewportW;
+
+    camera.aspect = viewportW / viewportH;
+    camera.updateProjectionMatrix();
+
+    const vFov = THREE.MathUtils.degToRad(camera.fov);
+    const hFov = 2 * Math.atan(Math.tan(vFov / 2) * camera.aspect);
+
+    // Determine distances along X and Z axes
+    // In portrait, we rotate the camera, so swap axes accordingly
+    let fitDistanceX: number, fitDistanceZ: number;
+
+    if (isPortrait) {
+      // Camera rotated 90°, width of table maps to vertical FOV
+      fitDistanceX = size.x / 2 / Math.tan(vFov / 2); // table width along vertical FOV
+      fitDistanceZ = size.z / 2 / Math.tan(hFov / 2); // table depth along horizontal FOV
+    } else {
+      fitDistanceX = size.x / 2 / Math.tan(hFov / 2);
+      fitDistanceZ = size.z / 2 / Math.tan(vFov / 2);
+    }
+
+    // Take the largest distance to fully fit table + apply uniform offset
+    const distance = Math.max(fitDistanceX, fitDistanceZ) * offset;
+
+    // Optional: enforce maxTablePx along dominant axis
+    const dominantSize = isPortrait ? size.x : size.x;
+    const screenAxis = isPortrait ? viewportH : viewportW;
+    const pixelLimitedDistance =
+      (dominantSize * screenAxis) /
+      maxTablePx /
+      (2 * Math.tan(isPortrait ? vFov / 2 : hFov / 2));
+
+    const finalDistance = Math.max(distance, pixelLimitedDistance);
+
+    // Apply camera
+    camera.position.set(center.x, center.y + finalDistance, center.z);
+    camera.near = finalDistance / 50;
+    camera.far = finalDistance * 6;
+    camera.updateProjectionMatrix();
+    camera.lookAt(center);
+
+    // Rotate for portrait
+    camera.rotation.z = isPortrait ? Math.PI / 2 : 0;
+  }
+  // fitCameraToTable(
+  //   camera: THREE.PerspectiveCamera,
+  //   table: THREE.Object3D,
+  //   viewportW: number,
+  //   viewportH: number,
+  //   maxTablePx = 600,
+  //   offset = 0.5
+  // ) {
+  //   const box = new THREE.Box3().setFromObject(table);
+
+  //   const size = new THREE.Vector3();
+  //   const center = new THREE.Vector3();
+  //   box.getSize(size);
+  //   box.getCenter(center);
+
+  //   camera.aspect = viewportW / viewportH;
+
+  //   const vFov = THREE.MathUtils.degToRad(camera.fov);
+  //   const hFov = 2 * Math.atan(Math.tan(vFov / 2) * camera.aspect);
+
+  //   // ---- 1. Distance to fully fit table (X/Z)
+  //   const fitDx = size.x / 2 / Math.tan(hFov / 2);
+  //   const fitDz = size.z / 2 / Math.tan(vFov / 2);
+  //   const fitDistance = Math.max(fitDx, fitDz) * offset;
+
+  //   // ---- 2. Distance to enforce max pixel width
+  //   const tableWorldWidth = size.x;
+  //   const visibleWorldWidthAtD = (tableWorldWidth * viewportW) / maxTablePx;
+
+  //   const pixelLimitedDistance =
+  //     visibleWorldWidthAtD / (2 * Math.tan(hFov / 2));
+
+  //   // ---- 3. Final distance
+  //   const distance = Math.max(fitDistance, pixelLimitedDistance);
+
+  //   // ---- Apply camera
+  //   camera.position.set(center.x, center.y + distance, center.z);
+  //   camera.near = distance / 50;
+  //   camera.far = distance * 5;
+  //   camera.updateProjectionMatrix();
+
+  //   camera.lookAt(center);
+  // }
 
   update(dt: number) {
     if (this.state != "playing") return;

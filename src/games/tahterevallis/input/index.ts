@@ -108,7 +108,7 @@ export class TiltInput {
 
     window.addEventListener("deviceorientation", (e) => {
       if (this.active) return; // touch/mouse takes priority
-      if (!e.beta || !e.gamma) return;
+      if (e.beta == null || e.gamma == null) return;
 
       // Normalize
       const x = MathUtils.clamp(e.gamma / 45, -1, 1);

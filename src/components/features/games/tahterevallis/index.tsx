@@ -109,35 +109,33 @@ const TahterevallisHUD = ({
   console.log("game state", gameState);
   return (
     <>
-      <HUDLayer>
-        <div className="absolute top-2 left-2 flex gap-2 p-0">
-          <HUDBox label="level" content={level + ""} />
-          {remainingTimeData.seconds != null &&
-            remainingTimeData.seconds < 10 && (
-              <p className="fixed top-1/2 left-1/2 -translate-1/2 text-9xl animate-pulse mix-blend-hard-light">
-                {remainingTimeData.seconds}
-              </p>
-            )}
-          <HUDBox
-            label="score"
-            content={"0"}
-            className=" border-amber-100! text-orange-500! bg-amber-300!"
-          />
-          <HUDBox
-            label="time left"
-            content={remainingTimeData.prettyFormatted}
-            className={`bg-red-500!  animate-pulse`}
-          />
-          {loading && (
-            <LoadingIntro>
-              <p className="text-white">
-                {loading && <span>Loading: </span>}
-                {progress?.lastLoaded} : {progress?.loadedCount} /{" "}
-                {progress?.queueCount}
-              </p>
-            </LoadingIntro>
+      <HUDLayer className="flex landscape:flex-col gap-2 p-2">
+        <HUDBox label="level" content={level + ""} />
+        {remainingTimeData.seconds != null &&
+          remainingTimeData.seconds < 10 && (
+            <p className="fixed top-1/2 left-1/2 -translate-1/2 text-9xl animate-pulse mix-blend-hard-light">
+              {remainingTimeData.seconds}
+            </p>
           )}
-        </div>
+        <HUDBox
+          label="score"
+          content={"0"}
+          className=" border-amber-100! text-orange-500! bg-amber-300!"
+        />
+        <HUDBox
+          label="time left"
+          content={remainingTimeData.prettyFormatted}
+          className={`bg-red-500!  animate-pulse`}
+        />
+        {loading && (
+          <LoadingIntro>
+            <p className="text-white">
+              {loading && <span>Loading: </span>}
+              {progress?.lastLoaded} : {progress?.loadedCount} /{" "}
+              {progress?.queueCount}
+            </p>
+          </LoadingIntro>
+        )}
       </HUDLayer>
       {gameState == "level-completed" && (
         <LevelCompletedIntro
