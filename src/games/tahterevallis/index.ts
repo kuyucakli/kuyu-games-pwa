@@ -165,9 +165,8 @@ export class Game {
       .matchMedia("(orientation: portrait)")
       .addEventListener("change", (e) => {
         const portrait = e.matches;
-        alert("aaa");
-        const w = window.innerWidth;
-        const h = window.innerHeight;
+
+        const { w, h } = this.engine.viewport;
 
         this.mainCamera.aspect = w / h;
         this.mainCamera.updateProjectionMatrix();
