@@ -155,4 +155,14 @@
   .icon {
     color: var(--color-emerald-400);
   }
+
+  /* Default: closed */
+  [popover] {
+    display: none;
+  }
+
+  /* Native browsers will override this automatically */
+  :popover-open {
+    display: block;
+  }
 }
