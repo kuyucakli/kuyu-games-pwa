@@ -1,4 +1,4 @@
-import { HTMLAttributes, PropsWithChildren } from "react";
+import { HTMLAttributes } from "react";
 import styles from "../shared-ui.module.css";
 
 const HUDLayer = ({ className, children }: HTMLAttributes<HTMLDivElement>) => {

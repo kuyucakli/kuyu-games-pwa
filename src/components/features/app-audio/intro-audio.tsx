@@ -25,7 +25,7 @@ export function IntroAudio() {
   };
 
   return (
-    <div className="relative z-50 ml-4">
+    <div className="relative z-50 ">
       <button type="button" onPointerDown={handleUserGesture}>
         {muted ? <IconMusicOff /> : <IconMusicNote />}
       </button>
