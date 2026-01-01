@@ -161,16 +161,20 @@ export class Game {
     this.fitCameraToTable(this.mainCamera, this.table, w, h, 640);
     this.applyCameraOrientation(this.mainCamera);
 
-    screen.orientation.addEventListener("change", () => {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
+    window
+      .matchMedia("(orientation: portrait)")
+      .addEventListener("change", (e) => {
+        const portrait = e.matches;
 
-      this.mainCamera.aspect = w / h;
-      this.mainCamera.updateProjectionMatrix();
+        const w = window.innerWidth;
+        const h = window.innerHeight;
 
-      this.fitCameraToTable(this.mainCamera, this.table, w, h, 640);
-      this.applyCameraOrientation(this.mainCamera);
-    });
+        this.mainCamera.aspect = w / h;
+        this.mainCamera.updateProjectionMatrix();
+
+        this.fitCameraToTable(this.mainCamera, this.table, w, h, 640);
+        this.applyCameraOrientation(this.mainCamera);
+      });
   }
 
   private applyCameraOrientation(camera: THREE.PerspectiveCamera) {
