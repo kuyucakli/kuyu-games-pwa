@@ -66,27 +66,7 @@ export class TiltInput {
       { passive: true }
     );
 
-    if (typeof window !== "undefined" && "DeviceOrientationEvent" in window) {
-      // iOS requires permission
-      const maybeRequestPermission = async () => {
-        alert("aa");
-        const deviceOrientation = DeviceOrientationEvent as any;
-        if (typeof deviceOrientation.requestPermission === "function") {
-          const result = await deviceOrientation.requestPermission();
-          if (result === "granted") {
-            this.enableDeviceTilt();
-          }
-        } else {
-          // Android / others
-          this.enableDeviceTilt();
-        }
-      };
-
-      // Call this from a user gesture (e.g. first touch)
-      el.addEventListener("pointerdown", maybeRequestPermission, {
-        once: true,
-      });
-    }
+    this.enableDeviceTilt();
   }
 
   reset() {

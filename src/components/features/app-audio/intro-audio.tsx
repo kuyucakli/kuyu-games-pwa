@@ -5,32 +5,21 @@ import { useRef } from "react";
 
 export function IntroAudio() {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const { muted, setMuted } = useAudioSession();
-
-  const handleUserGesture = async () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    try {
-      if (audio.paused) {
-        await audio.play(); // queues if not ready
-        setMuted(false);
-      } else {
-        audio.pause();
-        setMuted(true);
-      }
-    } catch {
-      // autoplay policy rejection
-    }
-  };
+  const { muted, toggleMuted } = useAudioSession();
 
   return (
     <div className="relative z-50 ">
-      <button type="button" onPointerDown={handleUserGesture}>
+      <button
+        type="button"
+        onPointerDown={() => {
+          toggleMuted();
+        }}
+      >
         {muted ? <IconMusicOff /> : <IconMusicNote />}
       </button>
 
       <audio
+        id="global-audio-player"
         ref={audioRef}
         preload="metadata"
         loop

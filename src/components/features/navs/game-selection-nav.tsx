@@ -4,10 +4,11 @@ import styles from "./navs.module.css";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { LogoKuyuGames } from "@/components/logo";
+import { Settings } from "../games/shared/settings";
 
 export function GameSelectionNav() {
   return (
-    <div className={`${styles.GameSelectionNavContainer} animate-pulse`}>
+    <div className={`${styles.GameSelectionNavContainer} animate-pulse `}>
       <SelectGameIntro />
 
       <div className={`${styles.GameSelectionNavContent} `}>
@@ -17,12 +18,13 @@ export function GameSelectionNav() {
             <CardTitle>SELECT GAME</CardTitle>
           </CardHeader>
           <CardContent>
-            <nav className="flex flex-col gap-1 mt-4">
+            <nav className="flex flex-col gap-1 mt-4 mb-8">
               <LinkButtonArtistic href="/pinball">PINBALL</LinkButtonArtistic>
               <LinkButtonArtistic href="/tahterevallis">
                 TAHTEREVALLIS
               </LinkButtonArtistic>
             </nav>
+            <Settings />
           </CardContent>
         </Card>
       </div>

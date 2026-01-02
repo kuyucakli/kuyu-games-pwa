@@ -3,14 +3,28 @@ import { create } from "zustand";
 
 type AudioSession = {
   muted: boolean;
-  unlocked: boolean;
-  setMuted: (v: boolean) => void;
-  unlock: () => void;
+  toggleMuted: () => void;
 };
 
-export const useAudioSession = create<AudioSession>((set) => ({
+export const useAudioSession = create<AudioSession>((set, get) => ({
   muted: true,
-  unlocked: false,
-  setMuted: (muted) => set({ muted }),
-  unlock: () => set({ unlocked: true }),
+  toggleMuted: async () => {
+    const audio = document.getElementById(
+      "global-audio-player"
+    ) as HTMLAudioElement;
+
+    if (!audio) return;
+
+    try {
+      if (audio.paused) {
+        await audio.play(); // queues if not ready
+        set({ muted: false });
+      } else {
+        audio.pause();
+        set({ muted: true });
+      }
+    } catch {
+      // autoplay policy rejection
+    }
+  },
 }));
