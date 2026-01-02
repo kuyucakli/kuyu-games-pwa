@@ -369,49 +369,7 @@ export class Game {
     // Rotate for portrait
     camera.rotation.z = isPortrait ? Math.PI / 2 : 0;
   }
-  // fitCameraToTable(
-  //   camera: THREE.PerspectiveCamera,
-  //   table: THREE.Object3D,
-  //   viewportW: number,
-  //   viewportH: number,
-  //   maxTablePx = 600,
-  //   offset = 0.5
-  // ) {
-  //   const box = new THREE.Box3().setFromObject(table);
-
-  //   const size = new THREE.Vector3();
-  //   const center = new THREE.Vector3();
-  //   box.getSize(size);
-  //   box.getCenter(center);
-
-  //   camera.aspect = viewportW / viewportH;
-
-  //   const vFov = THREE.MathUtils.degToRad(camera.fov);
-  //   const hFov = 2 * Math.atan(Math.tan(vFov / 2) * camera.aspect);
-
-  //   // ---- 1. Distance to fully fit table (X/Z)
-  //   const fitDx = size.x / 2 / Math.tan(hFov / 2);
-  //   const fitDz = size.z / 2 / Math.tan(vFov / 2);
-  //   const fitDistance = Math.max(fitDx, fitDz) * offset;
-
-  //   // ---- 2. Distance to enforce max pixel width
-  //   const tableWorldWidth = size.x;
-  //   const visibleWorldWidthAtD = (tableWorldWidth * viewportW) / maxTablePx;
-
-  //   const pixelLimitedDistance =
-  //     visibleWorldWidthAtD / (2 * Math.tan(hFov / 2));
-
-  //   // ---- 3. Final distance
-  //   const distance = Math.max(fitDistance, pixelLimitedDistance);
-
-  //   // ---- Apply camera
-  //   camera.position.set(center.x, center.y + distance, center.z);
-  //   camera.near = distance / 50;
-  //   camera.far = distance * 5;
-  //   camera.updateProjectionMatrix();
-
-  //   camera.lookAt(center);
-  // }
+ 
 
   update(dt: number) {
     if (this.state != "playing") return;

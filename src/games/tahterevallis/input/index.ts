@@ -100,7 +100,8 @@ export class TiltInput {
     let y = ((clientY - rect.top) / rect.height) * 2 - 1;
     y = -y; // screen → game space
 
-    this.y = this.isTouch ? -y : y;
+    this.y = y;
+    // this.y = this.isTouch ? -y : y;
   }
 
   private enableDeviceTilt() {
