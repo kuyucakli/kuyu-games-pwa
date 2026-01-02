@@ -12,7 +12,7 @@ export class TiltInput {
   private DEAD_ZONE_TILT = 2; // degrees
   private PHYSICAL_MAX_TILT = 45; // absolute safety clamp
 
-  private CONTROL_RANGE_X = 15; // left / right feels weaker
+  private CONTROL_RANGE_X = 14; // left / right feels weaker
   private CONTROL_RANGE_Y = 18; // forward / back feels stronger
 
   // --- calibration ---
