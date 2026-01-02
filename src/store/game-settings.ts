@@ -27,6 +27,7 @@ export const useGameSettings = create<GameSettings>()(
       setLanguage: (v) => set({ language: v }),
       setTiltEnabled: (v) => set({ tiltEnabled: v }),
       requestTiltPermission: async () => {
+        alert("slkmdsfldskf");
         if (!get().tiltEnabled) return;
 
         if (typeof window === "undefined") return;
@@ -40,6 +41,7 @@ export const useGameSettings = create<GameSettings>()(
             set({
               tiltPermission: result === "granted" ? "granted" : "denied",
             });
+            alert(result);
             if (result === "granted") set({ tiltEnabled: true });
             return;
           }
@@ -47,6 +49,7 @@ export const useGameSettings = create<GameSettings>()(
           // Android / Chrome / others (no permission prompt)
           if ("DeviceOrientationEvent" in window) {
             set({ tiltPermission: "granted" });
+            set({ tiltEnabled: true });
             return;
           }
 

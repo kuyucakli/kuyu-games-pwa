@@ -12,17 +12,18 @@ export function Settings() {
 
   return (
     <div className={`flex flex-col gap-4`}>
-      {isTouchDevice() && (
+      {true && (
         <div className="flex items-center gap-3">
           <Checkbox
             id="enable-device-orientation"
-            checked={tiltEnabled && tiltPermission === "granted"}
+            defaultChecked={tiltEnabled && tiltPermission === "granted"}
             onCheckedChange={async (checked) => {
-              if (checked !== true) {
+              if (!checked) {
+                console.log("uncheck", checked);
                 setTiltEnabled(false);
                 return;
               }
-
+              console.log("check", checked);
               await requestTiltPermission();
             }}
           />
