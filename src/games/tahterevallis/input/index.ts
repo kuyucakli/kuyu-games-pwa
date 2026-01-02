@@ -8,6 +8,8 @@ export class TiltInput {
   private active = false;
   private isTouch = false;
   private useDeviceTilt = false;
+  private DEAD_ZONE_TILT = 2; // degrees
+  private MAX_TILT = 30; // degrees (not 45)
 
   attach(engine: Engine) {
     const el = engine.renderer.domElement;
@@ -32,7 +34,7 @@ export class TiltInput {
       this.reset();
     });
 
-    // ---------- Touch ---------- 
+    // ---------- Touch ----------
     el.addEventListener(
       "touchstart",
       (e) => {
@@ -104,20 +106,77 @@ export class TiltInput {
     // this.y = this.isTouch ? -y : y;
   }
 
+  private normalizeTilt(deg: number): number {
+    const abs = Math.abs(deg);
+
+    if (abs < this.DEAD_ZONE_TILT) return 0;
+
+    const t = Math.min(abs, this.MAX_TILT) / this.MAX_TILT;
+
+    // smoothstep-like curve (good control near center)
+    const curved = t * t * (3 - 2 * t);
+
+    return Math.sign(deg) * curved;
+  }
+
   private enableDeviceTilt() {
     this.useDeviceTilt = true;
 
     window.addEventListener("deviceorientation", (e) => {
-      if (this.active) return; // touch/mouse takes priority
+      if (this.active) return;
       if (e.beta == null || e.gamma == null) return;
 
-      // Normalize
-      const x = MathUtils.clamp(e.gamma / 45, -1, 1);
-      const y = MathUtils.clamp(e.beta / 45, -1, 1);
+      const beta = e.beta;
+      const gamma = e.gamma;
 
-      // tilt device forward → table top moves away
-      this.x = -x;
-      this.y = y;
+      const angle =
+        screen.orientation?.angle ?? (window as any).orientation ?? 0;
+
+      let rawX = 0;
+      let rawY = 0;
+
+      switch (angle) {
+        case 0:
+          rawX = gamma;
+          rawY = beta;
+          break;
+
+        case 90:
+          rawX = beta;
+          rawY = -gamma;
+          break;
+
+        case -90:
+        case 270:
+          rawX = -beta;
+          rawY = gamma;
+          break;
+
+        case 180:
+          rawX = -gamma;
+          rawY = -beta;
+          break;
+      }
+
+      this.x = this.normalizeTilt(rawX);
+      this.y = this.normalizeTilt(rawY);
     });
   }
+
+  // private enableDeviceTilt() {
+  //   this.useDeviceTilt = true;
+
+  //   window.addEventListener("deviceorientation", (e) => {
+  //     if (this.active) return; // touch/mouse takes priority
+  //     if (e.beta == null || e.gamma == null) return;
+
+  //     // Normalize
+  //     const x = MathUtils.clamp(e.gamma / 45, -1, 1);
+  //     const y = MathUtils.clamp(e.beta / 45, -1, 1);
+
+  //     // tilt device forward → table top moves away
+  //     this.x = -x;
+  //     this.y = y;
+  //   });
+  // }
 }
