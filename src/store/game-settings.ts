@@ -27,9 +27,6 @@ export const useGameSettings = create<GameSettings>()(
       setLanguage: (v) => set({ language: v }),
       setTiltEnabled: (v) => set({ tiltEnabled: v }),
       requestTiltPermission: async () => {
-        alert("slkmdsfldskf");
-        if (!get().tiltEnabled) return;
-
         if (typeof window === "undefined") return;
 
         try {

@@ -19,11 +19,10 @@ export function Settings() {
             defaultChecked={tiltEnabled && tiltPermission === "granted"}
             onCheckedChange={async (checked) => {
               if (!checked) {
-                console.log("uncheck", checked);
                 setTiltEnabled(false);
                 return;
               }
-              console.log("check", checked);
+
               await requestTiltPermission();
             }}
           />
