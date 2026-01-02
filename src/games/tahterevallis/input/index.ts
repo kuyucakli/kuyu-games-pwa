@@ -32,7 +32,7 @@ export class TiltInput {
       this.reset();
     });
 
-    // ---------- Touch ----------
+    // ---------- Touch ---------- 
     el.addEventListener(
       "touchstart",
       (e) => {
@@ -115,10 +115,9 @@ export class TiltInput {
       const x = MathUtils.clamp(e.gamma / 45, -1, 1);
       const y = MathUtils.clamp(e.beta / 45, -1, 1);
 
-      // Match your existing semantic:
       // tilt device forward → table top moves away
-      this.x = x;
-      this.y = -y;
+      this.x = -x;
+      this.y = y;
     });
   }
 }
