@@ -16,7 +16,7 @@ export function Settings() {
         <div className="flex items-center gap-3">
           <Checkbox
             id="enable-device-orientation"
-            defaultChecked={tiltEnabled && tiltPermission === "granted"}
+            checked={tiltEnabled && tiltPermission === "granted"}
             onCheckedChange={async (checked) => {
               if (checked !== true) {
                 setTiltEnabled(false);
