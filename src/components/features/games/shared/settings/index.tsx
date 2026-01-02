@@ -7,7 +7,7 @@ import { useGameSettings } from "@/store/game-settings";
 
 export function Settings() {
   const { muted, toggleMuted } = useAudioSession();
-  const { tiltEnabled, setTiltEnabled, requestTiltPermission } =
+  const { tiltEnabled, setTiltEnabled, tiltPermission, requestTiltPermission } =
     useGameSettings();
 
   return (
@@ -16,9 +16,13 @@ export function Settings() {
         <div className="flex items-center gap-3">
           <Checkbox
             id="enable-device-orientation"
-            checked={tiltEnabled}
+            checked={tiltEnabled && tiltPermission === "granted"}
             onPointerDown={requestTiltPermission}
-            onCheckedChange={async (v) => {
+            onCheckedChange={async (checked) => {
+              if (checked) {
+                setTiltEnabled(false);
+                return;
+              }
               await requestTiltPermission();
             }}
           />

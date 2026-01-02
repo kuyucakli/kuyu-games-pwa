@@ -40,6 +40,7 @@ export const useGameSettings = create<GameSettings>()(
             set({
               tiltPermission: result === "granted" ? "granted" : "denied",
             });
+            if (result === "granted") set({ tiltEnabled: true });
             return;
           }
 
