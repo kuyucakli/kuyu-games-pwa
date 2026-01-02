@@ -19,7 +19,7 @@ export function Settings() {
             checked={tiltEnabled && tiltPermission === "granted"}
             onPointerDown={requestTiltPermission}
             onCheckedChange={async (checked) => {
-              if (checked) {
+              if (checked !== true) {
                 setTiltEnabled(false);
                 return;
               }
