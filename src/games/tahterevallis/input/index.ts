@@ -1,4 +1,3 @@
-import { MathUtils } from "three";
 import { Engine } from "../../engine/core/engine";
 
 export class TiltInput {
@@ -10,6 +9,9 @@ export class TiltInput {
   private useDeviceTilt = false;
   private DEAD_ZONE_TILT = 2; // degrees
   private MAX_TILT = 20; // degrees
+  private zeroX = 0;
+  private zeroY = 0;
+  private calibrated = false;
 
   attach(engine: Engine) {
     const el = engine.renderer.domElement;
@@ -100,6 +102,12 @@ export class TiltInput {
     return Math.sign(deg) * curved;
   }
 
+  private calibrate(rawX: number, rawY: number) {
+    this.zeroX = rawX;
+    this.zeroY = rawY;
+    this.calibrated = true;
+  }
+
   private enableDeviceTilt() {
     this.useDeviceTilt = true;
 
@@ -139,25 +147,18 @@ export class TiltInput {
           break;
       }
 
-      this.x = this.normalizeTilt(rawX);
-      this.y = this.normalizeTilt(rawY);
+      if (!this.calibrated) {
+        this.calibrate(rawX, rawY);
+        this.x = 0;
+        this.y = 0;
+        return;
+      }
+
+      const relX = rawX - this.zeroX;
+      const relY = rawY - this.zeroY;
+
+      this.x = this.normalizeTilt(relX);
+      this.y = this.normalizeTilt(relY);
     });
   }
-
-  // private enableDeviceTilt() {
-  //   this.useDeviceTilt = true;
-
-  //   window.addEventListener("deviceorientation", (e) => {
-  //     if (this.active) return; // touch/mouse takes priority
-  //     if (e.beta == null || e.gamma == null) return;
-
-  //     // Normalize
-  //     const x = MathUtils.clamp(e.gamma / 45, -1, 1);
-  //     const y = MathUtils.clamp(e.beta / 45, -1, 1);
-
-  //     // tilt device forward → table top moves away
-  //     this.x = -x;
-  //     this.y = y;
-  //   });
-  // }
 }
