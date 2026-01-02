@@ -14,6 +14,7 @@ export function IntroAudio() {
         onPointerDown={() => {
           toggleMuted();
         }}
+        className={`${muted ? "opacity-50" : ""}`}
       >
         {muted ? <IconMusicOff /> : <IconMusicNote />}
       </button>
