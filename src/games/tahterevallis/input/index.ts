@@ -12,7 +12,7 @@ export class TiltInput {
   private DEAD_ZONE_TILT = 2; // degrees
   private PHYSICAL_MAX_TILT = 45; // absolute safety clamp
 
-  private CONTROL_RANGE_X = 10; // left / right feels weaker
+  private CONTROL_RANGE_X = 15; // left / right feels weaker
   private CONTROL_RANGE_Y = 18; // forward / back feels stronger
 
   // --- calibration ---
@@ -97,7 +97,8 @@ export class TiltInput {
     const t = Math.min(clamped / controlRange, 1);
 
     // smoothstep curve
-    const curved = t * t * (3 - 2 * t);
+    // const curved = t * t * (3 - 2 * t);
+    const curved = Math.pow(t, 1.3);
     return Math.sign(deg) * curved;
   }
 
