@@ -8,7 +8,8 @@ export class TiltInput {
   private isTouch = false;
   private useDeviceTilt = false;
   private DEAD_ZONE_TILT = 2; // degrees
-  private MAX_TILT = 20; // degrees
+  private PHYSICAL_MAX_TILT = 45; // degrees (user can tilt a lot)
+  private CONTROL_RANGE_TILT = 15; // degrees (full input already reached)
   private zeroX = 0;
   private zeroY = 0;
   private calibrated = false;
@@ -94,10 +95,14 @@ export class TiltInput {
 
     if (abs < this.DEAD_ZONE_TILT) return 0;
 
-    const t = Math.min(abs, this.MAX_TILT) / this.MAX_TILT;
+    // Clamp to physical safety limit
+    const clamped = Math.min(abs, this.PHYSICAL_MAX_TILT);
 
-    // smoothstep-like curve (good control near center)
-    const curved = t * t * (3 - 2 * t);
+    // Map CONTROL range to full input
+    const t = Math.min(clamped / this.CONTROL_RANGE_TILT, 1);
+
+    // Curve: fast response, stable center
+    const curved = t * t * (3 - 2 * t); // smoothstep
 
     return Math.sign(deg) * curved;
   }
