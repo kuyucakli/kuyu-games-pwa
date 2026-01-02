@@ -2,14 +2,15 @@
 }
 
 .GameSelectionNavContent {
-  animation: content 2s 1.5s forwards;
+  animation: content 0.6s 0.8s ease-in-out forwards;
   opacity: 0;
 }
 
 @keyframes content {
   0% {
     opacity: 0;
-    transform: scale(1.2);
+    transform: scale(1.4);
+    filter: blur(20);
   }
   100% {
     opacity: 1;

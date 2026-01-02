@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useAudioSession } from "@/store/audio-session";
 import { useGameSettings } from "@/store/game-settings";
+import { is } from "drizzle-orm";
 
 export function Settings() {
   const { muted, toggleMuted } = useAudioSession();
@@ -12,7 +13,7 @@ export function Settings() {
 
   return (
     <div className={`flex flex-col gap-4`}>
-      {true && (
+      {isTouchDevice() && (
         <div className="flex items-center gap-3">
           <Checkbox
             id="enable-device-orientation"
