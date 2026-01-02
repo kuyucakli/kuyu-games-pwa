@@ -16,6 +16,7 @@ import { LevelSystem } from "./systems/level-system";
 import { TimerSystem } from "./systems/timer-system";
 import { Property } from "@/lib/types/utils";
 import { OutOfBoundsSystem } from "./systems/out-of-bounds-system";
+import { GameDisposable } from "@/games/types";
 
 type GameState = "idle" | "playing" | "paused" | "level-complete" | "game-over";
 
@@ -68,6 +69,7 @@ export class Game {
   private mainCamera!: THREE.PerspectiveCamera;
   private state: GameState = "idle";
   private activeLevel = 1;
+  private disposables: Array<GameDisposable> = [];
 
   async init(engine: Engine) {
     this.assetManager = new AssetManager<typeof GameAssets>();
@@ -110,13 +112,13 @@ export class Game {
     this.sparkleSystem = new SparkleSystem();
     this.scene.add(this.sparkleSystem.points);
 
-    this.holeSystem = new HoleSystem(this.engine.physicsWorld, tableInstance);
+    this.holeSystem = this.register(
+      new HoleSystem(this.engine.physicsWorld, tableInstance)
+    );
     this.holeSystem.registerFromTable();
 
-    this.ballSystem = new BallSystem(
-      this.scene,
-      engine.physicsWorld,
-      this.sparkleSystem
+    this.ballSystem = this.register(
+      new BallSystem(this.scene, engine.physicsWorld, this.sparkleSystem)
     );
     this.outOfBoundsSystem = new OutOfBoundsSystem(this.ballSystem);
 
@@ -174,6 +176,13 @@ export class Game {
         this.fitCameraToTable(this.mainCamera, this.table, w, h, 640);
         this.applyCameraOrientation(this.mainCamera);
       });
+  }
+
+  private register<T extends { dispose?: () => void }>(system: T): T {
+    if (system.dispose) {
+      this.disposables.push(system as any);
+    }
+    return system;
   }
 
   private applyCameraOrientation(camera: THREE.PerspectiveCamera) {
@@ -302,13 +311,13 @@ export class Game {
   pauseGame() {
     if (this.state !== "playing") return;
     this.state = "paused";
-    this.timerSystem.stop();
+    this.timerSystem.pause();
   }
 
   resumeGame() {
     if (this.state !== "paused") return;
     this.state = "playing";
-    this.timerSystem.start();
+    this.timerSystem.resume();
   }
 
   fitCameraToTable(
@@ -369,7 +378,6 @@ export class Game {
     // Rotate for portrait
     camera.rotation.z = isPortrait ? Math.PI / 2 : 0;
   }
- 
 
   update(dt: number) {
     if (this.state != "playing") return;
@@ -390,5 +398,28 @@ export class Game {
     gameEvents.emit("game:reset");
   }
 
-  dispose() {}
+  dispose() {
+    // stop game
+    this.state = "idle";
+
+    // dispose systems (reverse order is safer)
+    for (let i = this.disposables.length - 1; i >= 0; i--) {
+      this.disposables[i].dispose();
+    }
+    this.disposables.length = 0;
+
+    // clear scene
+    this.scene.traverse((obj) => {
+      if ((obj as any).geometry) (obj as any).geometry.dispose?.();
+      if ((obj as any).material) {
+        const m = (obj as any).material;
+        if (Array.isArray(m)) m.forEach((mat) => mat.dispose?.());
+        else m.dispose?.();
+      }
+    });
+
+    // clear mitt listeners
+    gameEvents.all.clear();
+    gameBusCommands.all.clear();
+  }
 }

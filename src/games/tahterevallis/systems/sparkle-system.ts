@@ -1,7 +1,8 @@
 import * as THREE from "three";
 import { gameEvents } from "..";
+import { GameDisposable } from "@/games/types";
 
-export class SparkleSystem {
+export class SparkleSystem implements GameDisposable {
   points: THREE.Points;
   private geometry: THREE.BufferGeometry;
   private material: THREE.PointsMaterial;
@@ -11,6 +12,17 @@ export class SparkleSystem {
   private velocities: Float32Array;
   private baseColors: Float32Array;
   private cursor = 0;
+  private disposed = false;
+
+  // keep handler reference
+  private onGoalFx = (pos: THREE.Vector3) => {
+    this.emitBurst(pos, {
+      count: 600,
+      speed: 2,
+      spread: 3.0,
+      upwardBias: 2.6,
+    });
+  };
 
   constructor() {
     this.geometry = new THREE.BufferGeometry();
@@ -39,14 +51,7 @@ export class SparkleSystem {
 
     this.points = new THREE.Points(this.geometry, this.material);
 
-    gameEvents.on("fx:goal", (pos) => {
-      this.emitBurst(pos, {
-        count: 600,
-        speed: 2,
-        spread: 3.0,
-        upwardBias: 2.6,
-      });
-    });
+    gameEvents.on("fx:goal", this.onGoalFx);
   }
 
   emit(position: THREE.Vector3, baseVelocity?: THREE.Vector3) {
@@ -160,5 +165,24 @@ export class SparkleSystem {
 
     positions.needsUpdate = true;
     colors.needsUpdate = true;
+  }
+
+  dispose(): void {
+    if (this.disposed) return;
+    this.disposed = true;
+
+    // 1. Unsubscribe events
+    gameEvents.off("fx:goal", this.onGoalFx);
+
+    // 2. Detach from scene (owner may also do this)
+    this.points.removeFromParent();
+
+    // 3. Free GPU resources
+    this.geometry.dispose();
+    this.material.dispose();
+
+    // 4. Help GC (optional but clean)
+    // @ts-expect-error intentional cleanup
+    this.lifetimes = this.ages = this.velocities = this.baseColors = null;
   }
 }

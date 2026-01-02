@@ -2,7 +2,6 @@ import { LinkButtonArtistic } from "@/components/ui/buttons";
 import { SelectGameIntro } from "../motion-intros/select-game-intro";
 import styles from "./navs.module.css";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
 import { LogoKuyuGames } from "@/components/logo";
 import { Settings } from "../games/shared/settings";
 
@@ -18,7 +17,7 @@ export function GameSelectionNav() {
             <CardTitle>SELECT GAME</CardTitle>
           </CardHeader>
           <CardContent>
-            <nav className="flex flex-col gap-1 mt-4 mb-8">
+            <nav className="flex flex-col gap-3 mt-4 mb-12">
               <LinkButtonArtistic href="/pinball">PINBALL</LinkButtonArtistic>
               <LinkButtonArtistic href="/tahterevallis">
                 TAHTEREVALLIS

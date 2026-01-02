@@ -1,10 +1,19 @@
-import { Object3D, Scene, MathUtils, Vector3 } from "three";
+import {
+  Object3D,
+  Scene,
+  MathUtils,
+  Vector3,
+  BufferGeometry,
+  Mesh,
+  Material,
+} from "three";
 import RAPIER, { Collider } from "@dimforge/rapier3d";
 import { Ball } from "../objects/ball";
 import { PhysicsWorld } from "@/games/engine/physics/physics-world";
 import { createDynamicBall } from "../factories/ball-factory";
 import { GAME_BALLS, LevelConfig } from "../config";
 import { SparkleSystem } from "../systems/sparkle-system";
+import { GameDisposable } from "@/games/types";
 
 export type BallCaptureTarget = {
   anchor: Object3D; // where to attach
@@ -25,7 +34,7 @@ export interface ActiveBallQuery {
   getActiveBalls(): readonly BallEntry[];
 }
 
-export class BallSystem {
+export class BallSystem implements GameDisposable {
   private nextBallId = 0;
   private ballSpeeds = new Map<RAPIER.RigidBody, number>();
   private balls: {
@@ -191,5 +200,49 @@ export class BallSystem {
       this.ballSpeeds.set(body, smoothSpeed);
       this.emitSparkles(mesh.position, v, smoothSpeed);
     }
+  }
+
+  dispose() {
+    for (const ball of this.balls) {
+      // 1. Remove Three.js mesh safely
+      if (ball.mesh.parent) {
+        ball.mesh.parent.remove(ball.mesh);
+      }
+
+      // Optional but correct if geometries/materials are unique
+      ball.mesh.traverse((obj) => {
+        if (obj instanceof Mesh) {
+          const geometry = obj.geometry;
+          if (geometry instanceof BufferGeometry) {
+            geometry.dispose();
+          }
+
+          const material = obj.material;
+          if (Array.isArray(material)) {
+            material.forEach((m: Material) => m.dispose());
+          } else if (material instanceof Material) {
+            material.dispose();
+          }
+        }
+      });
+
+      // 2. Remove physics metadata first
+      this.physicsWorld.removeColliderMeta(ball.collider);
+
+      // 3. Remove Rapier collider and rigid body
+      const world = this.physicsWorld.getWorld();
+
+      if (ball.collider) {
+        world.removeCollider(ball.collider, true);
+      }
+
+      if (ball.body) {
+        world.removeRigidBody(ball.body);
+      }
+    }
+
+    // 4. Clear internal references
+    this.balls.length = 0;
+    this.ballSpeeds.clear();
   }
 }

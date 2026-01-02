@@ -31,7 +31,7 @@
 .LevelCompleted {
   background-color: #ff3e3e;
   /* background-color: #A5B2C3; */
-  background-image: url("/assets/tahterevallis/images/level-completed-thing.png");
+  background-image: url("/assets/tahterevallis/images/tahterevallis-game-over-circle.svg");
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;

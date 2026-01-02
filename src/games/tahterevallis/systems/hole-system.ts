@@ -12,6 +12,7 @@ import { HoleName, LevelConfig } from "../config";
 import { Collider } from "@dimforge/rapier3d";
 import { gameEvents } from "..";
 import { BallCaptureTarget } from "./ball-system";
+import { GameDisposable } from "@/games/types";
 
 type HoleIndicator = {
   locator: Object3D;
@@ -20,7 +21,7 @@ type HoleIndicator = {
   sensor: Collider;
 };
 
-export class HoleSystem {
+export class HoleSystem implements GameDisposable {
   private indicators: HoleIndicator[] = [];
   private world: PhysicsWorld;
   private table;
@@ -29,31 +30,7 @@ export class HoleSystem {
     this.world = world;
     this.table = table;
 
-    physicsWorldEvent.on("physics:collision", ({ a, b }) => {
-      const isBallHole =
-        (a?.kind === "ball" && b?.kind === "goal") ||
-        (a?.kind === "goal" && b?.kind === "ball");
-
-      if (!isBallHole) return;
-
-      const holeName = a?.kind === "goal" ? a.entityId : b.entityId;
-      const ballName = a?.kind === "ball" ? a.entityId : b.entityId;
-
-      const holeIndicator = this.indicators.find(
-        (i) => i.locator.name === holeName
-      );
-
-      if (!holeIndicator || !holeIndicator?.active) return;
-
-      const pos = new Vector3();
-      holeIndicator.locator.getWorldPosition(pos);
-      holeIndicator.active = false;
-      gameEvents.emit("goal:entered", {
-        ballName,
-        holeName: holeName as HoleName,
-        pos,
-      });
-    });
+    physicsWorldEvent.on("physics:collision", this.onCollision);
   }
 
   register(locator: Object3D) {
@@ -76,6 +53,33 @@ export class HoleSystem {
     this.indicators.push(indicator);
     return indicator;
   }
+
+  private onCollision = ({ a, b }: any) => {
+    const isBallHole =
+      (a?.kind === "ball" && b?.kind === "goal") ||
+      (a?.kind === "goal" && b?.kind === "ball");
+
+    if (!isBallHole) return;
+
+    const holeName = a?.kind === "goal" ? a.entityId : b.entityId;
+    const ballName = a?.kind === "ball" ? a.entityId : b.entityId;
+
+    const holeIndicator = this.indicators.find(
+      (i) => i.locator.name === holeName
+    );
+
+    if (!holeIndicator || !holeIndicator.active) return;
+
+    const pos = new Vector3();
+    holeIndicator.locator.getWorldPosition(pos);
+    holeIndicator.active = false;
+
+    gameEvents.emit("goal:entered", {
+      ballName,
+      holeName: holeName as HoleName,
+      pos,
+    });
+  };
 
   setActive(locatorName: string, active: boolean) {
     const indicator = this.indicators.find(
@@ -121,5 +125,38 @@ export class HoleSystem {
       const s = 1 + Math.sin(time * 4) * 0.05;
       i.mesh.scale.setScalar(s);
     }
+  }
+
+  dispose() {
+    // 1. Unregister physics event listener
+    physicsWorldEvent.off("physics:collision", this.onCollision);
+
+    // 2. Remove colliders and metadata
+    for (const indicator of this.indicators) {
+      // Disable sensor first (defensive)
+      indicator.sensor.setEnabled(false);
+
+      // Remove metadata + collider from physics world
+      this.world.removeColliderMeta(indicator.sensor);
+
+      // 3. Remove Three.js objects
+      indicator.locator.remove(indicator.mesh);
+
+      // 4. Dispose geometries/materials if created by you
+      indicator.mesh.traverse((obj) => {
+        const mesh = obj as any;
+        if (mesh.geometry) mesh.geometry.dispose();
+        if (mesh.material) {
+          if (Array.isArray(mesh.material)) {
+            for (const m of mesh.material) m.dispose();
+          } else {
+            mesh.material.dispose();
+          }
+        }
+      });
+    }
+
+    // 5. Clear references
+    this.indicators.length = 0;
   }
 }

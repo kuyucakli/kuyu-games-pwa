@@ -3,8 +3,9 @@ import { gameEvents } from "..";
 import { Vector3 } from "three";
 import { AudioDirector } from "@/games/engine/audio/audio-director";
 import { GameAssets } from "../config";
+import { GameDisposable } from "@/games/types";
 
-export class AudioSystem {
+export class AudioSystem implements GameDisposable {
   constructor(
     private assets: AssetManager<typeof GameAssets>,
     private audio: AudioDirector
@@ -42,8 +43,10 @@ export class AudioSystem {
     });
   };
 
-  dispose() {
+  dispose(): void {
     gameEvents.off("goal:entered", this.onGoal);
+    gameEvents.off("audio:intro-home", this.onHomeIntro);
+    gameEvents.off("audio:select-game", this.onSelectGame);
     //gameEvents.off("ball:hit-table", this.onBallHit);
   }
 }

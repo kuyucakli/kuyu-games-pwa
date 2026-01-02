@@ -1,7 +1,8 @@
+import { GameDisposable } from "@/games/types";
 import { gameEvents } from "..";
 import { ActiveBallQuery } from "./ball-system";
 
-export class OutOfBoundsSystem {
+export class OutOfBoundsSystem implements GameDisposable {
   private readonly Y_LIMIT = -2;
   private reported = new Set<string>();
 
@@ -23,5 +24,13 @@ export class OutOfBoundsSystem {
 
   reset() {
     this.reported.clear();
+  }
+
+  dispose(): void {
+    this.reported.clear();
+
+    // Optional: break reference to help GC in long-lived apps
+    // @ts-expect-error intentional cleanup
+    this.ballQuery = null;
   }
 }

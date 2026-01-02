@@ -27,7 +27,7 @@ export default function GameTahterevallis({
 
   useEffect(() => {
     let engine: Engine | null = null;
-
+    let game: Game;
     (async () => {
       if (!containerRef.current) return;
       engine = await Engine.create(containerRef.current);
@@ -37,11 +37,12 @@ export default function GameTahterevallis({
       tahterevallisEvents.on("assets:progress", (data) => {
         setProgress(data);
       });
-      const game = new Game();
+      game = new Game();
       await engine.mount(game);
     })();
 
     return () => {
+      game?.dispose();
       engine?.dispose();
     };
   }, []);
@@ -106,7 +107,6 @@ const TahterevallisHUD = ({
     gameBusCommands.emit("play");
   };
 
-  console.log("game state", gameState);
   return (
     <>
       <HUDLayer className="flex landscape:flex-col gap-2 p-2">

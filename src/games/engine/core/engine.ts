@@ -105,5 +105,6 @@ export class Engine {
     window.removeEventListener("resize", this.handleResize);
     this.physicsWorld.dispose();
     this.game?.dispose();
+    this.renderer.domElement.remove();
   }
 }

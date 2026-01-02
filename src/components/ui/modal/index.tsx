@@ -1,14 +1,30 @@
 "use client";
 
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { IconClose } from "../icons";
 
-export function Modal({ children }: PropsWithChildren) {
+export function Modal({
+  children,
+  onCloseAction,
+  onOpenAction,
+}: PropsWithChildren & {
+  onCloseAction?: () => void;
+  onOpenAction?: () => void;
+}) {
   const router = useRouter();
+
+  useEffect(() => {
+    onOpenAction?.();
+
+    return () => {
+      onCloseAction?.();
+    };
+  }, []);
+
   return (
     <dialog
-      className="w-full h-full fixed top-0 left-0 bg-neutral-800/90 z-50 backdrop-blur-xs flex items-center justify-center"
+      className="w-full h-full fixed top-0 left-0 bg-neutral-800/90 z-50 backdrop-blur-xs flex items-center justify-center text-inherit"
       open
     >
       <button

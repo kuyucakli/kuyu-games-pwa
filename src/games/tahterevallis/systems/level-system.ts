@@ -4,8 +4,9 @@ import { BallSystem } from "./ball-system";
 import { HoleSystem } from "./hole-system";
 import { HoleName, LEVELS_CONFIG } from "../config";
 import { formatTimePretty } from "@/lib/utils/time";
+import { GameDisposable } from "@/games/types";
 
-export class LevelSystem {
+export class LevelSystem implements GameDisposable {
   private goals: HoleName[] = [];
   private currentLevel: number = 1;
   constructor(private ballSystem: BallSystem, private holeSystem: HoleSystem) {
@@ -58,5 +59,20 @@ export class LevelSystem {
   reset(level: number) {
     this.currentLevel = level;
     this.goals = [];
+  }
+
+  dispose(): void {
+    gameEvents.off("goal:entered", this.onGoal);
+    gameEvents.off("timer:updated", this.checkRemainingTime);
+
+    // Clear internal state
+    this.goals.length = 0;
+
+    // Optional: break references for GC clarity
+    // (not required, but helpful in long-lived SPAs)
+    // @ts-expect-error intentional cleanup
+    this.ballSystem = null;
+    // @ts-expect-error intentional cleanup
+    this.holeSystem = null;
   }
 }

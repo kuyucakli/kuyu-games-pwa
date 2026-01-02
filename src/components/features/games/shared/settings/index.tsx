@@ -39,7 +39,7 @@ export function Settings() {
             toggleMuted();
           }}
         />
-        <Label htmlFor="terms-2">Audio {muted ? "off" : "on"}</Label>
+        <Label htmlFor="audio">Audio {muted ? "off" : "on"}</Label>
       </div>
     </div>
   );
