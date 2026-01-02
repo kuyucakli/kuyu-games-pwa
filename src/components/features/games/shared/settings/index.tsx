@@ -18,7 +18,9 @@ export function Settings() {
             id="enable-device-orientation"
             checked={tiltEnabled}
             onPointerDown={requestTiltPermission}
-            onCheckedChange={(v) => setTiltEnabled(Boolean(v))}
+            onCheckedChange={async (v) => {
+              await requestTiltPermission();
+            }}
           />
           <Label htmlFor="enable-device-orientation">
             Enable device orientation detection
