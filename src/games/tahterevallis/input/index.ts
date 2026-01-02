@@ -119,23 +119,23 @@ export class TiltInput {
       switch (angle) {
         case 0: // portrait
           rawX = gamma;
-          rawY = -beta;
+          rawY = beta;
           break;
 
         case 90: // landscape right
-          rawX = -beta;
+          rawX = beta;
           rawY = -gamma;
           break;
 
         case -90:
         case 270: // landscape left
-          rawX = beta;
+          rawX = -beta;
           rawY = gamma;
           break;
 
         case 180: // upside-down
           rawX = -gamma;
-          rawY = beta;
+          rawY = -beta;
           break;
       }
 
