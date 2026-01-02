@@ -9,7 +9,7 @@ export class TiltInput {
   private isTouch = false;
   private useDeviceTilt = false;
   private DEAD_ZONE_TILT = 2; // degrees
-  private MAX_TILT = 30; // degrees (not 45)
+  private MAX_TILT = 20; // degrees
 
   attach(engine: Engine) {
     const el = engine.renderer.domElement;
@@ -69,9 +69,10 @@ export class TiltInput {
     if (typeof window !== "undefined" && "DeviceOrientationEvent" in window) {
       // iOS requires permission
       const maybeRequestPermission = async () => {
-        const anyDO = DeviceOrientationEvent as any;
-        if (typeof anyDO.requestPermission === "function") {
-          const result = await anyDO.requestPermission();
+        alert("aa");
+        const deviceOrientation = DeviceOrientationEvent as any;
+        if (typeof deviceOrientation.requestPermission === "function") {
+          const result = await deviceOrientation.requestPermission();
           if (result === "granted") {
             this.enableDeviceTilt();
           }
