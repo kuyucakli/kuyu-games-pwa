@@ -117,25 +117,25 @@ export class TiltInput {
       let rawY = 0;
 
       switch (angle) {
-        case 0:
+        case 0: // portrait
           rawX = gamma;
-          rawY = beta;
+          rawY = -beta;
           break;
 
-        case 90:
-          rawX = beta;
+        case 90: // landscape right
+          rawX = -beta;
           rawY = -gamma;
           break;
 
         case -90:
-        case 270:
-          rawX = -beta;
+        case 270: // landscape left
+          rawX = beta;
           rawY = gamma;
           break;
 
-        case 180:
+        case 180: // upside-down
           rawX = -gamma;
-          rawY = -beta;
+          rawY = beta;
           break;
       }
 
