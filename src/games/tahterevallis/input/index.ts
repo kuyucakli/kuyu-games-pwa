@@ -123,13 +123,13 @@ export class TiltInput {
           break;
 
         case 90: // landscape right (home button on the right)
-          rawX = -beta; // <-- THIS was wrong before
+          rawX = beta; // <-- THIS was wrong before
           rawY = gamma;
           break;
 
         case -90:
         case 270: // landscape left
-          rawX = beta;
+          rawX = -beta;
           rawY = -gamma;
           break;
 
