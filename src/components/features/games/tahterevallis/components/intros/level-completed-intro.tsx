@@ -16,7 +16,7 @@ export function LevelCompletedIntro({
       startAndAutoEnd={true}
       onCloseAction={onIntroEnded}
     >
-      <h1 className="text-8xl">LEVEL {level}</h1>
+      <h1 className="text-4xl blur-[1px]">LEVEL {level}</h1>
     </BaseIntro>
   );
 }

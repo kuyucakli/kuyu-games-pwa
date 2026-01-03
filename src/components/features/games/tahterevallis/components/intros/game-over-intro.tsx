@@ -14,7 +14,7 @@ export function GameOverIntro({
       onCloseAction={onRequestGameReplay}
       actionButtonLabel="Replay"
     >
-      <h1 className="text-5xl">Game Over</h1>
+      <h1 className="text-4xl blur-[1px]">Game Over</h1>
     </BaseIntro>
   );
 }

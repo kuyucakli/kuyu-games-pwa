@@ -23,7 +23,7 @@
 .GameOverContainer {
   background-color: #ff3e3e;
   background-image: url("/assets/tahterevallis/images/tahterevallis-game-over-circle.svg");
-  background-size: contain;
+  background-size: 52%;
   background-position: center;
   background-repeat: no-repeat;
 }
@@ -32,20 +32,30 @@
   background-color: #ff3e3e;
   /* background-color: #A5B2C3; */
   background-image: url("/assets/tahterevallis/images/tahterevallis-game-over-circle.svg");
-  background-size: contain;
+  background-size: 52%;
   background-position: center;
   background-repeat: no-repeat;
 }
 
 .IntroStart {
-  animation: fadeIn var(--start-duration) ease-out forwards;
+  animation: fadeIn var(--start-duration) ease-out forwards,
+    background-pulse 4s linear forwards alternate infinite;
 }
 .IntroEnd {
   animation: fadeOut var(--end-duration) forwards;
 }
 
 .IntroStartAndAutoEnd {
-  animation: newAnim 4s forwards;
+  animation: startAndAutoEnd 4s forwards;
+}
+
+@keyframes background-pulse {
+  0% {
+    background-size: 46%;
+  }
+  100% {
+    background-size: 52%;
+  }
 }
 
 @keyframes fadeIn {
@@ -71,7 +81,7 @@
   }
 }
 
-@keyframes newAnim {
+@keyframes startAndAutoEnd {
   0% {
     opacity: 0;
   }
