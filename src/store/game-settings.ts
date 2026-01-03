@@ -57,6 +57,14 @@ export const useGameSettings = create<GameSettings>()(
       },
     }),
 
-    { name: "game-settings" }
+    {
+      name: "game-settings",
+      partialize: (state) => ({
+        reducedMotion: state.reducedMotion,
+        language: state.language,
+        // tiltEnabled NOT persisted
+        // tiltPermission NOT persisted
+      }),
+    }
   )
 );
