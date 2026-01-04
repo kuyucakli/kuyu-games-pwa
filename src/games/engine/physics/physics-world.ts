@@ -6,6 +6,10 @@ export type PhysicsWorldEvent = {
     a: ColliderMeta | undefined;
     b: ColliderMeta | undefined;
   };
+  "physics:collisionEnd": {
+    a: ColliderMeta | undefined;
+    b: ColliderMeta | undefined;
+  };
 };
 export const physicsWorldEvent = mitt<PhysicsWorldEvent>();
 
@@ -28,16 +32,17 @@ export class PhysicsWorld {
     this.world.step(this.eventQueue);
 
     this.eventQueue.drainCollisionEvents((h1, h2, started) => {
-      if (!started) return;
+      // if (!started) return;
       const a = this.getColliderMeta(h1);
       const b = this.getColliderMeta(h2);
 
       if (!a || !b) return;
 
-      physicsWorldEvent.emit("physics:collision", {
-        a,
-        b,
-      });
+      if (started) {
+        physicsWorldEvent.emit("physics:collision", { a, b });
+      } else {
+        physicsWorldEvent.emit("physics:collisionEnd", { a, b });
+      }
     });
   }
 

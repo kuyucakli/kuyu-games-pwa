@@ -1,14 +1,14 @@
 import { AssetManager } from "@/games/engine/assets/asset-manager";
 import { gameEvents } from "..";
-import { Vector3 } from "three";
-import { AudioDirector } from "@/games/engine/audio/audio-director";
+import { GameAudioManager } from "@/games/engine/audio/game-audio-manager";
 import { GameAssets } from "../config";
 import { GameDisposable } from "@/games/types";
+import { BallRollingAudio } from "../objects/ball";
 
 export class AudioSystem implements GameDisposable {
   constructor(
     private assets: AssetManager<typeof GameAssets>,
-    private audio: AudioDirector
+    private audio: GameAudioManager
   ) {
     gameEvents.on("goal:entered", this.onGoal);
     gameEvents.on("audio:intro-home", this.onHomeIntro);
@@ -26,22 +26,15 @@ export class AudioSystem implements GameDisposable {
   };
 
   private onGoal = () => {
-    this.audio.play(this.assets.get("goalSoundFx"));
+    this.audio.play(this.assets.get("goalSoundFx"), { volume: 0.001 });
   };
 
-  private onBallHit = ({
-    speed,
-    position,
-  }: {
-    speed: number;
-    position: Vector3;
-  }) => {
-    if (speed < 0.8) return;
-
-    this.audio.playAt(this.assets.get("goalSoundFx"), position, undefined, {
-      volume: Math.min(speed / 4, 1),
-    });
-  };
+  createBallRollingAudio(): BallRollingAudio {
+    return new BallRollingAudio(
+      this.assets.get("ballRollingSoundFx"),
+      this.audio.output
+    );
+  }
 
   dispose(): void {
     gameEvents.off("goal:entered", this.onGoal);

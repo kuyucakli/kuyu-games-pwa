@@ -1,13 +1,13 @@
 "use client";
 
+import { threeAudioEngine } from "@/audio/three-audio-engine";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useAudioSession } from "@/store/audio-session";
 import { useGameSettings } from "@/store/game-settings";
-import { is } from "drizzle-orm";
 
 export function Settings() {
-  const { muted, toggleMuted } = useAudioSession();
+  const { muted, setMuted } = useAudioSession();
   const { tiltEnabled, setTiltEnabled, tiltPermission, requestTiltPermission } =
     useGameSettings();
 
@@ -37,7 +37,9 @@ export function Settings() {
           id="audio"
           checked={!muted}
           onCheckedChange={() => {
-            toggleMuted();
+            threeAudioEngine.unlock();
+            threeAudioEngine.setMuted(!muted);
+            setMuted(!muted);
           }}
         />
         <Label htmlFor="audio">Audio {muted ? "off" : "on"}</Label>

@@ -6,6 +6,7 @@ import { LogoKuyuGames } from "@/components/logo";
 import { Settings } from "../games/shared/settings";
 
 export function GameSelectionNav() {
+  
   return (
     <div className={`${styles.GameSelectionNavContainer} animate-pulse `}>
       <SelectGameIntro />

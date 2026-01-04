@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { PhysicsWorld } from "../physics/physics-world";
 import { Game } from "../../tahterevallis";
-import { AudioDirector } from "../audio/audio-director";
+import { GameAudioManager } from "../audio/game-audio-manager";
 
 export class Engine {
   public readonly scene = new THREE.Scene();
@@ -9,7 +9,7 @@ export class Engine {
   public readonly physicsWorld: PhysicsWorld;
   private cameras = new Map<string, THREE.Camera>();
   private activeCamera?: THREE.Camera;
-  public readonly audioDirector = new AudioDirector();
+  public readonly audioManager = new GameAudioManager();
   private rafId?: number;
   private lastTime = performance.now();
   private game?: Game;
@@ -72,7 +72,7 @@ export class Engine {
     const cam = this.cameras.get(name);
     if (!cam) throw new Error(`Camera '${name}' not found`);
     this.activeCamera = cam;
-    this.audioDirector.attachCamera(cam);
+    this.audioManager.attachCamera(cam);
   }
 
   public registerCamera(name: string, camera: THREE.Camera) {

@@ -39,6 +39,10 @@ export const GameAssets = {
     type: "audio",
     url: "/assets/tahterevallis/audio/goal-fx.wav",
   },
+  ballRollingSoundFx: {
+    type: "audio",
+    url: "/assets/tahterevallis/audio/ball-rolling-fx.wav",
+  },
 } as const;
 
 const defaultBall = {

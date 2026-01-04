@@ -1,5 +1,5 @@
 export type ColliderMeta = {
-  kind: "ball" | "goal" | "trap";
+  kind: "ball" | "goal" | "trap" | "table";
   entityId: string;
 };
 

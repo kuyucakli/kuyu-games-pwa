@@ -1,44 +1,26 @@
-import {
-  AudioListener,
-  Audio,
-  PositionalAudio,
-  Object3D,
-  Vector3,
-  Camera,
-} from "three";
+// game/audio/audio-director.ts
+import { Audio, PositionalAudio, Object3D, Vector3, Camera } from "three";
+import { threeAudioEngine } from "@/audio/three-audio-engine";
 
-export class AudioDirector {
-  private listener = new AudioListener();
-  private unlocked = false;
+export class GameAudioManager {
   private camera?: Camera;
 
   attachCamera(camera: Camera) {
     if (this.camera === camera) return;
-
-    if (this.camera) {
-      this.camera.remove(this.listener);
-    }
-
+    this.camera?.remove(threeAudioEngine.listener);
     this.camera = camera;
-    this.camera.add(this.listener);
-  }
-
-  get context() {
-    return this.listener.context;
-  }
-
-  unlock() {
-    if (this.unlocked) return;
-    this.listener.context.resume();
-    this.unlocked = true;
+    camera.add(threeAudioEngine.listener);
   }
 
   play(buffer: AudioBuffer, opts?: { volume?: number; playbackRate?: number }) {
-    const audio = new Audio(this.listener);
+    if (!threeAudioEngine.unlocked) return;
+
+    const audio = new Audio(threeAudioEngine.listener);
     audio.setBuffer(buffer);
     audio.setVolume(opts?.volume ?? 1);
     audio.setPlaybackRate(opts?.playbackRate ?? 1);
     audio.play();
+    console.log("engine id (game)", threeAudioEngine.id);
   }
 
   playAt(
@@ -47,9 +29,9 @@ export class AudioDirector {
     parent?: Object3D,
     opts?: { volume?: number }
   ) {
-    if (!this.camera) return;
+    if (!this.camera || !threeAudioEngine.unlocked) return;
 
-    const audio = new PositionalAudio(this.listener);
+    const audio = new PositionalAudio(threeAudioEngine.listener);
     audio.setBuffer(buffer);
     audio.setRefDistance(1);
     audio.setVolume(opts?.volume ?? 1);
@@ -59,5 +41,9 @@ export class AudioDirector {
     audio.play();
 
     audio.onEnded = () => audio.removeFromParent();
+  }
+
+  get output(): AudioNode {
+    return threeAudioEngine.listener.getInput();
   }
 }

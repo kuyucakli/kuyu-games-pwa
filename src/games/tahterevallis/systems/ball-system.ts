@@ -8,8 +8,11 @@ import {
   Material,
 } from "three";
 import RAPIER, { Collider } from "@dimforge/rapier3d";
-import { Ball } from "../objects/ball";
-import { PhysicsWorld } from "@/games/engine/physics/physics-world";
+import { Ball, BallRollingAudio } from "../objects/ball";
+import {
+  PhysicsWorld,
+  physicsWorldEvent,
+} from "@/games/engine/physics/physics-world";
 import { createDynamicBall } from "../factories/ball-factory";
 import { GAME_BALLS, LevelConfig } from "../config";
 import { SparkleSystem } from "../systems/sparkle-system";
@@ -28,6 +31,8 @@ type BallEntry = {
   body: RAPIER.RigidBody;
   collider: Collider;
   state: BallState;
+  rollingAudio?: BallRollingAudio;
+  isTouchingTable: boolean;
 };
 
 export interface ActiveBallQuery {
@@ -37,19 +42,34 @@ export interface ActiveBallQuery {
 export class BallSystem implements GameDisposable {
   private nextBallId = 0;
   private ballSpeeds = new Map<RAPIER.RigidBody, number>();
-  private balls: {
-    mesh: Object3D;
-    body: RAPIER.RigidBody;
-    collider: Collider;
-    id: string;
-    state: BallState;
-  }[] = [];
+  private balls: BallEntry[] = [];
+  private ballMap = new Map<string, BallEntry>();
 
   constructor(
     private scene: Scene,
     private physicsWorld: PhysicsWorld,
-    private sparkleSystem: SparkleSystem
+    private sparkleSystem: SparkleSystem,
+    private createRollingAudio: () => BallRollingAudio
   ) {
+    physicsWorldEvent.on("physics:collision", ({ a, b }) => {
+      if (a?.kind === "ball" && b?.kind === "table") {
+        const ball = this.ballMap.get(a.entityId);
+        if (ball) ball.isTouchingTable = true;
+      } else if (b?.kind === "ball" && a?.kind === "table") {
+        const ball = this.ballMap.get(b.entityId);
+        if (ball) ball.isTouchingTable = true;
+      }
+    });
+
+    physicsWorldEvent.on("physics:collisionEnd", ({ a, b }) => {
+      if (a?.kind === "ball" && b?.kind === "table") {
+        const ball = this.ballMap.get(a.entityId);
+        if (ball) ball.isTouchingTable = false;
+      } else if (b?.kind === "ball" && a?.kind === "table") {
+        const ball = this.ballMap.get(b.entityId);
+        if (ball) ball.isTouchingTable = false;
+      }
+    });
     for (const ball of GAME_BALLS) {
       this.put(ball.radius, ball.initPosition);
     }
@@ -69,13 +89,18 @@ export class BallSystem implements GameDisposable {
       kind: "ball",
       entityId: ballId,
     });
-    this.balls.push({
+    const ballEntry = {
       mesh: ball.mesh,
       collider,
       body,
       id: ballId,
       state: "inactive",
-    });
+      rollingAudio: this.createRollingAudio(),
+      isTouchingTable: false,
+    };
+
+    this.balls.push(ballEntry as BallEntry);
+    this.ballMap.set(ballId, ballEntry as BallEntry);
     this.ballSpeeds.set(body, 0);
   }
 
@@ -136,6 +161,8 @@ export class BallSystem implements GameDisposable {
     ball.body.setEnabled(false);
 
     ball.mesh.visible = false;
+
+    ball.rollingAudio?.stop();
   }
 
   captureBall(ballId: string, target: BallCaptureTarget) {
@@ -186,7 +213,8 @@ export class BallSystem implements GameDisposable {
   }
 
   update(dt: number) {
-    for (const { mesh, body, state } of this.balls) {
+    for (const { mesh, body, state, rollingAudio, isTouchingTable } of this
+      .balls) {
       if (state !== "active") continue;
       mesh.position.copy(body.translation());
       mesh.quaternion.copy(body.rotation());
@@ -199,11 +227,16 @@ export class BallSystem implements GameDisposable {
 
       this.ballSpeeds.set(body, smoothSpeed);
       this.emitSparkles(mesh.position, v, smoothSpeed);
+
+      if (rollingAudio) {
+        rollingAudio.update(smoothSpeed, dt, isTouchingTable);
+      }
     }
   }
 
   dispose() {
     for (const ball of this.balls) {
+      ball.rollingAudio?.stop();
       // 1. Remove Three.js mesh safely
       if (ball.mesh.parent) {
         ball.mesh.parent.remove(ball.mesh);

@@ -31,3 +31,45 @@ export class Ball {
     this.mesh = mesh;
   }
 }
+
+export class BallRollingAudio {
+  private source: AudioBufferSourceNode;
+  private gain: GainNode;
+  private minGain = 0.002; // silence floor
+  private maxGain = 0.1; // hard ceiling
+
+  constructor(buffer: AudioBuffer, output: AudioNode) {
+    const ctx = output.context;
+
+    this.source = ctx.createBufferSource();
+    this.source.buffer = buffer;
+    this.source.loop = true;
+
+    this.gain = ctx.createGain();
+    this.gain.gain.value = 0;
+
+    this.source.connect(this.gain);
+    this.gain.connect(output);
+    this.source.start();
+  }
+
+  update(speed: number, dt: number, isTouchingTable: boolean) {
+    const now = this.gain.context.currentTime;
+
+    if (isTouchingTable && speed > 0.01) {
+      const normalized = Math.min(speed / 4, 1);
+      const target = this.minGain + normalized * normalized * this.maxGain;
+      this.gain.gain.setTargetAtTime(target, now, 0.05);
+    } else {
+      // immediately cut to 0
+      this.gain.gain.cancelScheduledValues(now);
+      this.gain.gain.setValueAtTime(0, now);
+    }
+  }
+
+  stop() {
+    const now = this.gain.context.currentTime;
+    this.gain.gain.setTargetAtTime(0, now, 0.1);
+    // DO NOT stop the source, it will fade back in when rolling
+  }
+}

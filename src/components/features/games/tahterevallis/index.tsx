@@ -7,11 +7,13 @@ import { Engine } from "@/games/engine/core/engine";
 import { gameEvents as tahterevallisEvents } from "@/games/tahterevallis";
 import { GameOverIntro } from "./components/intros/game-over-intro";
 import { LevelCompletedIntro } from "./components/intros/level-completed-intro";
-import { AssetLoaderEvent } from "@/games/engine/assets/asset-manager";
+
 import { Property } from "@/lib/types/utils";
 import { LoadingIntro } from "./components/intros/loading-intro";
 
-type GameTahterevallisSceneProps = {
+import { AssetLoaderEvent } from "@/games/engine/assets/asset-manager";
+
+type GameTahterevallisProps = {
   width?: `${number}${"px" | "vw" | "dvw"}`;
   height?: `${number}${"px" | "vh" | "dvh"}`;
 };
@@ -19,7 +21,7 @@ type GameTahterevallisSceneProps = {
 export default function GameTahterevallis({
   width = "100vw",
   height = "100vh",
-}: GameTahterevallisSceneProps) {
+}: GameTahterevallisProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] =

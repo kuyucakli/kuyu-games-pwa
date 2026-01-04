@@ -11,6 +11,7 @@ import { GameAssets, HoleName, LEVELS_CONFIG } from "./config";
 import { BallSystem } from "./systems/ball-system";
 import { createTableTrimesh } from "./factories/table-factory";
 import { AssetLoaderEvent, AssetManager } from "../engine/assets/asset-manager";
+
 import { AudioSystem } from "./systems/audio-system";
 import { LevelSystem } from "./systems/level-system";
 import { TimerSystem } from "./systems/timer-system";
@@ -65,23 +66,24 @@ export class Game {
   private timerSystem!: TimerSystem;
   private outOfBoundsSystem!: OutOfBoundsSystem;
   private tableRigidBody!: RAPIER.RigidBody;
-  private assetManager!: AssetManager<typeof GameAssets>;
+  private assets!: AssetManager<typeof GameAssets>;
   private mainCamera!: THREE.PerspectiveCamera;
   private state: GameState = "idle";
   private activeLevel = 1;
   private disposables: Array<GameDisposable> = [];
 
   async init(engine: Engine) {
-    this.assetManager = new AssetManager<typeof GameAssets>();
-    this.assetManager.events.on("allCompleted", () => {
+    this.assets = new AssetManager();
+    this.assets.events.on("allCompleted", () => {
       gameEvents.emit("assets:completed", true);
     });
-    this.assetManager.events.on("progress", (data) => {
+    this.assets.events.on("progress", (data) => {
       gameEvents.emit("assets:progress", data);
     });
+
     await this.loadAssets();
 
-    const gameObjectsGLTF = this.assetManager.get("gameObjects");
+    const gameObjectsGLTF = this.assets.get("gameObjects");
 
     this.engine = engine;
     this.scene = engine.scene;
@@ -117,15 +119,14 @@ export class Game {
     );
     this.holeSystem.registerFromTable();
 
+    this.audioSystem = new AudioSystem(this.assets, this.engine.audioManager);
+
     this.ballSystem = this.register(
-      new BallSystem(this.scene, engine.physicsWorld, this.sparkleSystem)
+      new BallSystem(this.scene, engine.physicsWorld, this.sparkleSystem, () =>
+        this.audioSystem.createBallRollingAudio()
+      )
     );
     this.outOfBoundsSystem = new OutOfBoundsSystem(this.ballSystem);
-
-    this.audioSystem = new AudioSystem(
-      this.assetManager,
-      this.engine.audioDirector
-    );
 
     this.timerSystem = new TimerSystem();
     this.levelSystem = new LevelSystem(this.ballSystem, this.holeSystem);
@@ -197,17 +198,17 @@ export class Game {
 
   private async loadAssets() {
     await Promise.all([
-      this.assetManager.loadGLTF(
+      this.assets.loadGLTF(
         "gameObjects",
         "/assets/tahterevallis/3d/game-objects.glb"
       ),
-      this.assetManager.loadAudio(
-        "homeIntroMusic",
-        "/assets/tahterevallis/audio/select-game-intro.wav"
-      ),
-      this.assetManager.loadAudio(
+      this.assets.loadAudio(
         "goalSoundFx",
         "/assets/tahterevallis/audio/goal-fx.wav"
+      ),
+      this.assets.loadAudio(
+        "ballRollingSoundFx",
+        "/assets/tahterevallis/audio/ball-rolling-fx.wav"
       ),
     ]);
   }
