@@ -5,12 +5,15 @@ import styles from "./select-game-intro.module.css";
 import { threeAudioEngine } from "@/audio/three-audio-engine";
 import { useEffect } from "react";
 import { appAudioManager } from "@/audio/app-audio-manager";
+import { useAudioSession } from "@/store/audio-session";
 
 export function SelectGameIntro() {
+  const { muted } = useAudioSession((state) => state);
   useEffect(() => {
     let cancelled = false;
 
     (async () => {
+      if (muted) return;
       await threeAudioEngine.unlock();
 
       const ctx = threeAudioEngine.listener.context;
@@ -31,7 +34,7 @@ export function SelectGameIntro() {
       cancelled = true;
       appAudioManager.stop();
     };
-  }, []);
+  }, [muted]);
   return (
     <div className={`${styles.SelectGameIntro}`}>
       <div className={`${styles.MovingBallContainer}`}>

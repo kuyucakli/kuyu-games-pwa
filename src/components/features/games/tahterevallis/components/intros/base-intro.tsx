@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 import styles from "./intros.module.css";
+import Image from "next/image";
 
 type introState = "start" | "end" | "idle" | "startAndAutoEnd";
 type BaseIntroProps = PropsWithChildren<{
@@ -49,6 +50,17 @@ export function BaseIntro({
       ${state == "startAndAutoEnd" ? styles.IntroStartAndAutoEnd : ""}
       `}
     >
+      <Image
+        src="/assets/tahterevallis/images/tahterevallis-game-over-circle.svg"
+        alt="fx"
+        width="400"
+        height="400"
+        className={`${styles.ShapeImage}  ${
+          state == "start" ? styles.ShapeImageIn : ""
+        } 
+      ${state == "end" ? styles.ShapeImageOut : ""}
+        ${state == "startAndAutoEnd" ? styles.ShapeImageAutoInAndOut : ""}`}
+      />
       {children}
       {actionButtonLabel && (
         <button type="button" onClick={() => setState("end")}>

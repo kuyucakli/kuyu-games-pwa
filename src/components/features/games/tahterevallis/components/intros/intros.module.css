@@ -20,27 +20,45 @@
   z-index: var(--z-index);
 }
 
+.ShapeImage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  pointer-events: none;
+  transform-origin: center;
+  --size: calc(100vmin - 80px);
+  width: var(--size);
+  height: var(--size);
+  opacity: 0;
+}
+
+.ShapeImageIn {
+  animation: shapeImageIn var(--start-duration) ease-out forwards;
+}
+
+.ShapeImageOut {
+  animation: shapeImageOut var(--end-duration) ease-out forwards;
+}
+.ShapeImageAutoInAndOut {
+  animation: shapeImageAutoInAndOut var(--level-complete-duration) ease-out
+    forwards;
+}
+
 .GameOverContainer {
   background-color: #ff3e3e;
-  background-image: url("/assets/tahterevallis/images/tahterevallis-game-over-circle.svg");
-  background-size: 52%;
-  background-position: center;
-  background-repeat: no-repeat;
 }
 
 .LevelCompleted {
   background-color: #ff3e3e;
-  /* background-color: #A5B2C3; */
-  background-image: url("/assets/tahterevallis/images/tahterevallis-game-over-circle.svg");
-  background-size: 52%;
-  background-position: center;
-  background-repeat: no-repeat;
 }
 
 .IntroStart {
   animation: fadeIn var(--start-duration) ease-out forwards,
     background-pulse 4s linear forwards alternate infinite;
 }
+
 .IntroEnd {
   animation: fadeOut var(--end-duration) forwards;
 }
@@ -55,6 +73,36 @@
   }
   100% {
     background-size: 52%;
+  }
+}
+
+@keyframes shapeImageIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes shapeImageOut {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  30% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.8);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
   }
 }
 
@@ -99,5 +147,28 @@
   100% {
     width: 0;
     height: 0;
+  }
+}
+
+@keyframes shapeImageAutoInAndOut {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0) rotate(90deg);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+  90% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+  99% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0) rotate(0deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0) rotate(0deg);
   }
 }
