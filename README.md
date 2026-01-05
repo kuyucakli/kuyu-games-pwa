@@ -8,7 +8,7 @@ This is an experimental project focused on core gameplay systems rather than con
 
 Supabase is currently used for authentication and will later support progress persistence and leaderboards.
 
-[You can use live app on: ](https://kuyu-games-pwa.vercel.app)
+[You can use live app here. ](https://kuyu-games-pwa.vercel.app)
 
 ## Games
 
