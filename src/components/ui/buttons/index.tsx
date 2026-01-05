@@ -2,6 +2,7 @@
 
 import {
   ButtonHTMLAttributes,
+  HTMLAttributes,
   LinkHTMLAttributes,
   PropsWithChildren,
   ReactElement,
@@ -11,14 +12,22 @@ import Link from "next/link";
 import { useFormStatus } from "react-dom";
 import { ShimmerLoader } from "../shimmer";
 import { FancyArrow } from "../fancy-arrow";
+
+type BaseButtonProps = PropsWithChildren<
+  ButtonHTMLAttributes<HTMLButtonElement>
+> & {
+  icon?: ReactElement<SVGElement>;
+};
+type BaseLinkButtonProps = PropsWithChildren<
+  LinkHTMLAttributes<HTMLLinkElement>
+>;
+
 export function Button({
   icon,
-  type,
+  type = "button",
   className,
   children,
-}: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>> & {
-  icon?: ReactElement<SVGElement>;
-}) {
+}: BaseButtonProps) {
   const { pending } = useFormStatus();
   return (
     <button
@@ -37,11 +46,16 @@ export function Button({
   );
 }
 
-export function LinkButton({
-  href,
-  className,
-  children,
-}: PropsWithChildren<LinkHTMLAttributes<HTMLLinkElement>>) {
+export function ButtonRounded(props: BaseButtonProps) {
+  const { children, className, ...restProps } = props;
+  return (
+    <Button {...restProps} className={`${className} ${styles.ButtonRounded}`}>
+      {children}
+    </Button>
+  );
+}
+
+export function LinkButton({ href, className, children }: BaseLinkButtonProps) {
   if (!href) {
     throw new Error("Button link needs href value.");
   }
@@ -52,9 +66,16 @@ export function LinkButton({
   );
 }
 
-export function LinkButtonArtistic(
-  props: PropsWithChildren<LinkHTMLAttributes<HTMLLinkElement>>
-) {
+export function LinkButtonRounded(props: BaseLinkButtonProps) {
+  const { children, ...restProps } = props;
+  return (
+    <LinkButton {...restProps} className={styles.LinkButtonRounded}>
+      {children}
+    </LinkButton>
+  );
+}
+
+export function LinkButtonArtistic(props: BaseLinkButtonProps) {
   return (
     <LinkButton
       {...props}
@@ -66,11 +87,7 @@ export function LinkButtonArtistic(
   );
 }
 
-export function TextLink({
-  href,
-  className,
-  children,
-}: PropsWithChildren<LinkHTMLAttributes<HTMLLinkElement>>) {
+export function TextLink({ href, className, children }: BaseLinkButtonProps) {
   if (!href) {
     throw new Error("Text link needs href value.");
   }

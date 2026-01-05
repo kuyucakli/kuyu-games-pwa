@@ -20,6 +20,17 @@
   transition: all 0.4s;
 }
 
+.ButtonRounded,
+.LinkButtonRounded {
+  min-width: 32px;
+  min-height: 32px;
+  width: 32px;
+  height: 32px;
+  background-color: var(--color-neutral-500) !important;
+  border-radius: 50%;
+  border: none !important;
+}
+
 .LoaderIconContainer {
   position: absolute;
   top: 50%;
