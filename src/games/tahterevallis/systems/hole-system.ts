@@ -25,6 +25,7 @@ export class HoleSystem implements GameDisposable {
   private indicators: HoleIndicator[] = [];
   private world: PhysicsWorld;
   private table;
+  private scoredPairs = new Set<string>();
 
   constructor(world: PhysicsWorld, table: Table) {
     this.world = world;
@@ -51,6 +52,7 @@ export class HoleSystem implements GameDisposable {
     };
 
     this.indicators.push(indicator);
+
     return indicator;
   }
 
@@ -64,11 +66,16 @@ export class HoleSystem implements GameDisposable {
     const holeName = a?.kind === "goal" ? a.entityId : b.entityId;
     const ballName = a?.kind === "ball" ? a.entityId : b.entityId;
 
+    const key = `${ballName}::${holeName}`;
+    if (this.scoredPairs.has(key)) return;
+
     const holeIndicator = this.indicators.find(
       (i) => i.locator.name === holeName
     );
 
     if (!holeIndicator || !holeIndicator.active) return;
+
+    this.scoredPairs.add(key);
 
     const pos = new Vector3();
     holeIndicator.locator.getWorldPosition(pos);
@@ -85,9 +92,11 @@ export class HoleSystem implements GameDisposable {
     const indicator = this.indicators.find(
       (i) => i.locator.name === locatorName
     );
+
     if (indicator) {
       indicator.mesh.visible = active;
-      indicator.sensor.setEnabled(true);
+
+      indicator.sensor.setEnabled(active);
       indicator.active = active;
     }
   }
@@ -111,6 +120,7 @@ export class HoleSystem implements GameDisposable {
   }
 
   applyLevel(config: LevelConfig) {
+    this.scoredPairs.clear();
     for (const indicator of this.indicators) {
       const active = config.holes.goal.includes(
         indicator.locator.name as HoleName
@@ -130,7 +140,7 @@ export class HoleSystem implements GameDisposable {
   dispose() {
     // 1. Unregister physics event listener
     physicsWorldEvent.off("physics:collision", this.onCollision);
-
+    this.scoredPairs.clear();
     // 2. Remove colliders and metadata
     for (const indicator of this.indicators) {
       // Disable sensor first (defensive)

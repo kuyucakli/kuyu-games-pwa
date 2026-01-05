@@ -20,7 +20,6 @@ export class GameAudioManager {
     audio.setVolume(opts?.volume ?? 1);
     audio.setPlaybackRate(opts?.playbackRate ?? 1);
     audio.play();
-    console.log("engine id (game)", threeAudioEngine.id);
   }
 
   playAt(

@@ -1,9 +1,6 @@
 export function detectTiltAvailability(): Promise<boolean> {
   return new Promise((resolve) => {
-    console.log(DeviceOrientationEvent, "****???");
     if (typeof DeviceOrientationEvent === "undefined") {
-      console.log(DeviceOrientationEvent);
-
       resolve(false);
       return;
     }

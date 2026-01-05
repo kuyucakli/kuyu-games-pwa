@@ -19,8 +19,8 @@ function createTableTrimesh(
   );
 
   const colliderDesc = RAPIER.ColliderDesc.trimesh(vertices, indices)
-    .setFriction(1)
-    .setRestitution(0.2);
+    .setFriction(0.01)
+    .setRestitution(0.1);
 
   const collider = world.createCollider(colliderDesc, body);
 

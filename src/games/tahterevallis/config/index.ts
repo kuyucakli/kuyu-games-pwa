@@ -47,7 +47,7 @@ export const GameAssets = {
 
 const defaultBall = {
   color: `#ff0000`,
-  restitution: 0.2,
+  restitution: 0.1,
   radius: 0.28,
   initPosition: [0, 1, 4],
 } as Ball;
