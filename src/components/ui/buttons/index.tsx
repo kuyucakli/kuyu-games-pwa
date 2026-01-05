@@ -2,7 +2,6 @@
 
 import {
   ButtonHTMLAttributes,
-  HTMLAttributes,
   LinkHTMLAttributes,
   PropsWithChildren,
   ReactElement,
@@ -27,13 +26,15 @@ export function Button({
   type = "button",
   className,
   children,
+  disabled,
 }: BaseButtonProps) {
   const { pending } = useFormStatus();
   return (
     <button
       type={type}
       className={`${styles.Button} ${className}`}
-      disabled={pending}
+      disabled={disabled}
+      aria-disabled={disabled}
     >
       {icon}
       <span className={styles.ButtonContent}>
@@ -67,9 +68,12 @@ export function LinkButton({ href, className, children }: BaseLinkButtonProps) {
 }
 
 export function LinkButtonRounded(props: BaseLinkButtonProps) {
-  const { children, ...restProps } = props;
+  const { children, className, ...restProps } = props;
   return (
-    <LinkButton {...restProps} className={styles.LinkButtonRounded}>
+    <LinkButton
+      {...restProps}
+      className={`${className} ${styles.LinkButtonRounded}`}
+    >
       {children}
     </LinkButton>
   );

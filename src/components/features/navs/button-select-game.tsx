@@ -10,7 +10,6 @@ export function ButtonSelectGame() {
   return (
     <LinkButtonRounded
       href="/select-game"
-      aria-disabled={isSelectGamePage}
       className={`${isSelectGamePage ? "pointer-events-none opacity-40" : ""}`}
     >
       <IconGameList />

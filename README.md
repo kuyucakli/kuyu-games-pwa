@@ -37,6 +37,7 @@ A tilt-based game emphasizing precision and timing.
 - Rapier (wasm)
 - Vite
 - Vitest
+- Zustand
 
 ## Getting Started
 
