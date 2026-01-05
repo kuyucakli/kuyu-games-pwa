@@ -6,7 +6,6 @@ import { LogoKuyuGames } from "@/components/logo";
 import { Settings } from "../games/shared/settings";
 
 export function GameSelectionNav() {
-  
   return (
     <div className={`${styles.GameSelectionNavContainer} animate-pulse `}>
       <SelectGameIntro />
@@ -19,9 +18,17 @@ export function GameSelectionNav() {
           </CardHeader>
           <CardContent>
             <nav className="flex flex-col gap-3 mt-4 mb-12">
-              <LinkButtonArtistic href="/pinball">PINBALL</LinkButtonArtistic>
               <LinkButtonArtistic href="/tahterevallis">
                 TAHTEREVALLIS
+              </LinkButtonArtistic>
+              <LinkButtonArtistic href="/pinball">
+                <span className="text-center">
+                  PINBALL <br />
+                  <span className="text-xs block text-neutral-400">
+                    {" "}
+                    under development{" "}
+                  </span>
+                </span>
               </LinkButtonArtistic>
             </nav>
             <Settings />
