@@ -37,6 +37,7 @@ export class BallRollingAudio {
   private gain: GainNode;
   private minGain = 0.002; // silence floor
   private maxGain = 0.1; // hard ceiling
+  private connected = true;
 
   constructor(buffer: AudioBuffer, output: AudioNode) {
     const ctx = output.context;
@@ -57,13 +58,19 @@ export class BallRollingAudio {
     const now = this.gain.context.currentTime;
 
     if (isTouchingTable && speed > 0.01) {
+      if (!this.connected) {
+        this.gain.connect(this.gain.context.destination);
+        this.connected = true;
+      }
+
       const normalized = Math.min(speed / 4, 1);
       const target = this.minGain + normalized * normalized * this.maxGain;
       this.gain.gain.setTargetAtTime(target, now, 0.05);
     } else {
-      // immediately cut to 0
-      this.gain.gain.cancelScheduledValues(now);
-      this.gain.gain.setValueAtTime(0, now);
+      if (this.connected) {
+        this.gain.disconnect();
+        this.connected = false;
+      }
     }
   }
 
