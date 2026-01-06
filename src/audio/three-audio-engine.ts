@@ -48,13 +48,12 @@ class ThreeAudioEngine {
   }
 
   async unlock() {
-    alert("x");
     if (typeof window === "undefined") return;
-    alert("y");
+
     if (this.unlocked) return;
-    alert("z");
+
     await this.listener.context.resume();
-    alert("m");
+
     this.unlocked = true;
   }
 
