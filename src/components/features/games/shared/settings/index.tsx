@@ -7,7 +7,8 @@ import { useAudioSession } from "@/store/audio-session";
 import { useGameSettings } from "@/store/game-settings";
 
 export function Settings() {
-  const { muted, setMuted } = useAudioSession();
+  const muted = useAudioSession((state) => state.muted);
+  const setMuted = useAudioSession((state) => state.setMuted);
   const { tiltEnabled, setTiltEnabled, tiltPermission, requestTiltPermission } =
     useGameSettings();
 

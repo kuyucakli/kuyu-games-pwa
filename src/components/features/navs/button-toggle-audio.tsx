@@ -5,7 +5,8 @@ import { useAudioSession } from "@/store/audio-session";
 import buttonStyles from "../../ui/buttons/buttons.module.css";
 
 export function ButtonToggleAudio() {
-  const { muted, setMuted } = useAudioSession();
+  const muted = useAudioSession((state) => state.muted);
+  const setMuted = useAudioSession((state) => state.setMuted);
 
   return (
     <button
