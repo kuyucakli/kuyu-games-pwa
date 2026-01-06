@@ -54,6 +54,7 @@ class ThreeAudioEngine {
     if (this.unlocked) return;
     alert("z");
     await this.listener.context.resume();
+    alert("m");
     this.unlocked = true;
   }
 
