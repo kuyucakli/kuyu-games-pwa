@@ -11,8 +11,8 @@ export function ButtonToggleAudio() {
   return (
     <button
       type="button"
-      onPointerDown={() => {
-        threeAudioEngine.unlock();
+      onPointerDown={async () => {
+        await threeAudioEngine.unlock();
         threeAudioEngine.setMuted(!muted);
         setMuted(!muted);
       }}
