@@ -11,6 +11,7 @@ export function ButtonToggleAudio() {
     <button
       type="button"
       onPointerDown={() => {
+        alert("test");
         threeAudioEngine.unlock();
         threeAudioEngine.setMuted(!muted);
         setMuted(!muted);
