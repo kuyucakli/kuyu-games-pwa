@@ -1,3 +1,5 @@
+import { threeAudioEngine } from "@/audio/three-audio-engine";
+import { GameDisposable } from "@/games/types";
 import * as THREE from "three";
 
 export class Ball {
@@ -32,7 +34,7 @@ export class Ball {
   }
 }
 
-export class BallRollingAudio {
+export class BallRollingAudio implements GameDisposable {
   private source: AudioBufferSourceNode;
   private gain: GainNode;
   private minGain = 0.002; // silence floor
@@ -55,6 +57,8 @@ export class BallRollingAudio {
   }
 
   update(speed: number, dt: number, isTouchingTable: boolean) {
+    if (!threeAudioEngine.unlocked) return;
+
     const now = this.gain.context.currentTime;
 
     if (isTouchingTable && speed > 0.01) {
@@ -70,6 +74,7 @@ export class BallRollingAudio {
       if (this.connected) {
         this.gain.disconnect();
         this.connected = false;
+        // this.gain.gain.setTargetAtTime(0, now, 0.05);
       }
     }
   }
@@ -78,5 +83,23 @@ export class BallRollingAudio {
     const now = this.gain.context.currentTime;
     this.gain.gain.setTargetAtTime(0, now, 0.1);
     // DO NOT stop the source, it will fade back in when rolling
+  }
+
+  dispose() {
+    const ctx = this.gain.context;
+
+    try {
+      this.gain.gain.cancelScheduledValues(ctx.currentTime);
+      this.gain.gain.setValueAtTime(0, ctx.currentTime);
+    } catch {}
+
+    try {
+      this.source.stop();
+    } catch {}
+
+    try {
+      this.source.disconnect();
+      this.gain.disconnect();
+    } catch {}
   }
 }

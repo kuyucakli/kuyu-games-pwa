@@ -47,13 +47,15 @@ export class LevelSystem implements GameDisposable {
     const timeLimit = LEVELS_CONFIG[this.currentLevel - 1].timeLimit;
     if (!timeLimit) return;
     const remainingTimeMs = timeLimit - msElapsed;
-    if (remainingTimeMs <= 0) {
-      gameEvents.emit("level:failed");
-    }
+
     gameEvents.emit("level:remaining-time", {
       prettyFormatted: formatTimePretty(remainingTimeMs),
-      seconds: Math.max(Math.floor(remainingTimeMs / 1000), 0),
+      seconds: Math.max(Math.floor(remainingTimeMs / 1000), -1),
     });
+
+    if (remainingTimeMs < 0) {
+      gameEvents.emit("level:failed");
+    }
   };
 
   reset(level: number) {

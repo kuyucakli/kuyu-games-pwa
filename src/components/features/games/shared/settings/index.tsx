@@ -10,7 +10,7 @@ export function Settings() {
   const muted = useAudioSession((state) => state.muted);
   const setMuted = useAudioSession((state) => state.setMuted);
   const { tiltEnabled, setTiltEnabled, tiltPermission, requestTiltPermission } =
-    useGameSettings();
+    useGameSettings((state) => state);
 
   return (
     <div className={`flex flex-col gap-4`}>

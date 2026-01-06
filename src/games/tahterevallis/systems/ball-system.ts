@@ -237,6 +237,7 @@ export class BallSystem implements GameDisposable {
   dispose() {
     for (const ball of this.balls) {
       ball.rollingAudio?.stop();
+      ball.rollingAudio?.dispose();
       // 1. Remove Three.js mesh safely
       if (ball.mesh.parent) {
         ball.mesh.parent.remove(ball.mesh);

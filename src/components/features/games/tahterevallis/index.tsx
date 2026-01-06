@@ -4,7 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { Game, gameBusCommands } from "@/games/tahterevallis";
 import { HUDBox, HUDLayer } from "../shared/ui/heads-up-display";
 import { Engine } from "@/games/engine/core/engine";
-import { gameEvents as tahterevallisEvents } from "@/games/tahterevallis";
+import {
+  gameEvents as tahterevallisEvents,
+  GameEvents as TahtervallisGameEventDataTypes,
+} from "@/games/tahterevallis";
 import { GameOverIntro } from "./components/intros/game-over-intro";
 import { LevelCompletedIntro } from "./components/intros/level-completed-intro";
 
@@ -26,6 +29,17 @@ export default function GameTahterevallis({
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] =
     useState<Property<AssetLoaderEvent, "progress">>();
+
+  const [gameState, setGameState] = useState<"failed" | "level-completed" | "">(
+    ""
+  );
+  const [level, setLevel] = useState(1);
+  const [remainingTimeData, setRemainingTimeData] = useState<
+    TahtervallisGameEventDataTypes["level:remaining-time"]
+  >({
+    prettyFormatted: "",
+    seconds: -1,
+  });
 
   useEffect(() => {
     let engine: Engine | null = null;
@@ -49,51 +63,34 @@ export default function GameTahterevallis({
     };
   }, []);
 
-  return (
-    <>
-      <TahterevallisHUD loading={loading} progress={progress} />
-      <div
-        ref={containerRef}
-        style={{ width: `${width}`, height: `${height}` }}
-        className="relative overflow-hidden"
-      />
-    </>
-  );
-}
-
-const TahterevallisHUD = ({
-  loading,
-  progress,
-}: {
-  loading: boolean;
-  progress: Property<AssetLoaderEvent, "progress"> | undefined;
-}) => {
-  const [level, setLevel] = useState(1);
-  const [remainingTimeData, setRemainingTimeData] = useState<{
-    prettyFormatted: string;
-    seconds: null | number;
-  }>({
-    prettyFormatted: "",
-    seconds: null,
-  });
-  const [gameState, setGameState] = useState<"failed" | "level-completed" | "">(
-    ""
-  );
-
   useEffect(() => {
-    tahterevallisEvents.on("level:completed", ({ nextLevel }) => {
-      setGameState("level-completed");
+    const onLevelCompleted = ({
+      nextLevel,
+    }: TahtervallisGameEventDataTypes["level:completed"]) => {
       setLevel(nextLevel);
-    });
-    tahterevallisEvents.on(
-      "level:remaining-time",
-      ({ prettyFormatted, seconds }) => {
-        setRemainingTimeData({ prettyFormatted, seconds });
-      }
-    );
-    tahterevallisEvents.on("level:failed", () => {
+      setGameState("level-completed");
+    };
+
+    const onRemaining = ({
+      prettyFormatted,
+      seconds,
+    }: TahtervallisGameEventDataTypes["level:remaining-time"]) => {
+      setRemainingTimeData({ prettyFormatted, seconds });
+    };
+
+    const onFailed = () => {
       setGameState("failed");
-    });
+    };
+
+    tahterevallisEvents.on("level:completed", onLevelCompleted);
+    tahterevallisEvents.on("level:remaining-time", onRemaining);
+    tahterevallisEvents.on("level:failed", onFailed);
+
+    return () => {
+      tahterevallisEvents.off("level:completed", onLevelCompleted);
+      tahterevallisEvents.off("level:remaining-time", onRemaining);
+      tahterevallisEvents.off("level:failed", onFailed);
+    };
   }, []);
 
   const requestGameReplay = () => {
@@ -111,14 +108,50 @@ const TahterevallisHUD = ({
 
   return (
     <>
+      <TahterevallisHUD
+        loading={loading}
+        progress={progress}
+        level={level}
+        remainingTimeData={remainingTimeData}
+      />
+      {gameState == "level-completed" && (
+        <LevelCompletedIntro
+          level={level}
+          onIntroEnded={() => setGameState("")}
+        />
+      )}
+      {gameState == "failed" && (
+        <GameOverIntro onRequestGameReplay={requestGameReplay} />
+      )}
+      <div
+        ref={containerRef}
+        style={{ width: `${width}`, height: `${height}` }}
+        className="relative overflow-hidden"
+      />
+    </>
+  );
+}
+
+const TahterevallisHUD = ({
+  loading,
+  progress,
+  level,
+  remainingTimeData,
+}: {
+  loading: boolean;
+  progress: Property<AssetLoaderEvent, "progress"> | undefined;
+  level: number;
+  remainingTimeData: TahtervallisGameEventDataTypes["level:remaining-time"];
+}) => {
+  return (
+    <>
       <HUDLayer className="flex landscape:flex-col gap-2 p-2">
         <HUDBox label="level" content={level + ""} />
-        {remainingTimeData.seconds != null &&
-          remainingTimeData.seconds < 10 && (
-            <p className="fixed top-1/2 left-1/2 -translate-1/2 text-9xl animate-pulse mix-blend-hard-light">
-              {remainingTimeData.seconds}
-            </p>
-          )}
+        {remainingTimeData.seconds >= 0 && remainingTimeData.seconds < 10 && (
+          <p className="fixed top-1/2 left-1/2 -translate-1/2 text-9xl animate-pulse mix-blend-hard-light">
+            {remainingTimeData.seconds}
+          </p>
+        )}
         <HUDBox
           label="score"
           content={"0"}
@@ -139,15 +172,6 @@ const TahterevallisHUD = ({
           </LoadingIntro>
         )}
       </HUDLayer>
-      {gameState == "level-completed" && (
-        <LevelCompletedIntro
-          level={level}
-          onIntroEnded={() => setGameState("")}
-        />
-      )}
-      {gameState == "failed" && (
-        <GameOverIntro onRequestGameReplay={requestGameReplay} />
-      )}
     </>
   );
 };
