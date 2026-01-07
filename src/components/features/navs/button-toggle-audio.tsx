@@ -16,18 +16,6 @@ export function ButtonToggleAudio() {
         threeAudioEngine.setMuted(!muted);
         setMuted(!muted);
       }}
-      ref={(el) => {
-        if (!el) return;
-        el.addEventListener(
-          "pointerdown",
-          async () => {
-            await threeAudioEngine.unlock();
-            threeAudioEngine.setMuted(!muted);
-            setMuted(!muted);
-          },
-          { once: true }
-        );
-      }}
       className={`${buttonStyles.ButtonRounded} ${
         muted ? "opacity-50" : ""
       } relative z-50`}
