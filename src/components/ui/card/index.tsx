@@ -41,9 +41,10 @@ function CardDescription({
 }
 
 function CardContent({
+  className,
   children,
 }: PropsWithChildren<HtmlHTMLAttributes<HTMLDivElement>>) {
-  return <div className={styles.CardContent}>{children}</div>;
+  return <div className={`${styles.CardContent} ${className}`}>{children}</div>;
 }
 
 function CardFooter({

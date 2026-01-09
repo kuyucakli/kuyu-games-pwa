@@ -40,10 +40,10 @@ export function GameSelectionNav() {
         } `}
       >
         <Card className="min-h-dvh!  flex flex-col justify-between md:min-h-[600px]!">
-          <CardHeader className="pt-20 md:pt-0">
+          <CardHeader className="pt-10 md:pt-0">
             <LogoKuyuGames className="mx-auto mt-0 mb-10 opacity-90" />
           </CardHeader>
-          <CardContent>
+          <CardContent className="pb-0">
             <nav className="flex flex-col gap-3 mt-4 mb-12">
               <Settings />
               <ButtonDefault
