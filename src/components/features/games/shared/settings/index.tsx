@@ -24,17 +24,13 @@ export function Settings() {
       setTiltEnabled(false);
       return;
     }
-    {
-      setTiltEnabled(false);
-      return;
-    }
 
     await requestTiltPermission();
   };
 
   return (
     <>
-      {isTouchDevice() && (
+      {true && (
         <ButtonDefault
           icon={
             <span
@@ -43,7 +39,7 @@ export function Settings() {
               <Switch
                 id="tilt-permission"
                 checked={tiltEnabled}
-                className={`${tiltEnabled ? "opacity-80" : ""}  `}
+                className={`${tiltEnabled ? "opacity-80" : ""} w-3 h-3 `}
                 asChild={true}
               />
             </span>
