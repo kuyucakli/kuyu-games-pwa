@@ -1,6 +1,7 @@
 import { PhysicsWorld } from "@/games/engine/physics/physics-world";
 import RAPIER from "@dimforge/rapier3d";
 import { Vector3 } from "three";
+import { COLLISION_GROUPS } from "../config";
 
 function createTableTrimesh(
   vertices: Float32Array,
@@ -23,6 +24,7 @@ function createTableTrimesh(
     .setRestitution(0.1);
 
   const collider = world.createCollider(colliderDesc, body);
+  collider.setCollisionGroups(COLLISION_GROUPS.TABLE);
 
   physicsWorld.addColliderMeta(collider, {
     kind: "table",

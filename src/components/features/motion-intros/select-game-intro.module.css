@@ -8,9 +8,11 @@
 }
 
 .MovingBallContainer {
+  --moving-ball-container-h: 200px;
   position: absolute;
-  width: 500px;
-  height: 250px;
+  max-width: 1000px;
+  width: 100%;
+  height: var(--moving-ball-container-h);
   top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -19,10 +21,10 @@
 
 .MovingBall {
   position: absolute;
-  top: 0px;
-  left: 50%;
+  top: 50%;
+  right: 0%;
   z-index: 1;
-  width: 50%;
+  width: calc(var(--moving-ball-container-h));
   animation: rotate-ball 1.2s ease-out forwards, rotate-ball 30s 1.2s infinite,
     linear infinite, move 3s ease-in-out infinite alternate-reverse;
   mix-blend-mode: color-dodge;
@@ -30,14 +32,21 @@
 
 .MovingBallTrail {
   position: absolute;
-  top: 5%;
-  right: 25%;
-  height: 100%;
+  top: 0%;
+  margin-top: 1%;
+  right: 12.5%;
+  height: 97%;
+  max-width: none;
+  width: 125%;
   transform-origin: right center;
   animation: trail-init 1s ease-in-out forwards,
     trail 0.1s 1s ease-in-out infinite alternate,
     move 3s ease-in-out infinite alternate-reverse;
   filter: drop-shadow(2px 4px 10px #ff6b6b);
+}
+
+.Exit {
+  animation: exit 0.4s 0.5s ease-in forwards;
 }
 
 @keyframes hello {
@@ -97,5 +106,21 @@
 
   100% {
     transform: scaleX(1);
+  }
+}
+
+@keyframes exit {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(600px);
+    opacity: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .MovingBallContainer {
+    --moving-ball-container-h: 300px;
   }
 }

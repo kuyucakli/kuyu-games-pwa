@@ -1,8 +1,9 @@
 "use client";
 
 import { threeAudioEngine } from "@/audio/three-audio-engine";
-import { Checkbox } from "@/components/ui/checkbox";
+import { ButtonDefault } from "@/components/ui/buttons";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { useAudioSession } from "@/store/audio-session";
 import { useGameSettings } from "@/store/game-settings";
 
@@ -12,40 +13,64 @@ export function Settings() {
   const { tiltEnabled, setTiltEnabled, tiltPermission, requestTiltPermission } =
     useGameSettings((state) => state);
 
-  return (
-    <div className={`flex flex-col gap-4`}>
-      {isTouchDevice() && (
-        <div className="flex items-center gap-3">
-          <Checkbox
-            id="enable-device-orientation"
-            defaultChecked={tiltEnabled && tiltPermission === "granted"}
-            onCheckedChange={async (checked) => {
-              if (!checked) {
-                setTiltEnabled(false);
-                return;
-              }
+  const handleAudioToggle = async () => {
+    threeAudioEngine.unlock();
+    threeAudioEngine.setMuted(!muted);
+    setMuted(!muted);
+  };
 
-              await requestTiltPermission();
-            }}
-          />
-          <Label htmlFor="enable-device-orientation">
-            Enable device orientation detection
-          </Label>
-        </div>
+  const handleTiltPermission = async () => {
+    if (tiltEnabled) {
+      setTiltEnabled(false);
+      return;
+    }
+    {
+      setTiltEnabled(false);
+      return;
+    }
+
+    await requestTiltPermission();
+  };
+
+  return (
+    <>
+      {isTouchDevice() && (
+        <ButtonDefault
+          icon={
+            <span
+              className={`relative border border-neutral-300 flex w-6 h-3.5 rounded-md`}
+            >
+              <Switch
+                id="tilt-permission"
+                checked={tiltEnabled}
+                className={`${tiltEnabled ? "opacity-80" : ""}  `}
+                asChild={true}
+              />
+            </span>
+          }
+          onClick={handleTiltPermission}
+        >
+          <span>Use device tilt</span>
+        </ButtonDefault>
       )}
-      <div className={`${muted ? "opacity-60" : ""} flex items-start gap-3 `}>
-        <Checkbox
-          id="audio"
-          checked={!muted}
-          onCheckedChange={() => {
-            threeAudioEngine.unlock();
-            threeAudioEngine.setMuted(!muted);
-            setMuted(!muted);
-          }}
-        />
-        <Label htmlFor="audio">Audio {muted ? "off" : "on"}</Label>
-      </div>
-    </div>
+      <ButtonDefault
+        icon={
+          <span
+            className={` relative border border-neutral-300 flex w-6 h-3.5 rounded-md`}
+          >
+            <Switch
+              id="audio"
+              checked={!muted}
+              className={`${muted ? "opacity-80" : ""}  w-3 h-3`}
+              asChild={true}
+            />
+          </span>
+        }
+        onClick={handleAudioToggle}
+      >
+        <span className="text-md">{muted ? "Unmute" : "Mute"} audio </span>
+      </ButtonDefault>
+    </>
   );
 }
 

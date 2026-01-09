@@ -7,14 +7,14 @@ import {
   Mesh,
   Material,
 } from "three";
-import RAPIER, { Collider } from "@dimforge/rapier3d";
+import RAPIER, { Collider, RigidBody } from "@dimforge/rapier3d";
 import { Ball, BallRollingAudio } from "../objects/ball";
 import {
   PhysicsWorld,
   physicsWorldEvent,
 } from "@/games/engine/physics/physics-world";
 import { createDynamicBall } from "../factories/ball-factory";
-import { GAME_BALLS, LevelConfig } from "../config";
+import { COLLISION_GROUPS, GAME_BALLS, LevelConfig } from "../config";
 import { SparkleSystem } from "../systems/sparkle-system";
 import { GameDisposable } from "@/games/types";
 
@@ -23,7 +23,7 @@ export type BallCaptureTarget = {
   localOffset: Vector3;
 };
 
-type BallState = "inactive" | "active" | "captured";
+type BallState = "inactive" | "active" | "captured_pending" | "captured";
 
 type BallEntry = {
   id: string;
@@ -146,6 +146,8 @@ export class BallSystem implements GameDisposable {
   private activateBall(ball: BallEntry) {
     ball.state = "active";
 
+    ball.collider.setCollisionGroups(COLLISION_GROUPS.ACTIVE_BALL);
+    ball.body.setBodyType(RAPIER.RigidBodyType.Dynamic, true);
     ball.collider.setEnabled(true);
     ball.body.setEnabled(true);
 
@@ -157,6 +159,7 @@ export class BallSystem implements GameDisposable {
   private deactivateBall(ball: BallEntry) {
     ball.state = "inactive";
 
+    ball.collider.setCollisionGroups(COLLISION_GROUPS.CAPTURED_BALL);
     ball.collider.setEnabled(false);
     ball.body.setEnabled(false);
 
@@ -169,10 +172,16 @@ export class BallSystem implements GameDisposable {
     const ball = this.balls.find((b) => b.id === ballId);
     if (!ball || ball.state != "active") return;
 
-    // 1. Disable physics cleanly
-    ball.collider.setEnabled(false);
+    // --- 1. Stop motion deterministically ---
     ball.body.setLinvel({ x: 0, y: 0, z: 0 }, true);
     ball.body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+    ball.body.wakeUp(); // defensive: ensure state is applied
+
+    // --- 2. Convert body to kinematic (CRITICAL STEP) ---
+    ball.body.setBodyType(RAPIER.RigidBodyType.KinematicPositionBased, true);
+
+    ball.collider.setCollisionGroups(COLLISION_GROUPS.CAPTURED_BALL);
+    ball.collider.setEnabled(false);
     ball.body.setEnabled(false);
 
     target.anchor.add(ball.mesh);
@@ -180,6 +189,8 @@ export class BallSystem implements GameDisposable {
     ball.mesh.rotation.set(0, 0, 0);
 
     ball.state = "captured";
+
+    ball.rollingAudio?.stop();
   }
 
   private emitSparkles(

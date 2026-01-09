@@ -6,9 +6,24 @@
   min-width: 200px;
   min-height: 48px;
   border-radius: var(--radius-lg);
-  background-color: var(--color-primary-500);
   color: var(--color-neutral-700);
   cursor: pointer;
+  position: relative;
+}
+
+.ButtonDefault {
+  border-radius: 24px;
+  background-color: rgba(255, 255, 255, 0.2);
+  height: 60px;
+  min-width: 262px;
+  color: white;
+}
+
+.ButtonIcon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .ButtonContent {

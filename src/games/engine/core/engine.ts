@@ -2,10 +2,13 @@ import * as THREE from "three";
 import { PhysicsWorld } from "../physics/physics-world";
 import { Game } from "../../tahterevallis";
 import { GameAudioManager } from "../audio/game-audio-manager";
+import { RapierDebugRenderer } from "./debug-renderer";
 
 export class Engine {
   public readonly scene = new THREE.Scene();
   public readonly renderer: THREE.WebGLRenderer;
+  private rapierDebug?: RapierDebugRenderer;
+  private debugPhysics = false;
   public readonly physicsWorld: PhysicsWorld;
   private cameras = new Map<string, THREE.Camera>();
   private activeCamera?: THREE.Camera;
@@ -20,6 +23,11 @@ export class Engine {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.physicsWorld = physicsWorld;
+    // debug
+    this.rapierDebug = new RapierDebugRenderer(
+      this.scene,
+      this.physicsWorld.getWorld()
+    );
 
     container.appendChild(this.renderer.domElement);
     window.addEventListener("resize", this.handleResize);
@@ -64,6 +72,10 @@ export class Engine {
 
     this.game?.update(dt);
     this.render(this.scene);
+
+    if (this.debugPhysics && this.rapierDebug) {
+      this.rapierDebug.update();
+    }
 
     this.rafId = requestAnimationFrame(this.loop);
   };

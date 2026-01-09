@@ -2,6 +2,12 @@ export const TABLE_WIDTH = 12; // world units (X)
 export const TABLE_HEIGHT = 18; // world units (Z)
 export const TABLE_ASPECT_RATIO = TABLE_WIDTH / TABLE_HEIGHT;
 
+export const COLLISION_GROUPS = {
+  ACTIVE_BALL: 0x00010001, // Group 0, interacts with group 0
+  CAPTURED_BALL: 0x00020000, // Group 1, interacts with nothing
+  TABLE: 0x00010001, // Group 0, interacts with group 0
+};
+
 type Ball = {
   color: `#${string}`;
   restitution: number;

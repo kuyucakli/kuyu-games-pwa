@@ -19,6 +19,9 @@
   background-color: #5b92a9;
   color: #ffc9a4;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  animation: hud-box-enter 0.8s 1s forwards;
+  opacity: 0;
+  transform: scale(0);
 }
 
 .HUDBoxLabel {
@@ -29,4 +32,16 @@
 .HUDBoxContent {
   flex: 1;
   font-size: 20px;
+}
+
+@keyframes hud-box-enter {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

@@ -21,12 +21,13 @@ type BaseLinkButtonProps = PropsWithChildren<
   LinkHTMLAttributes<HTMLLinkElement>
 >;
 
-export function Button({
+export function BaseButton({
   icon,
   type = "button",
   className,
   children,
   disabled,
+  onClick,
 }: BaseButtonProps) {
   const { pending } = useFormStatus();
   return (
@@ -35,24 +36,40 @@ export function Button({
       className={`${styles.Button} ${className}`}
       disabled={disabled}
       aria-disabled={disabled}
+      onClick={onClick}
     >
-      {icon}
+      <span className={styles.ButtonIcon}>{icon}</span>
       <span className={styles.ButtonContent}>
         <span className={styles.LoaderIconContainer}>
           {pending && <ShimmerLoader />}
         </span>
-        <span className={styles.ButtonText}>{children}</span>
+        <span className={`text-sm ${styles.ButtonText}`}>{children}</span>
       </span>
     </button>
+  );
+}
+
+export function ButtonDefault(props: BaseButtonProps) {
+  const { children, className, ...restProps } = props;
+  return (
+    <BaseButton
+      {...restProps}
+      className={`${styles.ButtonDefault} ${className}`}
+    >
+      {children}
+    </BaseButton>
   );
 }
 
 export function ButtonRounded(props: BaseButtonProps) {
   const { children, className, ...restProps } = props;
   return (
-    <Button {...restProps} className={`${className} ${styles.ButtonRounded}`}>
+    <BaseButton
+      {...restProps}
+      className={`${className} ${styles.ButtonRounded}`}
+    >
       {children}
-    </Button>
+    </BaseButton>
   );
 }
 

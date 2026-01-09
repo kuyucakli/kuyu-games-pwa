@@ -32,17 +32,23 @@ function createHoleIndicator(): Mesh {
 function createHoleSensor(
   locator: Object3D,
   radius: number,
-  physicsWorld: RAPIER.World
+  physicsWorld: RAPIER.World,
+  tableBody: RAPIER.RigidBody
 ) {
-  const pos = new Vector3();
-  locator.getWorldPosition(pos);
+  const worldPos = new Vector3();
+  locator.getWorldPosition(worldPos);
 
-  const collider = physicsWorld.createCollider(
-    RAPIER.ColliderDesc.ball(radius)
-      .setTranslation(pos.x, pos.y, pos.z)
-      .setSensor(true)
-  );
+  const bodyPos = tableBody.translation();
 
+  const desc = RAPIER.ColliderDesc.ball(radius)
+    .setTranslation(
+      worldPos.x - bodyPos.x,
+      worldPos.y - bodyPos.y,
+      worldPos.z - bodyPos.z
+    )
+    .setSensor(true);
+
+  const collider = physicsWorld.createCollider(desc, tableBody);
   collider.setEnabled(false);
 
   return collider;

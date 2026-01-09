@@ -108,6 +108,7 @@ export class Game {
       new THREE.Vector3(0, 0, 0),
       engine.physicsWorld
     );
+    tableInstance.attachRigidBody(this.tableRigidBody);
 
     this.setupScene();
 

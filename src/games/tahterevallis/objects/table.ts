@@ -32,6 +32,17 @@ export class Table {
     this.group.add(locatorsClone);
   }
 
+  get object3D(): THREE.Object3D {
+    return this.group;
+  }
+
+  get rigidBody(): RAPIER.RigidBody {
+    if (!this.body) {
+      throw new Error("Table rigid body accessed before attachRigidBody()");
+    }
+    return this.body;
+  }
+
   attachRigidBody(body: RAPIER.RigidBody) {
     this.body = body;
   }

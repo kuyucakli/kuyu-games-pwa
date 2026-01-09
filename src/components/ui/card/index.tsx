@@ -11,7 +11,7 @@ function Card({
   className,
   children,
 }: PropsWithChildren<HtmlHTMLAttributes<HTMLDivElement>>) {
-  return <div className={`${styles.Card} ${styles.className}`}>{children}</div>;
+  return <div className={`${styles.Card} ${className}`}>{children}</div>;
 }
 
 function CardHeader({

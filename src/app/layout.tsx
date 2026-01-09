@@ -5,7 +5,6 @@ import { PWAInstallBanner } from "@/components/features/banners/pwa-banner";
 import { HeaderMain } from "@/components/layout";
 import { NavMain } from "@/components/features/navs/nav-main";
 
-
 const allertaStencil = Allerta_Stencil({
   weight: "400",
   variable: "--font-allerta-stencil",

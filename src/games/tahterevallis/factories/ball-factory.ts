@@ -1,4 +1,5 @@
 import RAPIER from "@dimforge/rapier3d";
+import { COLLISION_GROUPS } from "../config";
 
 function createDynamicBall(
   radius: number,
@@ -17,6 +18,7 @@ function createDynamicBall(
     body
   );
   collider.setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS);
+  collider.setCollisionGroups(COLLISION_GROUPS.ACTIVE_BALL);
 
   return { body, collider };
 }

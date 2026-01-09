@@ -7,7 +7,13 @@ import { useEffect, useState } from "react";
 import { appAudioManager } from "@/audio/app-audio-manager";
 import { useAudioSession } from "@/store/audio-session";
 
-export function SelectGameIntro() {
+export function SelectGameIntro({
+  exit = false,
+  onExit,
+}: {
+  exit: boolean;
+  onExit: () => void;
+}) {
   const muted = useAudioSession((state) => state.muted);
   const [ready, setReady] = useState(false);
 
@@ -47,10 +53,13 @@ export function SelectGameIntro() {
   }, [muted, ready]);
 
   return (
-    <div className={styles.SelectGameIntro}>
+    <div
+      className={`${styles.SelectGameIntro} ${exit ? styles.Exit : ""}`}
+      onAnimationEnd={() => onExit()}
+    >
       {!ready && <p className="text-xs">Loading...</p>}
 
-      <div className={styles.MovingBallContainer}>
+      <div className={`${styles.MovingBallContainer}`}>
         <Image
           src="/assets/tahterevallis/images/intro-ball.png"
           alt="intro ball"

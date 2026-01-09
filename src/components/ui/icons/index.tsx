@@ -1,12 +1,18 @@
+import { SVGAttributes } from "lucide-react";
 import { ReactElement } from "react";
+
+type IconBase = {
+  size?: number | string;
+  children: ReactElement<SVGElement> | ReactElement<SVGElement>[];
+} & SVGAttributes;
+
+type Icon = Omit<IconBase, "children">;
 
 const IconBase = ({
   size = "28px",
   children,
-}: {
-  size?: number | string;
-  children: ReactElement<SVGElement> | ReactElement<SVGElement>[];
-}) => {
+  fill = "currentColor",
+}: IconBase) => {
   return (
     <svg
       className="icon"
@@ -14,7 +20,7 @@ const IconBase = ({
       height={size}
       viewBox="0 -960 960 960"
       width={size}
-      fill="currentColor"
+      fill={fill}
     >
       {children}
     </svg>
@@ -111,6 +117,12 @@ const IconMusicOff = () => (
   </IconBase>
 );
 
+const IconPlay = (props: Icon) => (
+  <IconBase {...props}>
+    <path d="M320-200v-560l440 280-440 280Zm80-280Zm0 134 210-134-210-134v268Z" />
+  </IconBase>
+);
+
 const IconSettings = () => (
   <svg
     width="20"
@@ -133,6 +145,7 @@ export {
   IconMusicNote,
   IconMusicOff,
   IconHelp,
+  IconPlay,
   IconRobot,
   IconSettings,
 };

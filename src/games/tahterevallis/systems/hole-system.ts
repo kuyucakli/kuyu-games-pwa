@@ -38,7 +38,12 @@ export class HoleSystem implements GameDisposable {
     const mesh = createHoleIndicator();
     locator.add(mesh);
 
-    const sensor = createHoleSensor(locator, 0.1, this.world.getWorld());
+    const sensor = createHoleSensor(
+      locator,
+      0.1,
+      this.world.getWorld(),
+      this.table.rigidBody
+    );
     this.world.addColliderMeta(sensor, {
       kind: "goal",
       entityId: locator.name,
@@ -80,6 +85,7 @@ export class HoleSystem implements GameDisposable {
     const pos = new Vector3();
     holeIndicator.locator.getWorldPosition(pos);
     holeIndicator.active = false;
+    this.setSolid(holeName);
 
     gameEvents.emit("goal:entered", {
       ballName,
@@ -88,17 +94,25 @@ export class HoleSystem implements GameDisposable {
     });
   };
 
-  setActive(locatorName: string, active: boolean) {
-    const indicator = this.indicators.find(
-      (i) => i.locator.name === locatorName
-    );
+  setActive(holeName: HoleName, active: boolean) {
+    const indicator = this.indicators.find((i) => i.locator.name === holeName);
 
     if (indicator) {
       indicator.mesh.visible = active;
 
       indicator.sensor.setEnabled(active);
+      indicator.sensor.setSensor(true);
       indicator.active = active;
     }
+  }
+
+  setSolid(holeName: HoleName) {
+    const indicator = this.indicators.find((i) => i.locator.name === holeName);
+
+    if (!indicator) return;
+
+    // Toggle between sensor and solid collider
+    indicator.sensor.setSensor(false);
   }
 
   registerFromTable() {
@@ -125,11 +139,12 @@ export class HoleSystem implements GameDisposable {
       const active = config.holes.goal.includes(
         indicator.locator.name as HoleName
       );
-      this.setActive(indicator.locator.name, active);
+      this.setActive(indicator.locator.name as HoleName, active);
     }
   }
 
   update(time: number) {
+    //Hole indicator animation
     for (const i of this.indicators) {
       if (!i.active) continue;
       const s = 1 + Math.sin(time * 4) * 0.05;

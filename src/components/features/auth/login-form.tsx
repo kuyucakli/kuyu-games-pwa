@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/buttons";
+import { ButtonDefault } from "@/components/ui/buttons";
 import { Form } from "@/components/ui/form/form";
 import { InputText } from "@/components/ui/form/inputs";
 import { login } from "@/lib/actions/auth";
@@ -18,7 +18,7 @@ export function LoginForm({ message }: { message?: string | string[] }) {
 
       <InputText type="password" id="password" error={state.errors.password} />
 
-      <Button type="submit">Log in</Button>
+      <ButtonDefault type="submit">Log in</ButtonDefault>
     </Form>
   );
 }
