@@ -30,7 +30,7 @@ export function Settings() {
 
   return (
     <>
-      {true && (
+      {isTouchDevice() && (
         <ButtonDefault
           icon={
             <span

@@ -130,10 +130,22 @@
   html {
     height: 100%;
   }
+
+  html:has(meta[content="Kuyu Games Tahterevallis Game"]) body {
+    background-color: #b6aa96;
+  }
+
   body {
     @apply bg-background text-foreground;
     height: 100%;
     overflow: hidden;
+    transition: background-color 0.2s ease-in;
+    background: #0d2619;
+    background: radial-gradient(
+      circle,
+      rgba(13, 38, 25, 1) 0%,
+      rgba(23, 23, 20, 1) 58%
+    );
   }
 
   #root {
