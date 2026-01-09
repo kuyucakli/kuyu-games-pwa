@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/ui/buttons";
+import { ButtonDefault } from "@/components/ui/buttons";
 import { Form, FormFooter } from "@/components/ui/form/form";
 import { InputText } from "@/components/ui/form/inputs";
 import { requestPasswordReset } from "@/lib/actions/auth";
@@ -14,7 +14,7 @@ export function ForgotPasswordForm() {
     <Form action={action}>
       <InputText type="email" id="email" error={state.errors?.email} />
       <FormFooter>
-        <Button type="submit">Send</Button>
+        <ButtonDefault type="submit">Send</ButtonDefault>
       </FormFooter>
     </Form>
   );

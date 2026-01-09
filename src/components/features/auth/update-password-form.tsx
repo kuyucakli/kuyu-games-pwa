@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/ui/buttons";
+import { ButtonDefault } from "@/components/ui/buttons";
 import { Form, FormFooter } from "@/components/ui/form/form";
 import { InputText } from "@/components/ui/form/inputs";
 import { updatePassword } from "@/lib/actions/auth";
@@ -28,7 +28,7 @@ export function UpdatePasswordForm() {
         error={state.errors?.confirmPassword}
       />
       <FormFooter>
-        <Button type="submit">Send</Button>
+        <ButtonDefault type="submit">Send</ButtonDefault>
       </FormFooter>
     </Form>
   );
