@@ -33,11 +33,11 @@
 .MovingBallTrail {
   position: absolute;
   top: 0%;
-  margin-top: 1%;
-  right: 12.5%;
-  height: 97%;
+
+  right: 15.5%;
+  height: 100%;
   max-width: none;
-  width: 125%;
+  width: 120%;
   transform-origin: right center;
   animation: trail-init 1s ease-in-out forwards,
     trail 0.1s 1s ease-in-out infinite alternate,
@@ -122,5 +122,8 @@
 @media (min-width: 768px) {
   .MovingBallContainer {
     --moving-ball-container-h: 300px;
+  }
+  .MovingBallTrail {
+    right: 12.5%;
   }
 }

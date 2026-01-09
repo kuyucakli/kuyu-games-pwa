@@ -85,11 +85,11 @@ export const LEVELS_CONFIG: LevelConfig[] = [
   {
     holes: { goal: ["Hole_1", "Hole_6"], trap: ["Hole_2"] },
     totalBalls: 2,
-    timeLimit: 1000 * 40,
+    timeLimit: 1000 * 32,
   },
   {
     holes: { goal: ["Hole_2", "Hole_3", "Hole_6"], trap: ["Hole_4"] },
     totalBalls: 3,
-    timeLimit: 1000 * 52,
+    timeLimit: 1000 * 48,
   },
 ];

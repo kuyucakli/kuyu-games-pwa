@@ -43,7 +43,7 @@ export function GameSelectionNav() {
           <CardHeader className="pt-10 md:pt-0">
             <LogoKuyuGames className="mx-auto mt-0 mb-10 opacity-90" />
           </CardHeader>
-          <CardContent className="pb-0">
+          <CardContent className="pb-0!">
             <nav className="flex flex-col gap-3 mt-4 mb-12">
               <Settings />
               <ButtonDefault

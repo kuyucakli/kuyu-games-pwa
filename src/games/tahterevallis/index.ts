@@ -158,7 +158,10 @@ export class Game {
 
     gameBusCommands.on("play", () => this.resumeGame());
     gameBusCommands.on("pause", () => this.pauseGame());
-    gameBusCommands.on("replay", () => this.loadLevel(this.activeLevel));
+    gameBusCommands.on("replay", () => {
+      this.reset();
+      this.loadLevel(1);
+    });
 
     const { w, h } = this.engine.viewport;
 

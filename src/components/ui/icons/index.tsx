@@ -47,27 +47,11 @@ const IconRobot = () => {
   );
 };
 
-const IconGameList = () => {
+const IconGameList = (props: Icon) => {
   return (
-    <svg
-      className="icon"
-      width="28"
-      height="28"
-      viewBox="0 0 40 40"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-    >
-      <circle cx="10" cy="31" r="3" />
-      <circle cx="20" cy="31" r="3" />
-      <circle cx="30" cy="31" r="3" />
-      <path d="M8 11L16 11" />
-      <path d="M10 15L16 15" />
-      <path d="M12 19L14 19L16 19" />
-      <circle cx="26" cy="15" r="4.5" />
-    </svg>
+    <IconBase {...props}>
+      <path d="M120-240v-80h520v80H120Zm664-40L584-480l200-200 56 56-144 144 144 144-56 56ZM120-440v-80h400v80H120Zm0-200v-80h520v80H120Z" />
+    </IconBase>
   );
 };
 
@@ -105,14 +89,14 @@ const IconLogout = () => (
   </svg>
 );
 
-const IconMusicNote = () => (
-  <IconBase>
+const IconMusicNote = (props: Icon) => (
+  <IconBase {...props}>
     <path d="M400-120q-66 0-113-47t-47-113q0-66 47-113t113-47q23 0 42.5 5.5T480-418v-422h240v160H560v400q0 66-47 113t-113 47Z" />
   </IconBase>
 );
 
-const IconMusicOff = () => (
-  <IconBase>
+const IconMusicOff = (props: Icon) => (
+  <IconBase {...props}>
     <path d="M792-56 56-792l56-56 736 736-56 56ZM560-514l-80-80v-246h240v160H560v166ZM400-120q-66 0-113-47t-47-113q0-66 47-113t113-47q23 0 42.5 5.5T480-418v-62l80 80v120q0 66-47 113t-113 47Z" />
   </IconBase>
 );

@@ -20,7 +20,7 @@ export function ButtonToggleAudio() {
         muted ? "opacity-50" : ""
       } relative z-50`}
     >
-      {muted ? <IconMusicOff /> : <IconMusicNote />}
+      {muted ? <IconMusicOff size="22px" /> : <IconMusicNote size="22px" />}
     </button>
   );
 }

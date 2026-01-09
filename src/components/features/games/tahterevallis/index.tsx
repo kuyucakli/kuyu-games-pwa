@@ -80,6 +80,7 @@ export default function GameTahterevallis({
 
     const onFailed = () => {
       setGameState("failed");
+      setLevel(1);
     };
 
     tahterevallisEvents.on("level:completed", onLevelCompleted);

@@ -12,7 +12,7 @@ export function ButtonSelectGame() {
       href="/select-game"
       className={`${isSelectGamePage ? "pointer-events-none opacity-40" : ""}`}
     >
-      <IconGameList />
+      <IconGameList size="22px" />
     </LinkButtonRounded>
   );
 }
