@@ -32,7 +32,7 @@ export function Modal({
         aria-label="Close"
         className="absolute top-4 right-4 text-gray-200 hover:text-gray-100 z-10"
       >
-        <IconClose />
+        <IconClose fill="white"/>
       </button>
       {children}
     </dialog>
