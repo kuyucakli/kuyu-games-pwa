@@ -4,7 +4,7 @@ import { ActiveBallQuery } from "./ball-system";
 import { physicsWorldEvent } from "@/games/engine/physics/physics-world";
 
 export class OutOfBoundsSystem implements GameDisposable {
-  private readonly Y_LIMIT = -3;
+  private readonly Y_LIMIT = -3.4;
   private reported = new Set<string>();
 
   constructor(private ballQuery: ActiveBallQuery) {}
