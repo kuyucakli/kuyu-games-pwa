@@ -16,7 +16,7 @@ export class OutofBoundsPlane {
 
     mesh.castShadow = false;
     mesh.receiveShadow = false;
-
+    mesh.updateWorldMatrix(true, false);
     this.mesh = mesh;
   }
 

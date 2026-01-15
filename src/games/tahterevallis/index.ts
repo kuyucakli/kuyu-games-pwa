@@ -127,6 +127,7 @@ export class Game {
         this.audioSystem.createBallRollingAudio()
       )
     );
+
     this.outOfBoundsSystem = new OutOfBoundsSystem(this.ballSystem);
 
     this.timerSystem = new TimerSystem();

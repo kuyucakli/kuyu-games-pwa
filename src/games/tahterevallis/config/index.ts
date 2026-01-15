@@ -6,6 +6,7 @@ export const COLLISION_GROUPS = {
   ACTIVE_BALL: 0x00010001, // Group 0, interacts with group 0
   CAPTURED_BALL: 0x00020000, // Group 1, interacts with nothing
   TABLE: 0x00010001, // Group 0, interacts with group 0
+  OUT_OF_BOUNDS: 0b0010_0001,
 };
 
 type Ball = {
