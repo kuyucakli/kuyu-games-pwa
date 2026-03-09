@@ -9,6 +9,7 @@ import { LogoKuyuGames } from "@/components/logo";
 import { redirect } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { IconPlay } from "@/components/ui/icons";
+import { useDeviceTilt } from "@/hooks/use-device-tilt";
 
 export function GameSelectionNav() {
   const navContainerElRef = useRef(null);
@@ -16,6 +17,8 @@ export function GameSelectionNav() {
   const [sceneState, setSceneState] = useState<"entered" | "exiting" | "idle">(
     "entered",
   );
+
+  const { requestPermission } = useDeviceTilt();
 
   useEffect(() => {
     if (!navContainerElRef.current) return;
@@ -47,7 +50,9 @@ export function GameSelectionNav() {
             <nav className="flex flex-col gap-3 mt-4 mb-12">
               {/* <Settings /> */}
               <ButtonDefault
-                onClick={() => {
+                onClick={async () => {
+                  await requestPermission();
+
                   setSceneState("exiting");
                   setPath("/tahterevallis");
                 }}

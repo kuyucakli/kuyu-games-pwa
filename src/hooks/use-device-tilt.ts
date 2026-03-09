@@ -1,35 +1,43 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 export function useDeviceTilt() {
   const [tiltAngles, setTiltAngles] = useState([0, 0]);
+  const [isPermissionGranted, setIsPermissionGranted] = useState(false);
   const needsUpdate = useRef(false);
   const pendingTiltAngles = useRef([0, 0]);
 
+  const requestPermission = useCallback(async () => {
+    const D = DeviceOrientationEvent as any;
+
+    if (typeof D?.requestPermission === "function") {
+      try {
+        const state = await D.requestPermission();
+        if (state === "granted") {
+          setIsPermissionGranted(true);
+          return true;
+        }
+      } catch (e) {
+        console.error("DeviceOrientation permission denied", e);
+      }
+    } else {
+      // Non-iOS or older iOS browsers
+      setIsPermissionGranted(true);
+      return true;
+    }
+    return false;
+  }, []);
+
   useEffect(() => {
     let raf: number;
-    function requestIOSPermission() {
-      const D = DeviceOrientationEvent as any;
-
-      if (typeof D?.requestPermission === "function") {
-        D.requestPermission().catch(() => {});
-      }
-    }
 
     function handleOrientation(event: DeviceOrientationEvent) {
       const beta = event.beta ?? 0;
       const gamma = event.gamma ?? 0;
-
       const isPortrait = window.innerHeight > window.innerWidth;
 
-      let x = beta;
-      let y = gamma;
-
-      if (isPortrait) {
-        const rotatedX = y;
-        const rotatedY = -x;
-        x = rotatedX;
-        y = rotatedY;
-      }
+      // Portrait normalization logic
+      let x = isPortrait ? gamma : beta;
+      let y = isPortrait ? -beta : gamma;
 
       const normX = Math.max(-1, Math.min(1, x / 45));
       const normY = Math.max(-1, Math.min(1, y / 45));
@@ -46,16 +54,78 @@ export function useDeviceTilt() {
       raf = requestAnimationFrame(loop);
     }
 
-    raf = requestAnimationFrame(loop);
-
-    window.addEventListener("click", requestIOSPermission, { once: true });
-    window.addEventListener("deviceorientation", handleOrientation);
+    if (isPermissionGranted) {
+      window.addEventListener("deviceorientation", handleOrientation);
+      raf = requestAnimationFrame(loop);
+    }
 
     return () => {
       window.removeEventListener("deviceorientation", handleOrientation);
       cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [isPermissionGranted]);
 
-  return tiltAngles;
+  return { tiltAngles, requestPermission, isPermissionGranted };
 }
+
+// import { useEffect, useRef, useState } from "react";
+
+// export function useDeviceTilt() {
+//   const [tiltAngles, setTiltAngles] = useState([0, 0]);
+//   const needsUpdate = useRef(false);
+//   const pendingTiltAngles = useRef([0, 0]);
+
+//   useEffect(() => {
+//     let raf: number;
+//     function requestIOSPermission() {
+//       const D = DeviceOrientationEvent as any;
+
+//       if (typeof D?.requestPermission === "function") {
+//         D.requestPermission().catch(() => {});
+//       }
+//     }
+
+//     function handleOrientation(event: DeviceOrientationEvent) {
+//       const beta = event.beta ?? 0;
+//       const gamma = event.gamma ?? 0;
+
+//       const isPortrait = window.innerHeight > window.innerWidth;
+
+//       let x = beta;
+//       let y = gamma;
+
+//       if (isPortrait) {
+//         const rotatedX = y;
+//         const rotatedY = -x;
+//         x = rotatedX;
+//         y = rotatedY;
+//       }
+
+//       const normX = Math.max(-1, Math.min(1, x / 45));
+//       const normY = Math.max(-1, Math.min(1, y / 45));
+
+//       pendingTiltAngles.current = [normX, normY];
+//       needsUpdate.current = true;
+//     }
+
+//     function loop() {
+//       if (needsUpdate.current) {
+//         needsUpdate.current = false;
+//         setTiltAngles(pendingTiltAngles.current);
+//       }
+//       raf = requestAnimationFrame(loop);
+//     }
+
+//     raf = requestAnimationFrame(loop);
+
+//     window.addEventListener("click", requestIOSPermission, { once: true });
+//     window.addEventListener("deviceorientation", handleOrientation);
+
+//     return () => {
+//       window.removeEventListener("deviceorientation", handleOrientation);
+//       cancelAnimationFrame(raf);
+//     };
+//   }, []);
+
+//   return tiltAngles;
+// }
