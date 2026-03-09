@@ -50,36 +50,44 @@ export const GameAssets = {
     type: "audio",
     url: "/assets/tahterevallis/audio/ball-rolling-fx.wav",
   },
+  holeRedGlow: {
+    type: "texture",
+    url: "/assets/tahterevallis/images/red-glow.png",
+  },
+  holeGreenGlow: {
+    type: "texture",
+    url: "/assets/tahterevallis/images/green-glow.png",
+  },
 } as const;
 
 const defaultBall = {
   color: `#ff0000`,
   restitution: 0.1,
   radius: 0.28,
-  initPosition: [0, 1, 4],
+  initPosition: [0, 10, 4],
 } as Ball;
 
 export const GAME_BALLS: Ball[] = [
   defaultBall,
   {
     ...defaultBall,
-    initPosition: [0, 1, -4],
+    initPosition: [0, 10, -4],
   },
   {
     ...defaultBall,
-    initPosition: [1, 1, -4],
+    initPosition: [1, 10, -4],
   },
   {
     ...defaultBall,
-    initPosition: [2, 1, 4],
+    initPosition: [2, 10, 4],
   },
   {
     ...defaultBall,
-    initPosition: [3, 1, -4],
+    initPosition: [3, 10, -4],
   },
   {
     ...defaultBall,
-    initPosition: [4, 1, -4],
+    initPosition: [4, 10, -4],
   },
 ];
 export const LEVELS_CONFIG: LevelConfig[] = [

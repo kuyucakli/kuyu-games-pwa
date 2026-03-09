@@ -64,7 +64,10 @@ class ThreeAudioEngine {
 
     const clamped = Math.max(0, Math.min(1, v));
     this._lastVolume = clamped;
-    this._masterGain!.gain.value = clamped;
+
+    //this._masterGain!.gain.value = clamped;
+    const ctx = this.listener.context;
+    this._masterGain!.gain.setTargetAtTime(clamped, ctx.currentTime, 0.1);
   }
 
   setMuted(muted: boolean) {

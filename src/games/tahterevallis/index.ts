@@ -1,23 +1,26 @@
-import * as THREE from "three";
-import mitt from "mitt";
-import { Table } from "./objects/table";
-import { SparkleSystem } from "./systems/sparkle-system";
-import { Engine } from "../engine/core/engine";
-import { OutofBoundsPlane } from "./objects/outof-bounds-plane";
 import RAPIER from "@dimforge/rapier3d";
-import { TiltInput } from "./input";
-import { HoleSystem } from "./systems/hole-system";
-import { GameAssets, HoleName, LEVELS_CONFIG } from "./config";
-import { BallSystem } from "./systems/ball-system";
+import mitt from "mitt";
+import * as THREE from "three";
+import {
+  type AssetLoaderEvent,
+  AssetManager,
+} from "../engine/assets/asset-manager";
+import type { Engine } from "../engine/core/engine";
+import { type GameAssets, type HoleName, LEVELS_CONFIG } from "./config";
 import { createTableTrimesh } from "./factories/table-factory";
-import { AssetLoaderEvent, AssetManager } from "../engine/assets/asset-manager";
+import { TiltInput } from "./input";
+import { OutofBoundsPlane } from "./objects/outof-bounds-plane";
+import { Table } from "./objects/table";
+import { BallSystem } from "./systems/ball-system";
+import { HoleSystem } from "./systems/hole-system";
+import { SparkleSystem } from "./systems/sparkle-system";
 
+import type { GameDisposable } from "@/games/types";
+import type { Property } from "@/lib/types/utils";
 import { AudioSystem } from "./systems/audio-system";
 import { LevelSystem } from "./systems/level-system";
-import { TimerSystem } from "./systems/timer-system";
-import { Property } from "@/lib/types/utils";
 import { OutOfBoundsSystem } from "./systems/out-of-bounds-system";
-import { GameDisposable } from "@/games/types";
+import { TimerSystem } from "./systems/timer-system";
 
 type GameState = "idle" | "playing" | "paused" | "level-complete" | "game-over";
 
@@ -93,7 +96,7 @@ export class Game {
 
     const tableInstance = new Table(
       gameObjectsGLTF,
-      new THREE.Vector3(0, 0, 0)
+      new THREE.Vector3(0, 0, 0),
     );
     const outofBoundsPlane = new OutofBoundsPlane(gameObjectsGLTF);
 
@@ -106,7 +109,7 @@ export class Game {
       tableInstance.getColliderTrimeshLocal().vertices,
       tableInstance.getColliderTrimeshLocal().indices,
       new THREE.Vector3(0, 0, 0),
-      engine.physicsWorld
+      engine.physicsWorld,
     );
     tableInstance.attachRigidBody(this.tableRigidBody);
 
@@ -116,7 +119,10 @@ export class Game {
     this.scene.add(this.sparkleSystem.points);
 
     this.holeSystem = this.register(
-      new HoleSystem(this.engine.physicsWorld, tableInstance)
+      new HoleSystem(this.engine.physicsWorld, tableInstance, {
+        goalGlow: this.assets.get("holeGreenGlow"),
+        trapGlow: this.assets.get("holeRedGlow"),
+      }),
     );
     this.holeSystem.registerFromTable();
 
@@ -124,8 +130,8 @@ export class Game {
 
     this.ballSystem = this.register(
       new BallSystem(this.scene, engine.physicsWorld, this.sparkleSystem, () =>
-        this.audioSystem.createBallRollingAudio()
-      )
+        this.audioSystem.createBallRollingAudio(),
+      ),
     );
 
     this.outOfBoundsSystem = new OutOfBoundsSystem(this.ballSystem);
@@ -205,15 +211,23 @@ export class Game {
     await Promise.all([
       this.assets.loadGLTF(
         "gameObjects",
-        "/assets/tahterevallis/3d/game-objects.glb"
+        "/assets/tahterevallis/3d/game-objects.glb",
       ),
       this.assets.loadAudio(
         "goalSoundFx",
-        "/assets/tahterevallis/audio/goal-fx.wav"
+        "/assets/tahterevallis/audio/goal-fx.wav",
       ),
       this.assets.loadAudio(
         "ballRollingSoundFx",
-        "/assets/tahterevallis/audio/ball-rolling-fx.wav"
+        "/assets/tahterevallis/audio/ball-rolling-fx.wav",
+      ),
+      this.assets.loadTexture(
+        "holeGreenGlow",
+        "/assets/tahterevallis/images/green-glow.png",
+      ),
+      this.assets.loadTexture(
+        "holeRedGlow",
+        "/assets/tahterevallis/images/red-glow.png",
       ),
     ]);
   }
@@ -275,7 +289,7 @@ export class Game {
     const q = this.table.quaternion;
 
     this.tableRigidBody.setNextKinematicRotation(
-      new RAPIER.Quaternion(q.x, q.y, q.z, q.w)
+      new RAPIER.Quaternion(q.x, q.y, q.z, q.w),
     );
   }
 
@@ -332,7 +346,7 @@ export class Game {
     viewportW: number,
     viewportH: number,
     maxTablePx = 600,
-    offset = 1.1 // e.g., 10% padding around table
+    offset = 1.1, // e.g., 10% padding around table
   ) {
     const box = new THREE.Box3().setFromObject(table);
     const size = new THREE.Vector3();
@@ -385,12 +399,13 @@ export class Game {
     camera.rotation.z = isPortrait ? Math.PI / 2 : 0;
   }
 
-  update(dt: number) {
-    if (this.state != "playing") return;
+  update(dt: number, elapsed: number) {
+    if (this.state !== "playing") return;
 
     this.engine.physicsWorld.step(dt);
 
     this.ballSystem.update(dt);
+    this.holeSystem.update(dt, elapsed);
     this.outOfBoundsSystem.update();
 
     const mapped = this.mapTiltInput(this.tiltInput.x, this.tiltInput.y);

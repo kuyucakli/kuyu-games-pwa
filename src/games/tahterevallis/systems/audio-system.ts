@@ -8,7 +8,7 @@ import { BallRollingAudio } from "../objects/ball";
 export class AudioSystem implements GameDisposable {
   constructor(
     private assets: AssetManager<typeof GameAssets>,
-    private audio: GameAudioManager
+    private audio: GameAudioManager,
   ) {
     gameEvents.on("goal:entered", this.onGoal);
     gameEvents.on("audio:intro-home", this.onHomeIntro);
@@ -18,11 +18,11 @@ export class AudioSystem implements GameDisposable {
   }
 
   private onHomeIntro = () => {
-    this.audio.play(this.assets.get("homeIntroMusic"));
+    this.audio.play(this.assets.get("homeIntroMusic"), { volume: 0.01 });
   };
 
   private onSelectGame = () => {
-    this.audio.play(this.assets.get("homeIntroMusic"));
+    this.audio.play(this.assets.get("homeIntroMusic"), { volume: 0.01 });
   };
 
   private onGoal = () => {
@@ -32,7 +32,7 @@ export class AudioSystem implements GameDisposable {
   createBallRollingAudio(): BallRollingAudio {
     return new BallRollingAudio(
       this.assets.get("ballRollingSoundFx"),
-      this.audio.output
+      this.audio.output,
     );
   }
 

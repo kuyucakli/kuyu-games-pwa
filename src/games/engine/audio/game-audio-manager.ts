@@ -26,7 +26,7 @@ export class GameAudioManager {
     buffer: AudioBuffer,
     position: Vector3,
     parent?: Object3D,
-    opts?: { volume?: number }
+    opts?: { volume?: number },
   ) {
     if (!this.camera || !threeAudioEngine.unlocked) return;
 

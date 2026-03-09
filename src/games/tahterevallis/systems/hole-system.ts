@@ -1,4 +1,4 @@
-import { Object3D, Vector3 } from "three";
+import { Object3D, Sprite, Texture, Vector3 } from "three";
 import {
   createHoleIndicator,
   createHoleSensor,
@@ -13,12 +13,14 @@ import { Collider } from "@dimforge/rapier3d";
 import { gameEvents } from "..";
 import { BallCaptureTarget } from "./ball-system";
 import { GameDisposable } from "@/games/types";
+import { createGlow } from "../factories/glow-factory";
 
 type HoleIndicator = {
   locator: Object3D;
   mesh: Object3D;
   active: boolean;
   sensor: Collider;
+  glow?: Sprite;
 };
 
 export class HoleSystem implements GameDisposable {
@@ -27,7 +29,14 @@ export class HoleSystem implements GameDisposable {
   private table;
   private scoredPairs = new Set<string>();
 
-  constructor(world: PhysicsWorld, table: Table) {
+  constructor(
+    world: PhysicsWorld,
+    table: Table,
+    private glowTextures: {
+      goalGlow: Texture;
+      trapGlow?: Texture;
+    },
+  ) {
     this.world = world;
     this.table = table;
 
@@ -38,11 +47,14 @@ export class HoleSystem implements GameDisposable {
     const mesh = createHoleIndicator();
     locator.add(mesh);
 
+    const glow = createGlow(this.glowTextures.goalGlow);
+    locator.add(glow);
+
     const sensor = createHoleSensor(
       locator,
       0.1,
       this.world.getWorld(),
-      this.table.rigidBody
+      this.table.rigidBody,
     );
     this.world.addColliderMeta(sensor, {
       kind: "goal",
@@ -54,6 +66,7 @@ export class HoleSystem implements GameDisposable {
       mesh,
       active: false,
       sensor,
+      glow,
     };
 
     this.indicators.push(indicator);
@@ -75,7 +88,7 @@ export class HoleSystem implements GameDisposable {
     if (this.scoredPairs.has(key)) return;
 
     const holeIndicator = this.indicators.find(
-      (i) => i.locator.name === holeName
+      (i) => i.locator.name === holeName,
     );
 
     if (!holeIndicator || !holeIndicator.active) return;
@@ -137,18 +150,26 @@ export class HoleSystem implements GameDisposable {
     this.scoredPairs.clear();
     for (const indicator of this.indicators) {
       const active = config.holes.goal.includes(
-        indicator.locator.name as HoleName
+        indicator.locator.name as HoleName,
       );
       this.setActive(indicator.locator.name as HoleName, active);
     }
   }
 
-  update(time: number) {
+  update(time: number, elapsed: number) {
     //Hole indicator animation
+
     for (const i of this.indicators) {
       if (!i.active) continue;
       const s = 1 + Math.sin(time * 4) * 0.05;
       i.mesh.scale.setScalar(s);
+
+      if (i.glow) {
+        const pulse = 1 + Math.sin(elapsed * 1.8) * 0.3;
+        const s = 1.1 * pulse;
+
+        i.glow.scale.set(s, s, 1);
+      }
     }
   }
 

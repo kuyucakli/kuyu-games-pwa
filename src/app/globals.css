@@ -165,10 +165,6 @@
     justify-content: center;
   }
 
-  .icon {
-    color: var(--color-emerald-400);
-  }
-
   /* Default: closed */
   [popover] {
     display: none;

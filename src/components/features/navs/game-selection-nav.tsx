@@ -3,9 +3,9 @@
 import { ButtonDefault } from "@/components/ui/buttons";
 import { SelectGameIntro } from "../motion-intros/select-game-intro";
 import styles from "./navs.module.css";
+import buttonStyles from "@/components/ui/buttons/buttons.module.css";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { LogoKuyuGames } from "@/components/logo";
-import { Settings } from "../games/shared/settings";
 import { redirect } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { IconPlay } from "@/components/ui/icons";
@@ -14,7 +14,7 @@ export function GameSelectionNav() {
   const navContainerElRef = useRef(null);
   const [path, setPath] = useState("/");
   const [sceneState, setSceneState] = useState<"entered" | "exiting" | "idle">(
-    "entered"
+    "entered",
   );
 
   useEffect(() => {
@@ -24,19 +24,19 @@ export function GameSelectionNav() {
   return (
     <div
       ref={navContainerElRef}
-      className={`${styles.GameSelectionNavContainer}  `}
+      className={`${styles.GameSelectionNavContainer} `}
     >
       <SelectGameIntro
-        exit={sceneState == "exiting"}
+        exit={sceneState === "exiting"}
         onExit={() => {
-          if (sceneState != "exiting") return;
+          if (sceneState !== "exiting") return;
           redirect(path);
         }}
       />
 
       <div
         className={`${styles.GameSelectionNavContent} ${
-          sceneState == "exiting" ? styles.GameSelectionNavContentExit : ""
+          sceneState === "exiting" ? styles.GameSelectionNavContentExit : ""
         } `}
       >
         <Card className="min-h-dvh!  flex flex-col justify-between md:min-h-[600px]!">
@@ -45,13 +45,14 @@ export function GameSelectionNav() {
           </CardHeader>
           <CardContent className="pb-0!">
             <nav className="flex flex-col gap-3 mt-4 mb-12">
-              <Settings />
+              {/* <Settings /> */}
               <ButtonDefault
                 onClick={() => {
                   setSceneState("exiting");
                   setPath("/tahterevallis");
                 }}
                 icon={<IconPlay fill="white" />}
+                className={buttonStyles.ButtonShimmer}
               >
                 Play Tahterevallis
               </ButtonDefault>

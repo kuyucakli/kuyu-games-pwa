@@ -1,8 +1,8 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { LinkButtonRounded } from "@/components/ui/buttons";
 import { IconGameList } from "@/components/ui/icons";
-import { usePathname } from "next/navigation";
 
 export function ButtonSelectGame() {
   const pathName = usePathname();
@@ -12,7 +12,7 @@ export function ButtonSelectGame() {
       href="/select-game"
       className={`${isSelectGamePage ? "pointer-events-none opacity-40" : ""}`}
     >
-      <IconGameList size="22px" />
+      <IconGameList size="24px" />
     </LinkButtonRounded>
   );
 }

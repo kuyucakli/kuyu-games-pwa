@@ -1,14 +1,13 @@
+import RAPIER from "@dimforge/rapier3d";
 import {
-  PlaneGeometry,
+  AdditiveBlending,
+  DoubleSide,
   Mesh,
   MeshBasicMaterial,
-  DoubleSide,
-  Object3D,
+  type Object3D,
+  PlaneGeometry,
   Vector3,
-  AdditiveBlending,
 } from "three";
-
-import RAPIER from "@dimforge/rapier3d";
 
 function createHoleIndicator(): Mesh {
   const geometry = new PlaneGeometry(0.95, 0.95, 1, 1);
@@ -33,7 +32,7 @@ function createHoleSensor(
   locator: Object3D,
   radius: number,
   physicsWorld: RAPIER.World,
-  tableBody: RAPIER.RigidBody
+  tableBody: RAPIER.RigidBody,
 ) {
   const worldPos = new Vector3();
   locator.getWorldPosition(worldPos);
@@ -44,7 +43,7 @@ function createHoleSensor(
     .setTranslation(
       worldPos.x - bodyPos.x,
       worldPos.y - bodyPos.y,
-      worldPos.z - bodyPos.z
+      worldPos.z - bodyPos.z,
     )
     .setSensor(true);
 

@@ -17,6 +17,8 @@
   left: 50%;
   transform: translate(-50%, -50%);
   animation: hello 1.2s ease-out forwards;
+  mix-blend-mode: color-dodge;
+  filter: drop-shadow(2px 4px 10px #000000);
 }
 
 .MovingBall {
@@ -25,9 +27,11 @@
   right: 0%;
   z-index: 1;
   width: calc(var(--moving-ball-container-h));
-  animation: rotate-ball 1.2s ease-out forwards, rotate-ball 30s 1.2s infinite,
-    linear infinite, move 3s ease-in-out infinite alternate-reverse;
-  mix-blend-mode: color-dodge;
+  animation:
+    rotate-ball 1.2s ease-out forwards,
+    rotate-ball 30s 1.2s infinite,
+    linear infinite,
+    move 3s ease-in-out infinite alternate-reverse;
 }
 
 .MovingBallTrail {
@@ -39,7 +43,8 @@
   max-width: none;
   width: 120%;
   transform-origin: right center;
-  animation: trail-init 1s ease-in-out forwards,
+  animation:
+    trail-init 1s ease-in-out forwards,
     trail 0.1s 1s ease-in-out infinite alternate,
     move 3s ease-in-out infinite alternate-reverse;
   filter: drop-shadow(2px 4px 10px #ff6b6b);
@@ -121,7 +126,7 @@
 
 @media (min-width: 768px) {
   .MovingBallContainer {
-    --moving-ball-container-h: 300px;
+    --moving-ball-container-h: 240px;
   }
   .MovingBallTrail {
     right: 12.5%;

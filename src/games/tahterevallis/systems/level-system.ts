@@ -1,15 +1,19 @@
+import { formatTimePretty } from "@/lib/utils/time";
 import { Vector3 } from "three";
 import { gameEvents } from "..";
+import { HoleName, LEVELS_CONFIG } from "../config";
 import { BallSystem } from "./ball-system";
 import { HoleSystem } from "./hole-system";
-import { HoleName, LEVELS_CONFIG } from "../config";
-import { formatTimePretty } from "@/lib/utils/time";
-import { GameDisposable } from "@/games/types";
+
+import type { GameDisposable } from "@/games/types";
 
 export class LevelSystem implements GameDisposable {
   private goals: HoleName[] = [];
   private currentLevel: number = 1;
-  constructor(private ballSystem: BallSystem, private holeSystem: HoleSystem) {
+  constructor(
+    private ballSystem: BallSystem,
+    private holeSystem: HoleSystem,
+  ) {
     gameEvents.on("goal:entered", this.onGoal);
     gameEvents.on("timer:updated", this.checkRemainingTime);
   }
@@ -36,9 +40,8 @@ export class LevelSystem implements GameDisposable {
   };
 
   private checkLevelGoals() {
-    let success;
-    success = LEVELS_CONFIG[this.currentLevel - 1].holes.goal.every((h) =>
-      this.goals.includes(h)
+    const success = LEVELS_CONFIG[this.currentLevel - 1].holes.goal.every((h) =>
+      this.goals.includes(h),
     );
     return success;
   }

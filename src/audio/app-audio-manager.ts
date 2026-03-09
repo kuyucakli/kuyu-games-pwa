@@ -14,19 +14,76 @@ class AppAudioManager {
     return this.loading.has(key);
   }
 
-  async load(key: string, url: string, ctx: AudioContext) {
-    if (this.buffers.has(key)) return;
+  async load(
+    key: string,
+    url: string,
+    ctx: AudioContext,
+    onProgress?: (percentage: number) => void,
+  ) {
+    if (this.buffers.has(key)) {
+      onProgress?.(100);
+      return;
+    }
 
     this.loading.add(key);
 
     try {
-      const res = await fetch(url);
-      const buf = await ctx.decodeAudioData(await res.arrayBuffer());
+      const response = await fetch(url);
+
+      // 1. Get the total file size from headers
+      const contentLength = +(response.headers.get("Content-Length") ?? 0);
+      const reader = response.body?.getReader();
+
+      if (!reader) throw new Error("Failed to get reader");
+
+      let receivedLength = 0;
+      const chunks: Uint8Array[] = [];
+
+      // 2. Read the stream chunk by chunk
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) break;
+
+        chunks.push(value);
+        receivedLength += value.length;
+
+        if (contentLength && onProgress) {
+          const pct = Math.round((receivedLength / contentLength) * 100);
+          onProgress(pct);
+        }
+      }
+
+      // 3. Combine chunks into a single ArrayBuffer
+      const chunksAll = new Uint8Array(receivedLength);
+      let position = 0;
+      for (let chunk of chunks) {
+        chunksAll.set(chunk, position);
+        position += chunk.length;
+      }
+
+      // 4. Decode the final buffer
+      const buf = await ctx.decodeAudioData(chunksAll.buffer);
       this.buffers.set(key, buf);
+    } catch (error) {
+      console.error("Audio Load Error:", error);
     } finally {
       this.loading.delete(key);
     }
   }
+  // async load(key: string, url: string, ctx: AudioContext) {
+  //   if (this.buffers.has(key)) return;
+
+  //   this.loading.add(key);
+
+  //   try {
+  //     const res = await fetch(url);
+  //     const buf = await ctx.decodeAudioData(await res.arrayBuffer());
+  //     this.buffers.set(key, buf);
+  //   } finally {
+  //     this.loading.delete(key);
+  //   }
+  // }
 
   playLoop(key: string, output: AudioNode, volume = 1) {
     this.stop();

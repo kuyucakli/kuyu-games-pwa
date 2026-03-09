@@ -1,4 +1,8 @@
-import { LinkButton } from "@/components/ui/buttons";
+import {
+  ButtonDefault,
+  ButtonRounded,
+  LinkButton,
+} from "@/components/ui/buttons";
 import { HTMLAttributes } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutForm } from "./logout-form";
@@ -21,11 +25,11 @@ export async function ProfileDropDown({
 
   return (
     <div className={`${className}`}>
-      <button popoverTarget="account-popover">
+      <ButtonRounded popoverTarget="account-popover">
         <Avatar>
           <IconRobot />
         </Avatar>
-      </button>
+      </ButtonRounded>
       <Popover
         id="account-popover"
         className="fixed left-auto top-10 right-0 scheme-dark text-center"

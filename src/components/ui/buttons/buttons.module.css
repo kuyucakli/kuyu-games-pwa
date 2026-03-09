@@ -9,14 +9,42 @@
   color: var(--color-neutral-700);
   cursor: pointer;
   position: relative;
+  transition: all 0.5s;
 }
 
 .ButtonDefault {
-  border-radius: 24px;
-  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 32px;
+  background-color: #91eddb33;
   height: 60px;
   min-width: 262px;
   color: white;
+}
+
+.ButtonShimmer {
+  background: linear-gradient(
+    -45deg,
+    #91eddb33 40%,
+    #9b7575 50%,
+    #91eddb33 60%
+  );
+  background-size: 300%;
+  background-position-x: 100%;
+  animation: shimmer 2.6s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+    background-size: 400%;
+  }
+  50% {
+    background-position: 0% 0;
+    background-size: 600%;
+  }
+
+  100% {
+    background-position: 0% 0;
+  }
 }
 
 .ButtonIcon {
@@ -44,9 +72,11 @@
   min-height: 32px;
   width: 32px;
   height: 32px;
-  background-color: var(--color-neutral-500) !important;
+  /* background-color: var(--color-neutral-800) !important; */
   border-radius: 50%;
-  border: none !important;
+  color: rgb(255, 255, 0);
+
+  background-color: rgba(83, 62, 0, 0.221);
 }
 
 .LoaderIconContainer {
@@ -57,9 +87,9 @@
 }
 
 .LinkButton {
-  background-color: transparent;
+  /* background-color: transparent;
   color: var(--color-neutral-400);
-  border: 1px solid var(--color-neutral-600);
+  border: 1px solid var(--color-neutral-600); */
 }
 
 .LinkButtonArtistic {

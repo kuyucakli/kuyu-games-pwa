@@ -15,9 +15,13 @@ export class Engine {
   public readonly audioManager = new GameAudioManager();
   private rafId?: number;
   private lastTime = performance.now();
+  private elapsed = 0;
   private game?: Game;
 
-  constructor(private container: HTMLElement, physicsWorld: PhysicsWorld) {
+  constructor(
+    private container: HTMLElement,
+    physicsWorld: PhysicsWorld,
+  ) {
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.renderer.setSize(container.clientWidth, container.clientHeight);
     this.renderer.shadowMap.enabled = true;
@@ -26,7 +30,7 @@ export class Engine {
     // debug
     this.rapierDebug = new RapierDebugRenderer(
       this.scene,
-      this.physicsWorld.getWorld()
+      this.physicsWorld.getWorld(),
     );
 
     container.appendChild(this.renderer.domElement);
@@ -69,8 +73,8 @@ export class Engine {
     const now = performance.now();
     const dt = (now - this.lastTime) / 1000;
     this.lastTime = now;
-
-    this.game?.update(dt);
+    this.elapsed += dt;
+    this.game?.update(dt, this.elapsed);
     this.render(this.scene);
 
     if (this.debugPhysics && this.rapierDebug) {

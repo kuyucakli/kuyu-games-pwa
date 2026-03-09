@@ -24,14 +24,14 @@ type AssetCache<TAssets extends Record<string, GameAssetDescriptor>> = {
 type LoadResult<T extends GameAssetDescriptor> = T["type"] extends "gltf"
   ? GLTF
   : T["type"] extends "audio"
-  ? AudioBuffer
-  : T["type"] extends "texture"
-  ? Texture
-  : never;
+    ? AudioBuffer
+    : T["type"] extends "texture"
+      ? Texture
+      : never;
 
 type KeysByType<
   TAssets extends Record<string, GameAssetDescriptor>,
-  TType extends GameAssetDescriptor["type"]
+  TType extends GameAssetDescriptor["type"],
 > = {
   [K in keyof TAssets]: K extends string
     ? TAssets[K]["type"] extends TType
@@ -83,12 +83,36 @@ export class AssetManager<TAssets extends Record<string, GameAssetDescriptor>> {
             message: JSON.stringify(err),
           });
           reject(err);
-        }
+        },
       );
     });
   }
 
-  loadTexture() {}
+  loadTexture<K extends KeysByType<TAssets, "texture">>(name: K, url: string) {
+    return new Promise<void>((resolve, reject) => {
+      if (this.cache[name]) {
+        resolve();
+        return;
+      }
+
+      this.addQueueCount(1);
+      this.emitProgress();
+
+      this.textureLoader.load(
+        url,
+        (texture) => {
+          this.cache[name] = texture as LoadResult<TAssets[typeof name]>;
+          this.trackProgress(name);
+          resolve();
+        },
+        undefined,
+        (err) => {
+          this.events.emit("error", { name, message: JSON.stringify(err) });
+          reject(err);
+        },
+      );
+    });
+  }
 
   loadGLTF<K extends KeysByType<TAssets, "gltf">>(name: K, url: string) {
     return new Promise<void>((resolve, reject) => {
@@ -109,7 +133,7 @@ export class AssetManager<TAssets extends Record<string, GameAssetDescriptor>> {
         (err) => {
           this.events.emit("error", { name, message: JSON.stringify(err) });
           reject(err);
-        }
+        },
       );
     });
   }

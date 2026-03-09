@@ -6,6 +6,7 @@ import { threeAudioEngine } from "@/audio/three-audio-engine";
 import { useEffect, useState } from "react";
 import { appAudioManager } from "@/audio/app-audio-manager";
 import { useAudioSession } from "@/store/audio-session";
+import { Progress } from "@/components/ui/progress";
 
 export function SelectGameIntro({
   exit = false,
@@ -16,6 +17,7 @@ export function SelectGameIntro({
 }) {
   const muted = useAudioSession((state) => state.muted);
   const [ready, setReady] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   // 1. Load + unlock ONCE
   useEffect(() => {
@@ -26,8 +28,13 @@ export function SelectGameIntro({
 
       await appAudioManager.load(
         "select-game",
-        "/assets/tahterevallis/audio/select-game-intro-v2.wav",
-        ctx
+        "/assets/tahterevallis/audio/select-game-intro-v4.wav",
+        ctx,
+        (percent) => {
+          if (!cancelled) {
+            setProgress(percent); // Update the bar as it loads
+          }
+        },
       );
 
       if (!cancelled) {
@@ -48,16 +55,21 @@ export function SelectGameIntro({
       appAudioManager.stop();
     } else {
       appAudioManager.playLoop("select-game", threeAudioEngine.output, 0.0);
-      appAudioManager.setVolumeSmooth(0.016);
+      appAudioManager.setVolumeSmooth(0.08);
     }
   }, [muted, ready]);
 
   return (
     <div
-      className={`${styles.SelectGameIntro} ${exit ? styles.Exit : ""}`}
+      className={`${styles.SelectGameIntro} ${exit ? styles.Exit : ""} bg-[url(/assets/tahterevallis/images/bg-select-game.jpg)] bg-cover bg-center bg-no-repeat `}
       onAnimationEnd={() => onExit()}
     >
-      {!ready && <p className="text-xs">Loading...</p>}
+      {!ready && (
+        <div className="p-1">
+          <Progress value={progress} id="load-audio" />
+          <span className="text-xs">Loading audio...</span>
+        </div>
+      )}
 
       <div className={`${styles.MovingBallContainer}`}>
         <Image
