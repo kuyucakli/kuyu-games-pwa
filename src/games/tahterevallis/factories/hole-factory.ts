@@ -9,10 +9,10 @@ import {
   Vector3,
 } from "three";
 
-function createHoleIndicator(): Mesh {
+function createHoleIndicator(color: string | number = "green"): Mesh {
   const geometry = new PlaneGeometry(0.95, 0.95, 1, 1);
   const material = new MeshBasicMaterial({
-    color: "green",
+    color,
     transparent: true,
     opacity: 1.0,
     side: DoubleSide,

@@ -1,7 +1,7 @@
 "use client";
 
-import styles from "./intros.module.css";
 import { BaseIntro } from "./base-intro";
+import styles from "./intros.module.css";
 
 export function GameOverIntro({
   onRequestGameReplay,

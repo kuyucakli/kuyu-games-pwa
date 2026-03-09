@@ -43,8 +43,9 @@ export class HoleSystem implements GameDisposable {
     physicsWorldEvent.on("physics:collision", this.onCollision);
   }
 
-  register(locator: Object3D) {
-    const mesh = createHoleIndicator();
+  register(locator: Object3D, kind: "goal" | "trap" = "goal") {
+    const indicatorColor = kind === "goal" ? 0x00ff00 : 0xff0000;
+    const mesh = createHoleIndicator(indicatorColor);
     locator.add(mesh);
 
     const glow = createGlow(this.glowTextures.goalGlow);

@@ -135,9 +135,9 @@ export default function GameTahterevallis({
         style={
           {
             "--hole-width": "680px",
-            "--aspect-ratio": "4/3",
+            "--aspect-ratio": "4 / 2.6",
             /* We calculate the height based on the width and ratio */
-            "--hole-height": "calc(var(--hole-width) / (4 / 2.7))",
+            "--hole-height": "calc(var(--hole-width) / (4 / 2.6))",
             /* We calculate the offsets to keep it centered */
             "--x1": "calc((100% - var(--hole-width)) / 2)",
             "--x2": "calc(100% - var(--x1))",
@@ -147,7 +147,9 @@ export default function GameTahterevallis({
         }
         className="
     fixed w-dvw h-dvh touch-none pointer-events-none
-    bg-[url(/assets/tahterevallis/images/bg-board-texture.png),url(/assets/tahterevallis/images/bg-board-colored-stencils.png),url(/assets/tahterevallis/images/bg-board-colored-stencils-2.png)] bg-position-[center,center_left,bottom_right] bg-size-[cover,auto,auto] bg-no-repeat
+   landscape:bg-[url(/assets/tahterevallis/images/bg-board-texture.png),url(/assets/tahterevallis/images/bg-board-colored-stencils.png),url(/assets/tahterevallis/images/bg-board-colored-stencils-2.png)]
+    
+    bg-position-[center,center_left,bottom_right] bg-size-[cover,auto,auto] bg-no-repeat
     
     [clip-path:polygon(0%_0%,100%_0%,100%_100%,0%_100%,0%_0%,var(--x1)_var(--y1),var(--x1)_var(--y2),var(--x2)_var(--y2),var(--x2)_var(--y1),var(--x1)_var(--y1))]
   "

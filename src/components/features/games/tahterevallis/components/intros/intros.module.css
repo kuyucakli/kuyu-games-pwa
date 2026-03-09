@@ -1,6 +1,6 @@
 .IntroContainer {
   --end-duration: 0.5s;
-  --start-duration: 0.5s;
+  --start-duration: 1.2s;
   --level-complete-duration: 4s;
   --container-w: 100dvw;
   --container-h: 100dvh;
@@ -34,7 +34,8 @@
 }
 
 .ShapeImageIn {
-  animation: shapeImageIn var(--start-duration) ease-out forwards;
+  transform: translate(-50%, -50%) scale(0);
+  animation: shapeImageIn 0.6s ease-in forwards;
 }
 
 .ShapeImageOut {
@@ -46,11 +47,11 @@
 }
 
 .GameOverContainer {
-  background-color: #ff3e3e;
+  background-color: #ff3e3e00;
 }
 
 .LevelCompleted {
-  background-color: #ff3e3e;
+  background-color: #58cc87;
 }
 
 .IntroStart {
@@ -79,9 +80,10 @@
     opacity: 0;
     transform: translate(-50%, -50%) scale(0);
   }
-  70% {
+
+  50% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.8);
+    transform: translate(-50%, -50%) scale(3);
   }
   100% {
     opacity: 1;
@@ -96,7 +98,7 @@
   }
   30% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.8);
+    transform: translate(-50%, -50%) scale(3.8);
   }
   100% {
     opacity: 0;
@@ -106,9 +108,20 @@
 
 @keyframes fadeIn {
   0% {
+    opacity: 0;
+    background-color: #ff3e3e00;
+  }
+  1% {
+    opacity: 1;
+    background-color: #ff3e3e00;
+  }
+  60% {
+    opacity: 1;
+    background-color: #ff3e3e00;
   }
   100% {
     opacity: 1;
+    background-color: #ff3e3e;
   }
 }
 

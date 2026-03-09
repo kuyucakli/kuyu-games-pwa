@@ -1,7 +1,7 @@
 "use client";
 
-import styles from "./intros.module.css";
 import { BaseIntro } from "./base-intro";
+import styles from "./intros.module.css";
 
 export function LevelCompletedIntro({
   level,
@@ -12,7 +12,7 @@ export function LevelCompletedIntro({
 }) {
   return (
     <BaseIntro
-      className={`${styles.LevelCompleted} `}
+      className={`${styles.LevelCompleted} bg-[url(/assets/tahterevallis/images/bg-board-texture.png)] bg-cover  bg-no-repeat z-50`}
       startAndAutoEnd={true}
       onCloseAction={onIntroEnded}
     >
