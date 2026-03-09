@@ -126,17 +126,19 @@ export default function GameTahterevallis({
         <GameOverIntro onRequestGameReplay={requestGameReplay} />
       )}
       <div
-        style={{
-          "--hole-width": "680px",
-          "--aspect-ratio": "4/3",
-          /* We calculate the height based on the width and ratio */
-          "--hole-height": "calc(var(--hole-width) / (4 / 2.7))",
-          /* We calculate the offsets to keep it centered */
-          "--x1": "calc((100% - var(--hole-width)) / 2)",
-          "--x2": "calc(100% - var(--x1))",
-          "--y1": "calc((100% - var(--hole-height)) / 2)",
-          "--y2": "calc(100% - var(--y1))",
-        }}
+        style={
+          {
+            "--hole-width": "680px",
+            "--aspect-ratio": "4/3",
+            /* We calculate the height based on the width and ratio */
+            "--hole-height": "calc(var(--hole-width) / (4 / 2.7))",
+            /* We calculate the offsets to keep it centered */
+            "--x1": "calc((100% - var(--hole-width)) / 2)",
+            "--x2": "calc(100% - var(--x1))",
+            "--y1": "calc((100% - var(--hole-height)) / 2)",
+            "--y2": "calc(100% - var(--y1))",
+          } as React.CSSProperties
+        }
         className="
     fixed z-10 w-dvw h-dvh touch-none pointer-events-none
     bg-[url(/assets/tahterevallis/images/bg-board-texture.png),url(/assets/tahterevallis/images/bg-board-colored-stencils.png),url(/assets/tahterevallis/images/bg-board-colored-stencils-2.png)] bg-position-[center,center_left,bottom_right] bg-size-[cover,auto,auto] bg-no-repeat
