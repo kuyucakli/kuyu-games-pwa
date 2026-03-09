@@ -8,6 +8,7 @@ import {
 } from "react";
 import styles from "./intros.module.css";
 import Image from "next/image";
+import { ButtonDefault } from "@/components/ui/buttons";
 
 type introState = "start" | "end" | "idle" | "startAndAutoEnd";
 type BaseIntroProps = PropsWithChildren<{
@@ -26,7 +27,7 @@ export function BaseIntro({
 }: BaseIntroProps) {
   const containerRef = useRef(null);
   const [state, setState] = useState<introState>(
-    startAndAutoEnd ? "startAndAutoEnd" : "start"
+    startAndAutoEnd ? "startAndAutoEnd" : "start",
   );
 
   const handleAnimationEnd: AnimationEventHandler<HTMLDivElement> = (e) => {
@@ -45,27 +46,29 @@ export function BaseIntro({
       ref={containerRef}
       onAnimationEnd={handleAnimationEnd}
       className={`${styles.IntroContainer}  ${className} 
-      ${state == "start" ? styles.IntroStart : ""} 
-      ${state == "end" ? styles.IntroEnd : ""}
-      ${state == "startAndAutoEnd" ? styles.IntroStartAndAutoEnd : ""}
+      ${state === "start" ? styles.IntroStart : ""} 
+      ${state === "end" ? styles.IntroEnd : ""}
+      ${state === "startAndAutoEnd" ? styles.IntroStartAndAutoEnd : ""}
       `}
     >
       <Image
         src="/assets/tahterevallis/images/tahterevallis-game-over-circle.svg"
         alt="fx"
-        width="400"
-        height="400"
+        width="600"
+        height="600"
         className={`${styles.ShapeImage}  ${
-          state == "start" ? styles.ShapeImageIn : ""
+          state === "start" ? styles.ShapeImageIn : ""
         } 
-      ${state == "end" ? styles.ShapeImageOut : ""}
-        ${state == "startAndAutoEnd" ? styles.ShapeImageAutoInAndOut : ""}`}
+      ${state === "end" ? styles.ShapeImageOut : ""}
+        ${state === "startAndAutoEnd" ? styles.ShapeImageAutoInAndOut : ""}`}
       />
       {children}
       {actionButtonLabel && (
-        <button type="button" onClick={() => setState("end")}>
-          {actionButtonLabel}
-        </button>
+        <div className="my-8">
+          <ButtonDefault type="button" onClick={() => setState("end")}>
+            <span className="text-lg">{actionButtonLabel}</span>
+          </ButtonDefault>
+        </div>
       )}
     </div>
   );

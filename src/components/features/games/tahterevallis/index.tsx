@@ -125,6 +125,12 @@ export default function GameTahterevallis({
       {gameState === "failed" && (
         <GameOverIntro onRequestGameReplay={requestGameReplay} />
       )}
+
+      <div
+        ref={containerRef}
+        style={{ width: `${width}`, height: `${height}` }}
+        className="relative overflow-hidden "
+      />
       <div
         style={
           {
@@ -140,17 +146,12 @@ export default function GameTahterevallis({
           } as React.CSSProperties
         }
         className="
-    fixed z-10 w-dvw h-dvh touch-none pointer-events-none
+    fixed w-dvw h-dvh touch-none pointer-events-none
     bg-[url(/assets/tahterevallis/images/bg-board-texture.png),url(/assets/tahterevallis/images/bg-board-colored-stencils.png),url(/assets/tahterevallis/images/bg-board-colored-stencils-2.png)] bg-position-[center,center_left,bottom_right] bg-size-[cover,auto,auto] bg-no-repeat
     
     [clip-path:polygon(0%_0%,100%_0%,100%_100%,0%_100%,0%_0%,var(--x1)_var(--y1),var(--x1)_var(--y2),var(--x2)_var(--y2),var(--x2)_var(--y1),var(--x1)_var(--y1))]
   "
       ></div>
-      <div
-        ref={containerRef}
-        style={{ width: `${width}`, height: `${height}` }}
-        className="relative overflow-hidden "
-      />
     </>
   );
 }

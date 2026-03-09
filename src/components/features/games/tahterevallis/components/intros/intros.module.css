@@ -4,7 +4,6 @@
   --level-complete-duration: 4s;
   --container-w: 100dvw;
   --container-h: 100dvh;
-  --z-index: 2;
 
   width: var(--container-w);
   height: var(--container-h);
@@ -17,7 +16,6 @@
   top: 0;
   left: 0;
   overflow: hidden;
-  z-index: var(--z-index);
 }
 
 .ShapeImage {
@@ -28,10 +26,11 @@
   z-index: -1;
   pointer-events: none;
   transform-origin: center;
-  --size: calc(100vmin - 80px);
+  --size: calc(100vmax);
   width: var(--size);
   height: var(--size);
   opacity: 0;
+  mix-blend-mode: saturation;
 }
 
 .ShapeImageIn {
@@ -55,8 +54,7 @@
 }
 
 .IntroStart {
-  animation: fadeIn var(--start-duration) ease-out forwards,
-    background-pulse 4s linear forwards alternate infinite;
+  animation: fadeIn var(--start-duration) ease-out forwards;
 }
 
 .IntroEnd {
