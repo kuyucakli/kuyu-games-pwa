@@ -188,7 +188,7 @@ export class HoleSystem implements GameDisposable {
         indicator.glow.material.needsUpdate = true;
       }
 
-      this.setActive(name, isGoal || isTrap);
+      this.setActive(name, !!(isGoal || isTrap));
     }
   }
 

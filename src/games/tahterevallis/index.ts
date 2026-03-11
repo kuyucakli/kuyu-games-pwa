@@ -329,7 +329,7 @@ export class Game {
     const config = LEVELS_CONFIG[level - 1];
     if (!config) return;
 
-    this.activeLevel = level;
+    // this.activeLevel = level;
     this.state = "idle";
 
     this.levelSystem.reset(level);
