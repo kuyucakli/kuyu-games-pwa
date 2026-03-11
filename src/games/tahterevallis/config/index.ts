@@ -84,7 +84,7 @@ export const GAME_BALLS: Ball[] = [
   defaultBall,
   {
     ...defaultBall,
-    initPosition: [0, 10, -4],
+    initPosition: [4, 10, -1],
   },
   {
     ...defaultBall,
@@ -92,7 +92,7 @@ export const GAME_BALLS: Ball[] = [
   },
   {
     ...defaultBall,
-    initPosition: [2, 10, 4],
+    initPosition: [-2, 10, 4],
   },
   {
     ...defaultBall,
