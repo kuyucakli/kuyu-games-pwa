@@ -53,6 +53,16 @@ export class Table {
     this.group.rotation.z = z;
   }
 
+  setTexture(texture: THREE.Texture | null) {
+    if (!texture) return;
+    const material = this.mesh.material as THREE.MeshStandardMaterial;
+    if (!material) return;
+
+    // If we pass null, or if Level 1 is active, revert to default
+    material.map = texture;
+    material.needsUpdate = true;
+  }
+
   getColliderTrimeshLocal() {
     const mesh = this.mesh;
     const geom = mesh.geometry;

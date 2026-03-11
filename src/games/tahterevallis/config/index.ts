@@ -33,6 +33,7 @@ export type LevelConfig = {
   };
   timeLimit?: number;
   totalBalls: number;
+  textureKey?: keyof typeof GameAssets;
 };
 
 export const GameAssets = {
@@ -61,6 +62,14 @@ export const GameAssets = {
   ballExplosion: {
     type: "texture",
     url: "/assets/tahterevallis/images/ball-explosion-sprite-sheet.png",
+  },
+  tableTextureLevel1: {
+    type: "texture",
+    url: "/assets/tahterevallis/images/table-texture-level-1.jpg",
+  },
+  tableTextureLevel2: {
+    type: "texture",
+    url: "/assets/tahterevallis/images/table-texture-level-2.jpg",
   },
 } as const;
 
@@ -96,6 +105,7 @@ export const GAME_BALLS: Ball[] = [
 ];
 export const LEVELS_CONFIG: LevelConfig[] = [
   {
+    textureKey: "tableTextureLevel1",
     holes: {
       goal: ["Hole_1", "Hole_6"],
       trap: ["Hole_2", "Hole_3", "Hole_4", "Hole_5"],
@@ -104,8 +114,9 @@ export const LEVELS_CONFIG: LevelConfig[] = [
     timeLimit: 1000 * 30,
   },
   {
+    textureKey: "tableTextureLevel2",
     holes: { goal: ["Hole_2", "Hole_3", "Hole_6"], trap: ["Hole_4"] },
-    totalBalls: 3,
     timeLimit: 1000 * 48,
+    totalBalls: 3,
   },
 ];

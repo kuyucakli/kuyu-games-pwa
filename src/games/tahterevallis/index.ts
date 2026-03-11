@@ -73,6 +73,7 @@ export class Game {
   private engine!: Engine;
   private scene!: THREE.Scene;
   private table!: any;
+  private tableInstance!: Table;
   private holeSystem!: HoleSystem;
   private ballSystem!: BallSystem;
   private audioSystem!: AudioSystem;
@@ -104,24 +105,21 @@ export class Game {
     this.setupCamera();
     this.setupLights();
 
-    const tableInstance = new Table(
-      gameObjectsGLTF,
-      new THREE.Vector3(0, 0, 0),
-    );
+    this.tableInstance = new Table(gameObjectsGLTF, new THREE.Vector3(0, 0, 0));
     const outofBoundsPlane = new OutofBoundsPlane(gameObjectsGLTF);
 
     this.tiltInput.attach(this.engine);
-    this.table = tableInstance.group;
-    this.scene.add(tableInstance.group);
+    this.table = this.tableInstance.group;
+    this.scene.add(this.tableInstance.group);
     this.scene.add(outofBoundsPlane.getMesh());
 
     this.tableRigidBody = createTableTrimesh(
-      tableInstance.getColliderTrimeshLocal().vertices,
-      tableInstance.getColliderTrimeshLocal().indices,
+      this.tableInstance.getColliderTrimeshLocal().vertices,
+      this.tableInstance.getColliderTrimeshLocal().indices,
       new THREE.Vector3(0, 0, 0),
       engine.physicsWorld,
     );
-    tableInstance.attachRigidBody(this.tableRigidBody);
+    this.tableInstance.attachRigidBody(this.tableRigidBody);
 
     this.setupScene();
 
@@ -133,7 +131,7 @@ export class Game {
     this.scene.add(this.ballExplosionSystem.container);
 
     this.holeSystem = this.register(
-      new HoleSystem(this.engine.physicsWorld, tableInstance, {
+      new HoleSystem(this.engine.physicsWorld, this.tableInstance, {
         goalGlow: this.assets.get("holeGreenGlow"),
         trapGlow: this.assets.get("holeRedGlow"),
       }),
@@ -247,6 +245,14 @@ export class Game {
         "ballExplosion",
         "/assets/tahterevallis/images/ball-explosion-sprite-sheet.png",
       ),
+      this.assets.loadTexture(
+        "tableTextureLevel1",
+        "/assets/tahterevallis/images/table-texture-level-1.jpg",
+      ),
+      this.assets.loadTexture(
+        "tableTextureLevel2",
+        "/assets/tahterevallis/images/table-texture-level-2.jpg",
+      ),
     ]);
   }
 
@@ -328,6 +334,13 @@ export class Game {
   loadLevel(level: number) {
     const config = LEVELS_CONFIG[level - 1];
     if (!config) return;
+
+    const texture = config.textureKey
+      ? this.assets.get(config.textureKey)
+      : null;
+
+    // tableInstance is the instance of your Table class
+    this.tableInstance.setTexture(texture);
 
     // this.activeLevel = level;
     this.state = "idle";
