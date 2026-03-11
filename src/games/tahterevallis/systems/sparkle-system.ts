@@ -1,6 +1,6 @@
 import * as THREE from "three";
+import type { GameDisposable } from "@/games/types";
 import { gameEvents } from "..";
-import { GameDisposable } from "@/games/types";
 
 export class SparkleSystem implements GameDisposable {
   points: THREE.Points;
@@ -14,16 +14,6 @@ export class SparkleSystem implements GameDisposable {
   private cursor = 0;
   private disposed = false;
 
-  // keep handler reference
-  private onGoalFx = (pos: THREE.Vector3) => {
-    this.emitBurst(pos, {
-      count: 600,
-      speed: 2,
-      spread: 3.0,
-      upwardBias: 2.6,
-    });
-  };
-
   constructor() {
     this.geometry = new THREE.BufferGeometry();
 
@@ -36,7 +26,7 @@ export class SparkleSystem implements GameDisposable {
 
     this.geometry.setAttribute(
       "position",
-      new THREE.BufferAttribute(positions, 3)
+      new THREE.BufferAttribute(positions, 3),
     );
     this.geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
 
@@ -54,6 +44,15 @@ export class SparkleSystem implements GameDisposable {
     gameEvents.on("fx:goal", this.onGoalFx);
   }
 
+  private onGoalFx = (pos: THREE.Vector3) => {
+    this.emitBurst(pos, {
+      count: 600,
+      speed: 2,
+      spread: 3.0,
+      upwardBias: 2.6,
+    });
+  };
+
   emit(position: THREE.Vector3, baseVelocity?: THREE.Vector3) {
     const positions = this.geometry.attributes
       .position as THREE.BufferAttribute;
@@ -70,7 +69,7 @@ export class SparkleSystem implements GameDisposable {
       index,
       position.x + (Math.random() - 0.5) * 0.02,
       position.y + (Math.random() - 0.5) * 0.02,
-      position.z + (Math.random() - 0.5) * 0.02
+      position.z + (Math.random() - 0.5) * 0.02,
     );
 
     this.lifetimes[index] = 1.0 + Math.random() * 0.6;
@@ -107,7 +106,7 @@ export class SparkleSystem implements GameDisposable {
       speed?: number;
       spread?: number;
       upwardBias?: number;
-    }
+    },
   ) {
     const {
       count = 40,
@@ -120,7 +119,7 @@ export class SparkleSystem implements GameDisposable {
       const dir = new THREE.Vector3(
         (Math.random() - 0.5) * spread,
         Math.random() * upwardBias,
-        (Math.random() - 0.5) * spread
+        (Math.random() - 0.5) * spread,
       )
         .normalize()
         .multiplyScalar(speed * (0.6 + Math.random() * 0.6));

@@ -58,6 +58,10 @@ export const GameAssets = {
     type: "texture",
     url: "/assets/tahterevallis/images/green-glow.png",
   },
+  ballExplosion: {
+    type: "texture",
+    url: "/assets/tahterevallis/images/ball-explosion-sprite-sheet.png",
+  },
 } as const;
 
 const defaultBall = {
@@ -92,9 +96,12 @@ export const GAME_BALLS: Ball[] = [
 ];
 export const LEVELS_CONFIG: LevelConfig[] = [
   {
-    holes: { goal: ["Hole_1", "Hole_6"], trap: ["Hole_2"] },
+    holes: {
+      goal: ["Hole_1", "Hole_6"],
+      trap: ["Hole_2", "Hole_3", "Hole_4", "Hole_5"],
+    },
     totalBalls: 2,
-    timeLimit: 1000 * 32,
+    timeLimit: 1000 * 30,
   },
   {
     holes: { goal: ["Hole_2", "Hole_3", "Hole_6"], trap: ["Hole_4"] },

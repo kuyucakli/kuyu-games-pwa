@@ -49,7 +49,7 @@ export class BallSystem implements GameDisposable {
     private scene: Scene,
     private physicsWorld: PhysicsWorld,
     private sparkleSystem: SparkleSystem,
-    private createRollingAudio: () => BallRollingAudio
+    private createRollingAudio: () => BallRollingAudio,
   ) {
     physicsWorldEvent.on("physics:collision", ({ a, b }) => {
       if (a?.kind === "ball" && b?.kind === "table") {
@@ -83,7 +83,7 @@ export class BallSystem implements GameDisposable {
     const { body, collider } = createDynamicBall(
       radius,
       initPosition,
-      this.physicsWorld.getWorld()
+      this.physicsWorld.getWorld(),
     );
     this.physicsWorld.addColliderMeta(collider, {
       kind: "ball",
@@ -125,7 +125,7 @@ export class BallSystem implements GameDisposable {
 
   private resetBallTransform(
     ball: BallEntry,
-    initPosition: [number, number, number]
+    initPosition: [number, number, number],
   ) {
     const [x, y, z] = initPosition;
 
@@ -168,6 +168,15 @@ export class BallSystem implements GameDisposable {
     ball.rollingAudio?.stop();
   }
 
+  destroyBall(ballId: string) {
+    const ball = this.ballMap.get(ballId);
+    if (!ball) return;
+
+    this.deactivateBall(ball);
+
+    ball.mesh.position.copy(ball.body.translation());
+  }
+
   captureBall(ballId: string, target: BallCaptureTarget) {
     const ball = this.balls.find((b) => b.id === ballId);
     if (!ball || ball.state != "active") return;
@@ -196,7 +205,7 @@ export class BallSystem implements GameDisposable {
   private emitSparkles(
     position: Vector3,
     velocity: RAPIER.Vector,
-    speed: number
+    speed: number,
   ) {
     const MIN = 1.8;
     const MAX = 4.0;
@@ -210,7 +219,7 @@ export class BallSystem implements GameDisposable {
     for (let i = 0; i < count; i++) {
       this.sparkleSystem.emit(
         position,
-        new Vector3(velocity.x, velocity.y, velocity.z)
+        new Vector3(velocity.x, velocity.y, velocity.z),
       );
     }
   }

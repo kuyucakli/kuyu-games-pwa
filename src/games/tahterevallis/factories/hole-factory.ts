@@ -14,7 +14,7 @@ function createHoleIndicator(color: string | number = "green"): Mesh {
   const material = new MeshBasicMaterial({
     color,
     transparent: true,
-    opacity: 1.0,
+    opacity: 0.1,
     side: DoubleSide,
     depthWrite: false,
     blending: AdditiveBlending,

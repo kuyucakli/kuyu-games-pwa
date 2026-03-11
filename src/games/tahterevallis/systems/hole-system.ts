@@ -34,7 +34,7 @@ export class HoleSystem implements GameDisposable {
     table: Table,
     private glowTextures: {
       goalGlow: Texture;
-      trapGlow?: Texture;
+      trapGlow: Texture;
     },
   ) {
     this.world = world;
@@ -43,9 +43,8 @@ export class HoleSystem implements GameDisposable {
     physicsWorldEvent.on("physics:collision", this.onCollision);
   }
 
-  register(locator: Object3D, kind: "goal" | "trap" = "goal") {
-    const indicatorColor = kind === "goal" ? 0x00ff00 : 0xff0000;
-    const mesh = createHoleIndicator(indicatorColor);
+  register(locator: Object3D) {
+    const mesh = createHoleIndicator("gray");
     locator.add(mesh);
 
     const glow = createGlow(this.glowTextures.goalGlow);
@@ -57,10 +56,6 @@ export class HoleSystem implements GameDisposable {
       this.world.getWorld(),
       this.table.rigidBody,
     );
-    this.world.addColliderMeta(sensor, {
-      kind: "goal",
-      entityId: locator.name,
-    });
 
     const indicator: HoleIndicator = {
       locator,
@@ -76,14 +71,18 @@ export class HoleSystem implements GameDisposable {
   }
 
   private onCollision = ({ a, b }: any) => {
-    const isBallHole =
-      (a?.kind === "ball" && b?.kind === "goal") ||
-      (a?.kind === "goal" && b?.kind === "ball");
+    const isBallHoleCollision =
+      (a?.kind === "ball" && (b?.kind === "goal" || b?.kind === "trap")) ||
+      (b?.kind === "ball" && (a?.kind === "goal" || a?.kind === "trap"));
 
-    if (!isBallHole) return;
+    if (!isBallHoleCollision) return;
 
-    const holeName = a?.kind === "goal" ? a.entityId : b.entityId;
-    const ballName = a?.kind === "ball" ? a.entityId : b.entityId;
+    const hole = a?.kind === "goal" || a?.kind === "trap" ? a : b;
+    const ball = a?.kind === "ball" ? a : b;
+
+    const holeName = hole.entityId as HoleName;
+    const ballName = ball.entityId;
+    const kind = hole.kind;
 
     const key = `${ballName}::${holeName}`;
     if (this.scoredPairs.has(key)) return;
@@ -101,11 +100,19 @@ export class HoleSystem implements GameDisposable {
     holeIndicator.active = false;
     this.setSolid(holeName);
 
-    gameEvents.emit("goal:entered", {
-      ballName,
-      holeName: holeName as HoleName,
-      pos,
-    });
+    if (kind === "trap") {
+      gameEvents.emit("collision:trap", {
+        ballName,
+        holeName: holeName as HoleName,
+        pos,
+      });
+    } else if (kind === "goal") {
+      gameEvents.emit("collision:goal", {
+        ballName,
+        holeName: holeName as HoleName,
+        pos,
+      });
+    }
   };
 
   setActive(holeName: HoleName, active: boolean) {
@@ -150,10 +157,38 @@ export class HoleSystem implements GameDisposable {
   applyLevel(config: LevelConfig) {
     this.scoredPairs.clear();
     for (const indicator of this.indicators) {
-      const active = config.holes.goal.includes(
-        indicator.locator.name as HoleName,
-      );
-      this.setActive(indicator.locator.name as HoleName, active);
+      const name = indicator.locator.name as HoleName;
+      const isGoal = config.holes.goal.includes(name);
+      const isTrap = config.holes.trap?.includes(name);
+      const kind = isGoal ? "goal" : "trap";
+
+      // Update Physics
+      this.world.addColliderMeta(indicator.sensor, {
+        kind: kind,
+        entityId: name,
+      });
+
+      // Determine the color based on the kind
+      const hexColor = kind === "goal" ? 0x00ff00 : 0xff0000;
+
+      // Update Mesh Color
+      const meshMaterial = (indicator.mesh as any).material;
+      if (meshMaterial) meshMaterial.color.setHex(hexColor);
+
+      // Update Glow Color
+      if (indicator.glow) {
+        indicator.glow.material.color.setHex(hexColor);
+
+        // Optionally swap the texture if goalGlow and trapGlow look different
+        indicator.glow.material.map =
+          kind === "goal"
+            ? this.glowTextures.goalGlow
+            : this.glowTextures.trapGlow;
+
+        indicator.glow.material.needsUpdate = true;
+      }
+
+      this.setActive(name, isGoal || isTrap);
     }
   }
 

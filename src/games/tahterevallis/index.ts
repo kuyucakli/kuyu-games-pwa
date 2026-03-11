@@ -21,6 +21,7 @@ import { AudioSystem } from "./systems/audio-system";
 import { LevelSystem } from "./systems/level-system";
 import { OutOfBoundsSystem } from "./systems/out-of-bounds-system";
 import { TimerSystem } from "./systems/timer-system";
+import { BallExplosionSpriteSystem } from "./systems/ball-explosion-sprite-system";
 
 type GameState = "idle" | "playing" | "paused" | "level-complete" | "game-over";
 
@@ -31,12 +32,21 @@ export type GameEvents = {
   "level:completed": { nextLevel: number };
   "level:remaining-time": { prettyFormatted: string; seconds: number };
   "level:failed": void;
+  "fx:trap": THREE.Vector3;
   "fx:goal": THREE.Vector3;
-  "goal:entered": {
+
+  "collision:goal": {
     ballName: string;
     holeName: HoleName;
     pos: THREE.Vector3;
   };
+  "collision:trap": {
+    ballName: string;
+    holeName: HoleName;
+    pos: THREE.Vector3;
+  };
+  "collision:out-of-bounds": { ballId: string };
+
   "ball:out-of-bounds": { ballId: string };
   "assets:completed": true;
   "assets:progress": Property<AssetLoaderEvent, "progress">;
@@ -59,6 +69,7 @@ export const gameBusCommands = mitt<GameBusCommands>();
 export class Game {
   private tiltInput = new TiltInput();
   private sparkleSystem!: SparkleSystem;
+  private ballExplosionSystem!: BallExplosionSpriteSystem;
   private engine!: Engine;
   private scene!: THREE.Scene;
   private table!: any;
@@ -72,7 +83,6 @@ export class Game {
   private assets!: AssetManager<typeof GameAssets>;
   private mainCamera!: THREE.PerspectiveCamera;
   private state: GameState = "idle";
-  private activeLevel = 1;
   private disposables: Array<GameDisposable> = [];
 
   async init(engine: Engine) {
@@ -117,6 +127,10 @@ export class Game {
 
     this.sparkleSystem = new SparkleSystem();
     this.scene.add(this.sparkleSystem.points);
+    this.ballExplosionSystem = this.register(
+      new BallExplosionSpriteSystem(this.assets.get("ballExplosion")),
+    );
+    this.scene.add(this.ballExplosionSystem.container);
 
     this.holeSystem = this.register(
       new HoleSystem(this.engine.physicsWorld, tableInstance, {
@@ -228,6 +242,10 @@ export class Game {
       this.assets.loadTexture(
         "holeRedGlow",
         "/assets/tahterevallis/images/red-glow.png",
+      ),
+      this.assets.loadTexture(
+        "ballExplosion",
+        "/assets/tahterevallis/images/ball-explosion-sprite-sheet.png",
       ),
     ]);
   }
@@ -412,6 +430,7 @@ export class Game {
     this.tiltTable(mapped.x, mapped.z);
 
     this.sparkleSystem.update(dt * 2);
+    this.ballExplosionSystem.update(dt);
     this.timerSystem.update(dt);
   }
 

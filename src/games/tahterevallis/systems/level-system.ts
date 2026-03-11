@@ -10,11 +10,13 @@ import type { GameDisposable } from "@/games/types";
 export class LevelSystem implements GameDisposable {
   private goals: HoleName[] = [];
   private currentLevel: number = 1;
+
   constructor(
     private ballSystem: BallSystem,
     private holeSystem: HoleSystem,
   ) {
-    gameEvents.on("goal:entered", this.onGoal);
+    gameEvents.on("collision:goal", this.onGoal);
+    gameEvents.on("collision:trap", this.onTrap);
     gameEvents.on("timer:updated", this.checkRemainingTime);
   }
 
@@ -39,6 +41,25 @@ export class LevelSystem implements GameDisposable {
     }
   };
 
+  // New Trap Handler
+  private onTrap = ({
+    ballName,
+
+    pos,
+  }: {
+    ballName: string;
+    holeName: HoleName;
+    pos: Vector3;
+  }) => {
+    gameEvents.emit("fx:trap", pos);
+
+    this.ballSystem.destroyBall(ballName);
+
+    setTimeout(() => {
+      gameEvents.emit("level:failed");
+    }, 1000);
+  };
+
   private checkLevelGoals() {
     const success = LEVELS_CONFIG[this.currentLevel - 1].holes.goal.every((h) =>
       this.goals.includes(h),
@@ -56,18 +77,42 @@ export class LevelSystem implements GameDisposable {
       seconds: Math.max(Math.floor(remainingTimeMs / 1000), -1),
     });
 
-    if (remainingTimeMs < 0) {
-      gameEvents.emit("level:failed");
+    if (remainingTimeMs <= 0) {
+      this.handleTimeUpFailure();
     }
   };
 
   reset(level: number) {
     this.currentLevel = level;
     this.goals = [];
+
+    gameEvents.off("timer:updated", this.checkRemainingTime);
+    gameEvents.on("timer:updated", this.checkRemainingTime);
+  }
+
+  private handleTimeUpFailure() {
+    // Prevent multiple triggers if update keeps running
+    gameEvents.off("timer:updated", this.checkRemainingTime);
+
+    const activeBalls = this.ballSystem.getActiveBalls();
+
+    // 1. Explode every ball currently on the table
+    activeBalls.forEach((ball) => {
+      const pos = new Vector3().copy(ball.mesh.position);
+      gameEvents.emit("fx:trap", pos);
+      this.ballSystem.destroyBall(ball.id);
+    });
+
+    // 2. Wait for the After Effects GIF/Sparkles to finish (e.g., 800ms - 1s)
+    // this gives the "Juice" time to play out before the UI covers the screen
+    setTimeout(() => {
+      gameEvents.emit("level:failed");
+    }, 1400);
   }
 
   dispose(): void {
-    gameEvents.off("goal:entered", this.onGoal);
+    gameEvents.off("collision:goal", this.onGoal);
+    gameEvents.off("collision:trap", this.onTrap);
     gameEvents.off("timer:updated", this.checkRemainingTime);
 
     // Clear internal state

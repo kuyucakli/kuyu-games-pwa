@@ -1,6 +1,6 @@
+import type RAPIER from "@dimforge/rapier3d";
 import * as THREE from "three";
-import RAPIER from "@dimforge/rapier3d";
-import { GLTF } from "three/examples/jsm/Addons.js";
+import type { GLTF } from "three/examples/jsm/Addons.js";
 
 export class Table {
   public readonly group = new THREE.Group();

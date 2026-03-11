@@ -10,7 +10,7 @@ export class AudioSystem implements GameDisposable {
     private assets: AssetManager<typeof GameAssets>,
     private audio: GameAudioManager,
   ) {
-    gameEvents.on("goal:entered", this.onGoal);
+    gameEvents.on("collision:goal", this.onGoal);
     gameEvents.on("audio:intro-home", this.onHomeIntro);
     gameEvents.on("audio:select-game", this.onSelectGame);
 
@@ -37,7 +37,7 @@ export class AudioSystem implements GameDisposable {
   }
 
   dispose(): void {
-    gameEvents.off("goal:entered", this.onGoal);
+    gameEvents.off("collision:goal", this.onGoal);
     gameEvents.off("audio:intro-home", this.onHomeIntro);
     gameEvents.off("audio:select-game", this.onSelectGame);
     //gameEvents.off("ball:hit-table", this.onBallHit);
