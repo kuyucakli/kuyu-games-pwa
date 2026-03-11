@@ -115,7 +115,10 @@ export const LEVELS_CONFIG: LevelConfig[] = [
   },
   {
     textureKey: "tableTextureLevel2",
-    holes: { goal: ["Hole_2", "Hole_3", "Hole_6"], trap: ["Hole_4"] },
+    holes: {
+      goal: ["Hole_2", "Hole_3", "Hole_6"],
+      trap: ["Hole_4", "Hole_5", "Hole_1"],
+    },
     timeLimit: 1000 * 48,
     totalBalls: 3,
   },
