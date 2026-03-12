@@ -7,8 +7,9 @@ import {
   useState,
 } from "react";
 import styles from "./intros.module.css";
-import Image from "next/image";
+
 import { ButtonDefault } from "@/components/ui/buttons";
+import { StarShape } from "../shapes";
 
 type introState = "start" | "end" | "idle" | "startAndAutoEnd";
 type BaseIntroProps = PropsWithChildren<{
@@ -16,6 +17,7 @@ type BaseIntroProps = PropsWithChildren<{
   onCloseAction?: () => void;
   startAndAutoEnd?: boolean;
   actionButtonLabel?: string;
+  themeColor?: string;
 }>;
 
 export function BaseIntro({
@@ -24,6 +26,7 @@ export function BaseIntro({
   onCloseAction,
   startAndAutoEnd,
   actionButtonLabel,
+  themeColor = "text-red-500",
 }: BaseIntroProps) {
   const containerRef = useRef(null);
   const [state, setState] = useState<introState>(
@@ -33,7 +36,7 @@ export function BaseIntro({
   const handleAnimationEnd: AnimationEventHandler<HTMLDivElement> = (e) => {
     if (e.target !== e.currentTarget) return;
 
-    if (state == "end" || state == "startAndAutoEnd") {
+    if (state === "end" || state === "startAndAutoEnd") {
       onCloseAction?.();
       setState("idle");
     }
@@ -51,21 +54,22 @@ export function BaseIntro({
       ${state === "startAndAutoEnd" ? styles.IntroStartAndAutoEnd : ""}
       `}
     >
-      <Image
-        src="/assets/tahterevallis/images/tahterevallis-game-over-circle.svg"
-        alt="fx"
-        width="600"
-        height="600"
-        className={`${styles.ShapeImage}  ${
+      <StarShape
+        className={`${styles.ShapeImage} ${themeColor} ${
           state === "start" ? styles.ShapeImageIn : ""
         } 
       ${state === "end" ? styles.ShapeImageOut : ""}
-        ${state === "startAndAutoEnd" ? styles.ShapeImageAutoInAndOut : ""}`}
+        ${state === "startAndAutoEnd" ? styles.ShapeImageAutoInAndOut : ""} `}
       />
+
       {children}
       {actionButtonLabel && (
         <div className="my-8">
-          <ButtonDefault type="button" onClick={() => setState("end")}>
+          <ButtonDefault
+            type="button"
+            onClick={() => setState("end")}
+            className="bg-transparent! border-4"
+          >
             <span className="text-lg">{actionButtonLabel}</span>
           </ButtonDefault>
         </div>

@@ -15,8 +15,9 @@ export function LevelCompletedIntro({
       className={`${styles.LevelCompleted} bg-[url(/assets/tahterevallis/images/bg-board-texture.png)] bg-cover  bg-no-repeat z-50`}
       startAndAutoEnd={true}
       onCloseAction={onIntroEnded}
+      themeColor="text-green-500"
     >
-      <h1 className="text-4xl blur-[1px]">LEVEL {level}</h1>
+      <h1 className="text-5xl blur-[1px]">LEVEL {level}</h1>
     </BaseIntro>
   );
 }

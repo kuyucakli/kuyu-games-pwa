@@ -30,7 +30,7 @@
   width: var(--size);
   height: var(--size);
   opacity: 0;
-  mix-blend-mode: saturation;
+  /* mix-blend-mode: saturation; */
 }
 
 .ShapeImageIn {
@@ -81,9 +81,14 @@
     transform: translate(-50%, -50%) scale(0);
   }
 
-  50% {
+  20% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(3);
+    transform: translate(-50%, -50%) scale(0.7);
+  }
+  90% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+    filter: blur(50px);
   }
   100% {
     opacity: 1;
@@ -99,6 +104,7 @@
   30% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(3.8);
+    filter: blur(20px);
   }
   100% {
     opacity: 0;

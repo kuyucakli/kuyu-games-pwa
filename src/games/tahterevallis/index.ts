@@ -257,6 +257,10 @@ export class Game {
         "tableTextureLevel2",
         "/assets/tahterevallis/images/table-texture-level-2.jpg",
       ),
+      this.assets.loadTexture(
+        "tableTextureLevel3",
+        "/assets/tahterevallis/images/table-texture-level-3.jpg",
+      ),
     ]);
   }
 

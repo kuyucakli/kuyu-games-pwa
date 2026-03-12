@@ -75,6 +75,10 @@ export const GameAssets = {
     type: "texture",
     url: "/assets/tahterevallis/images/table-texture-level-2.jpg",
   },
+  tableTextureLevel3: {
+    type: "texture",
+    url: "/assets/tahterevallis/images/table-texture-level-3.jpg",
+  },
 } as const;
 
 const defaultBall = {
@@ -119,6 +123,15 @@ export const LEVELS_CONFIG: LevelConfig[] = [
   },
   {
     textureKey: "tableTextureLevel2",
+    holes: {
+      goal: ["Hole_2", "Hole_3", "Hole_6"],
+      trap: ["Hole_4", "Hole_5", "Hole_1"],
+    },
+    timeLimit: 1000 * 48,
+    totalBalls: 3,
+  },
+  {
+    textureKey: "tableTextureLevel3",
     holes: {
       goal: ["Hole_2", "Hole_3", "Hole_6"],
       trap: ["Hole_4", "Hole_5", "Hole_1"],
