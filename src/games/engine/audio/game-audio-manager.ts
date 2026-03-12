@@ -19,7 +19,16 @@ export class GameAudioManager {
     audio.setBuffer(buffer);
     audio.setVolume(opts?.volume ?? 1);
     audio.setPlaybackRate(opts?.playbackRate ?? 1);
+
+    // Add this line to keep the reference active
+    threeAudioEngine.listener.add(audio);
+
     audio.play();
+
+    // Clean up after it's done to prevent memory leaks
+    audio.onEnded = () => {
+      audio.removeFromParent();
+    };
   }
 
   playAt(

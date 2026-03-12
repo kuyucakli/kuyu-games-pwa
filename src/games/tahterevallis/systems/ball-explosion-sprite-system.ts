@@ -26,7 +26,7 @@ export class BallExplosionSpriteSystem {
     this.play(pos);
   };
 
-  play(position: THREE.Vector3, scale: number = 4.2) {
+  play(position: THREE.Vector3, scale: number = 5.2) {
     this.sprite.position.copy(position);
     this.sprite.scale.set(scale, scale, 1);
     this.sprite.rotation.z = Math.random() * Math.PI * 2;

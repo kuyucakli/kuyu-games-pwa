@@ -230,6 +230,10 @@ export class Game {
         "/assets/tahterevallis/audio/goal-fx.wav",
       ),
       this.assets.loadAudio(
+        "ballExplosionFx",
+        "/assets/tahterevallis/audio/ball-explosion-fx.wav",
+      ),
+      this.assets.loadAudio(
         "ballRollingSoundFx",
         "/assets/tahterevallis/audio/ball-rolling-fx.wav",
       ),

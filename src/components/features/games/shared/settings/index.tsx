@@ -2,7 +2,6 @@
 
 import { threeAudioEngine } from "@/audio/three-audio-engine";
 import { ButtonDefault } from "@/components/ui/buttons";
-import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useAudioSession } from "@/store/audio-session";
 import { useGameSettings } from "@/store/game-settings";
@@ -10,7 +9,7 @@ import { useGameSettings } from "@/store/game-settings";
 export function Settings() {
   const muted = useAudioSession((state) => state.muted);
   const setMuted = useAudioSession((state) => state.setMuted);
-  const { tiltEnabled, setTiltEnabled, tiltPermission, requestTiltPermission } =
+  const { tiltEnabled, setTiltEnabled, requestTiltPermission } =
     useGameSettings((state) => state);
 
   const handleAudioToggle = async () => {

@@ -85,22 +85,27 @@ class AppAudioManager {
   //   }
   // }
 
-  playLoop(key: string, output: AudioNode, volume = 1) {
+  playLoop(key: string, output: AudioNode, volume = 1, offset = 0) {
     this.stop();
+
+    const buffer = this.buffers.get(key);
+    if (!buffer) return;
 
     const ctx = output.context;
 
     const source = ctx.createBufferSource();
-    source.buffer = this.buffers.get(key)!;
+    source.buffer = buffer;
     source.loop = true;
 
     const gain = ctx.createGain();
     gain.gain.value = volume;
 
     source.connect(gain);
-    gain.connect(output); // ✅ NOT destination
+    gain.connect(output);
 
-    source.start();
+    // 0 = Start immediately
+    // offset % buffer.duration = Ensures offset is within the file length
+    source.start(0, offset % buffer.duration);
 
     this.current = { source, gain };
   }

@@ -11,6 +11,7 @@ export class AudioSystem implements GameDisposable {
     private audio: GameAudioManager,
   ) {
     gameEvents.on("collision:goal", this.onGoal);
+    gameEvents.on("collision:trap", this.onBallTrapped);
     gameEvents.on("audio:intro-home", this.onHomeIntro);
     gameEvents.on("audio:select-game", this.onSelectGame);
 
@@ -27,6 +28,9 @@ export class AudioSystem implements GameDisposable {
 
   private onGoal = () => {
     this.audio.play(this.assets.get("goalSoundFx"), { volume: 0.001 });
+  };
+  private onBallTrapped = () => {
+    this.audio.play(this.assets.get("ballExplosionFx"), { volume: 0.05 });
   };
 
   createBallRollingAudio(): BallRollingAudio {

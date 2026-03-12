@@ -54,8 +54,13 @@ export function SelectGameIntro({
     if (muted) {
       appAudioManager.stop();
     } else {
-      appAudioManager.playLoop("select-game", threeAudioEngine.output, 0.0);
-      appAudioManager.setVolumeSmooth(0.08);
+      appAudioManager.playLoop(
+        "select-game",
+        threeAudioEngine.output,
+        0.0,
+        2.0,
+      );
+      appAudioManager.setVolumeSmooth(0.09);
     }
   }, [muted, ready]);
 
