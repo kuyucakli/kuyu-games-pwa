@@ -106,6 +106,8 @@ export class BallSystem implements GameDisposable {
 
   applyLevel(config: LevelConfig) {
     const activeCount = config.totalBalls;
+    // Get the specific ball definitions for THIS level
+    const levelBalls = config.balls;
 
     for (let i = 0; i < this.balls.length; i++) {
       const ball = this.balls[i];
@@ -115,13 +117,33 @@ export class BallSystem implements GameDisposable {
       }
 
       if (i < activeCount) {
-        this.resetBallTransform(ball, GAME_BALLS[i].initPosition);
+        // Get position from the level config, fallback to a default if index is missing
+        const ballConfig = levelBalls[i] || levelBalls[0];
+        this.resetBallTransform(ball, ballConfig.initPosition);
         this.activateBall(ball);
       } else {
         this.deactivateBall(ball);
       }
     }
   }
+  // applyLevel(config: LevelConfig) {
+  //   const activeCount = config.totalBalls;
+
+  //   for (let i = 0; i < this.balls.length; i++) {
+  //     const ball = this.balls[i];
+
+  //     if (ball.state === "captured") {
+  //       this.resetBallAttachment(ball);
+  //     }
+
+  //     if (i < activeCount) {
+  //       this.resetBallTransform(ball, GAME_BALLS[i].initPosition);
+  //       this.activateBall(ball);
+  //     } else {
+  //       this.deactivateBall(ball);
+  //     }
+  //   }
+  // }
 
   private resetBallTransform(
     ball: BallEntry,

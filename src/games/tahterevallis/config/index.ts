@@ -31,6 +31,7 @@ export type LevelConfig = {
     trap?: HoleName[];
     bonus?: HoleName[];
   };
+  balls: Ball[];
   obstacles?: {
     name: string;
     type: "moving" | "draggable";
@@ -124,7 +125,10 @@ export const LEVELS_CONFIG: LevelConfig[] = [
       goal: ["Hole_1", "Hole_6"],
       trap: ["Hole_2", "Hole_3", "Hole_4", "Hole_5"],
     },
-
+    balls: [
+      { ...defaultBall, initPosition: [-1.0, 10, 3.5] },
+      { ...defaultBall, initPosition: [-5.0, 10, -3.5] },
+    ],
     totalBalls: 2,
     timeLimit: 1000 * 30,
   },
@@ -134,6 +138,11 @@ export const LEVELS_CONFIG: LevelConfig[] = [
       goal: ["Hole_2", "Hole_3", "Hole_6"],
       trap: ["Hole_4", "Hole_5", "Hole_1"],
     },
+    balls: [
+      { ...defaultBall, initPosition: [5, 10, 4] },
+      { ...defaultBall, initPosition: [7, 10, 4] },
+      { ...defaultBall, initPosition: [-3, 10, -4] },
+    ],
     obstacles: [
       {
         name: "Obstacle_Capsule",
@@ -157,6 +166,11 @@ export const LEVELS_CONFIG: LevelConfig[] = [
       goal: ["Hole_2", "Hole_3", "Hole_6"],
       trap: ["Hole_4", "Hole_5", "Hole_1"],
     },
+    balls: [
+      { ...defaultBall, initPosition: [-2, 10, -2.9] },
+      { ...defaultBall, initPosition: [-2.2, 10, 0.5] },
+      { ...defaultBall, initPosition: [-2.3, 10, -2.4] },
+    ],
     obstacles: [
       {
         name: "Obstacle_Capsule",

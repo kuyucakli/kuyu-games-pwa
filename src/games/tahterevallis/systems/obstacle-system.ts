@@ -9,7 +9,7 @@ import {
 } from "../factories/obstacle-factory";
 import type { RigidBody } from "@dimforge/rapier3d";
 import { Obstacle, ObstacleType } from "../objects/obstacle";
-import { LevelConfig } from "../config";
+import { COLLISION_GROUPS, LevelConfig } from "../config";
 
 type ObstacleState = "active" | "inactive";
 
@@ -123,6 +123,11 @@ export class ObstacleSystem implements GameDisposable {
     entry.mesh.visible = true;
     entry.body.setEnabled(true);
 
+    const collider = entry.body.collider(0);
+    if (collider) {
+      collider.setCollisionGroups(COLLISION_GROUPS.TABLE);
+    }
+
     const [x, y, z] = initPosArray;
     //entry.mesh.position.set(x, y, z); // local to table
 
@@ -131,11 +136,6 @@ export class ObstacleSystem implements GameDisposable {
     } else {
       table.add(entry.mesh);
     }
-
-    // Sync body to the mesh's initial world position
-    // const worldPos = new Vector3();
-    // entry.mesh.getWorldPosition(worldPos);
-    // entry.body.setNextKinematicTranslation(worldPos);
   }
 
   private deactivateObstacle(entry: ObstacleEntry) {
@@ -143,9 +143,15 @@ export class ObstacleSystem implements GameDisposable {
     entry.mesh.visible = false;
     entry.body.setEnabled(false);
 
-    // Move "under the floor" so it doesn't interfere
-    entry.body.setNextKinematicTranslation({ x: 0, y: 0, z: 0 });
-    this.scene.add(entry.mesh); // Move back to main scene so it doesn't tilt
+    const collider = entry.body.collider(0);
+    if (collider) {
+      // 0 disables all membership and filter bits
+      collider.setCollisionGroups(0);
+    }
+    //entry.body.setTranslation({ x: 0, y: -1000, z: 0 }, true);
+    if (entry.mesh.parent) {
+      entry.mesh.parent.remove(entry.mesh);
+    }
   }
 
   // obstacle-system.ts

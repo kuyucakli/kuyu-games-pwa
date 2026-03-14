@@ -1,5 +1,5 @@
 .IntroContainer {
-  --end-duration: 0.5s;
+  --end-duration: 1.5s;
   --start-duration: 1.2s;
   --level-complete-duration: 4s;
   --container-w: 100dvw;
@@ -35,7 +35,7 @@
 
 .ShapeImageIn {
   transform: translate(-50%, -50%) scale(0);
-  animation: shapeImageIn 0.6s ease-in forwards;
+  animation: shapeImageIn 1.2s ease-in-out forwards;
 }
 
 .ShapeImageOut {
@@ -47,7 +47,7 @@
 }
 
 .GameOverContainer {
-  background-color: #ff3e3e00;
+  background-color: #ff3e3e;
 }
 
 .LevelCompleted {
@@ -83,16 +83,18 @@
 
   20% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(0.7);
+    transform: translate(-50%, -50%) scale(1.7);
+    filter: blur(10px);
   }
-  90% {
+  /* 90% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1.2);
     filter: blur(50px);
-  }
+  } */
   100% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
+    filter: blur(0px);
   }
 }
 
@@ -101,7 +103,7 @@
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }
-  30% {
+  20% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(3.8);
     filter: blur(20px);
@@ -135,7 +137,7 @@
   0% {
     opacity: 1;
   }
-  99% {
+  70% {
     opacity: 0;
     width: var(--container-w);
     height: var(--container-h);
