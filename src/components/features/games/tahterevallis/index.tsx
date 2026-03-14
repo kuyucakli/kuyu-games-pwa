@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useRef, useState } from "react";
 import { Game, gameBusCommands } from "@/games/tahterevallis";
 import { HUDBox, HUDLayer } from "../shared/ui/heads-up-display";
@@ -10,12 +9,9 @@ import {
 } from "@/games/tahterevallis";
 import { GameOverIntro } from "./components/intros/game-over-intro";
 import { LevelCompletedIntro } from "./components/intros/level-completed-intro";
-
 import { Property } from "@/lib/types/utils";
 import { LoadingIntro } from "./components/intros/loading-intro";
-
 import { AssetLoaderEvent } from "@/games/engine/assets/asset-manager";
-import { Progress } from "@/components/ui/progress";
 
 type GameTahterevallisProps = {
   width?: `${number}${"px" | "vw" | "dvw"}`;
@@ -173,7 +169,7 @@ const TahterevallisHUD = ({
     <HUDLayer className="flex landscape:flex-col gap-2 p-2">
       <HUDBox label="level" content={level + ""} />
       {remainingTimeData.seconds >= 0 && remainingTimeData.seconds < 10 && (
-        <p className="fixed top-1/2 left-1/2 -translate-1/2 text-9xl animate-pulse mix-blend-hard-light">
+        <p className="fixed top-1/2 left-1/2 -translate-1/2 text-8xl animate-ping mix-blend-hard-light bg-red-400/75  size-45 flex justify-center items-center rounded-full">
           {remainingTimeData.seconds}
         </p>
       )}

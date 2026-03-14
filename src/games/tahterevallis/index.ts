@@ -168,7 +168,7 @@ export class Game {
       // small delay for FX
       setTimeout(() => {
         this.loadLevel(nextLevel);
-      }, 800);
+      }, 900);
     });
 
     gameEvents.on("level:failed", () => {
@@ -370,8 +370,11 @@ export class Game {
 
     this.outOfBoundsSystem.reset();
 
-    this.timerSystem.start();
-    this.state = "playing";
+    const delay = level > 1 ? 2200 : 0;
+    setTimeout(() => {
+      this.timerSystem.start();
+      this.state = "playing";
+    }, delay);
   }
 
   startGame() {

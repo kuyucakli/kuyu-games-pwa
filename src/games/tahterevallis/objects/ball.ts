@@ -38,7 +38,7 @@ export class BallRollingAudio implements GameDisposable {
   private source: AudioBufferSourceNode;
   private gain: GainNode;
   private minGain = 0.002; // silence floor
-  private maxGain = 0.1; // hard ceiling
+  private maxGain = 0.3; // hard ceiling
   private connected = true;
 
   constructor(buffer: AudioBuffer, output: AudioNode) {

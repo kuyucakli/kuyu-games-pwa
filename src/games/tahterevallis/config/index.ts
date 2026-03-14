@@ -140,8 +140,8 @@ export const LEVELS_CONFIG: LevelConfig[] = [
     },
     balls: [
       { ...defaultBall, initPosition: [5, 10, 5] },
-      { ...defaultBall, initPosition: [7, 10, 4] },
-      { ...defaultBall, initPosition: [-3, 10, -5] },
+      { ...defaultBall, initPosition: [2, 10, 4] },
+      { ...defaultBall, initPosition: [-2, 10, 5] },
     ],
     obstacles: [
       {

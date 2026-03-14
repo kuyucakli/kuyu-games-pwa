@@ -44,7 +44,7 @@ export function SelectGameIntro({
 
     return () => {
       cancelled = true;
-      appAudioManager.stop();
+      appAudioManager.setVolumeSmooth(0.008);
     };
   }, []);
 
