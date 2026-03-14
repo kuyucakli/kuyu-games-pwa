@@ -13,6 +13,7 @@ import { OutofBoundsPlane } from "./objects/outof-bounds-plane";
 import { Table } from "./objects/table";
 import { BallSystem } from "./systems/ball-system";
 import { HoleSystem } from "./systems/hole-system";
+import { ObstacleSystem } from "./systems/obstacle-system";
 import { SparkleSystem } from "./systems/sparkle-system";
 
 import type { GameDisposable } from "@/games/types";
@@ -76,6 +77,7 @@ export class Game {
   private tableInstance!: Table;
   private holeSystem!: HoleSystem;
   private ballSystem!: BallSystem;
+  private obstacleSystem!: ObstacleSystem;
   private audioSystem!: AudioSystem;
   private levelSystem!: LevelSystem;
   private timerSystem!: TimerSystem;
@@ -146,10 +148,18 @@ export class Game {
       ),
     );
 
+    this.obstacleSystem = this.register(
+      new ObstacleSystem(this.scene, engine.physicsWorld, gameObjectsGLTF),
+    );
+
     this.outOfBoundsSystem = new OutOfBoundsSystem(this.ballSystem);
 
     this.timerSystem = new TimerSystem();
-    this.levelSystem = new LevelSystem(this.ballSystem, this.holeSystem);
+    this.levelSystem = new LevelSystem(
+      this.ballSystem,
+      this.holeSystem,
+      this.obstacleSystem,
+    );
 
     gameEvents.on("level:completed", ({ nextLevel }) => {
       this.state = "level-complete";
@@ -190,7 +200,7 @@ export class Game {
     window
       .matchMedia("(orientation: portrait)")
       .addEventListener("change", (e) => {
-        const portrait = e.matches;
+        // const portrait = e.matches;
 
         const { w, h } = this.engine.viewport;
 
@@ -356,6 +366,8 @@ export class Game {
     this.levelSystem.reset(level);
     this.holeSystem.applyLevel(config);
     this.ballSystem.applyLevel(config);
+    this.obstacleSystem.applyLevel(config, this.table);
+
     this.outOfBoundsSystem.reset();
 
     this.timerSystem.start();
@@ -441,14 +453,14 @@ export class Game {
   update(dt: number, elapsed: number) {
     if (this.state !== "playing") return;
 
+    const mapped = this.mapTiltInput(this.tiltInput.x, this.tiltInput.y);
+    this.tiltTable(mapped.x, mapped.z);
     this.engine.physicsWorld.step(dt);
 
     this.ballSystem.update(dt);
     this.holeSystem.update(dt, elapsed);
     this.outOfBoundsSystem.update();
-
-    const mapped = this.mapTiltInput(this.tiltInput.x, this.tiltInput.y);
-    this.tiltTable(mapped.x, mapped.z);
+    this.obstacleSystem.update();
 
     this.sparkleSystem.update(dt * 2);
     this.ballExplosionSystem.update(dt);

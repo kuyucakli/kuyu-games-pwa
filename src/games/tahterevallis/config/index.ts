@@ -31,6 +31,12 @@ export type LevelConfig = {
     trap?: HoleName[];
     bonus?: HoleName[];
   };
+  obstacles?: {
+    name: string;
+    type: "moving" | "draggable";
+    initPosition: [number, number, number];
+    speed?: number;
+  }[];
   timeLimit?: number;
   totalBalls: number;
   textureKey?: keyof typeof GameAssets;
@@ -118,6 +124,7 @@ export const LEVELS_CONFIG: LevelConfig[] = [
       goal: ["Hole_1", "Hole_6"],
       trap: ["Hole_2", "Hole_3", "Hole_4", "Hole_5"],
     },
+
     totalBalls: 2,
     timeLimit: 1000 * 30,
   },
@@ -127,6 +134,20 @@ export const LEVELS_CONFIG: LevelConfig[] = [
       goal: ["Hole_2", "Hole_3", "Hole_6"],
       trap: ["Hole_4", "Hole_5", "Hole_1"],
     },
+    obstacles: [
+      {
+        name: "Obstacle_Capsule",
+        type: "moving",
+        speed: 2.0,
+        initPosition: [0, 0, 0],
+      },
+      {
+        name: "Obstacle_Tube",
+        type: "draggable",
+        initPosition: [0, 0, 0],
+      },
+    ],
+
     timeLimit: 1000 * 48,
     totalBalls: 3,
   },
@@ -136,6 +157,24 @@ export const LEVELS_CONFIG: LevelConfig[] = [
       goal: ["Hole_2", "Hole_3", "Hole_6"],
       trap: ["Hole_4", "Hole_5", "Hole_1"],
     },
+    obstacles: [
+      {
+        name: "Obstacle_Capsule",
+        type: "moving",
+        speed: 2.0,
+        initPosition: [0, 0, 0],
+      },
+      {
+        name: "Obstacle_Tube",
+        type: "draggable",
+        initPosition: [0, 0, 0],
+      },
+      {
+        name: "Obstacle_1",
+        type: "draggable",
+        initPosition: [0, 0, 0],
+      },
+    ],
     timeLimit: 1000 * 48,
     totalBalls: 3,
   },

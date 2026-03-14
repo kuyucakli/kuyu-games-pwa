@@ -2,8 +2,9 @@ import { formatTimePretty } from "@/lib/utils/time";
 import { Vector3 } from "three";
 import { gameEvents } from "..";
 import { HoleName, LEVELS_CONFIG } from "../config";
-import { BallSystem } from "./ball-system";
-import { HoleSystem } from "./hole-system";
+import type { BallSystem } from "./ball-system";
+import type { HoleSystem } from "./hole-system";
+import type { ObstacleSystem } from "./obstacle-system";
 
 import type { GameDisposable } from "@/games/types";
 
@@ -14,6 +15,7 @@ export class LevelSystem implements GameDisposable {
   constructor(
     private ballSystem: BallSystem,
     private holeSystem: HoleSystem,
+    private obstacleSystem: ObstacleSystem,
   ) {
     gameEvents.on("collision:goal", this.onGoal);
     gameEvents.on("collision:trap", this.onTrap);

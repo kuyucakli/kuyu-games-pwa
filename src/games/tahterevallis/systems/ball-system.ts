@@ -7,7 +7,7 @@ import {
   Mesh,
   Material,
 } from "three";
-import RAPIER, { Collider, RigidBody } from "@dimforge/rapier3d";
+import RAPIER, { Collider } from "@dimforge/rapier3d";
 import { Ball, BallRollingAudio } from "../objects/ball";
 import {
   PhysicsWorld,
@@ -110,7 +110,7 @@ export class BallSystem implements GameDisposable {
     for (let i = 0; i < this.balls.length; i++) {
       const ball = this.balls[i];
 
-      if (ball.state == "captured") {
+      if (ball.state === "captured") {
         this.resetBallAttachment(ball);
       }
 
@@ -179,7 +179,7 @@ export class BallSystem implements GameDisposable {
 
   captureBall(ballId: string, target: BallCaptureTarget) {
     const ball = this.balls.find((b) => b.id === ballId);
-    if (!ball || ball.state != "active") return;
+    if (!ball || ball.state !== "active") return;
 
     // --- 1. Stop motion deterministically ---
     ball.body.setLinvel({ x: 0, y: 0, z: 0 }, true);
