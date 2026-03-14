@@ -139,9 +139,9 @@ export const LEVELS_CONFIG: LevelConfig[] = [
       trap: ["Hole_4", "Hole_5", "Hole_1"],
     },
     balls: [
-      { ...defaultBall, initPosition: [5, 10, 4] },
+      { ...defaultBall, initPosition: [5, 10, 5] },
       { ...defaultBall, initPosition: [7, 10, 4] },
-      { ...defaultBall, initPosition: [-3, 10, -4] },
+      { ...defaultBall, initPosition: [-3, 10, -5] },
     ],
     obstacles: [
       {
