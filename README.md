@@ -1,4 +1,4 @@
-# Kuyu Games 🎮
+# Kuyu Games
 
 **Kuyu Games** is a multi-game platform built to explore the intersection of web technologies and 3D physics. By leveraging a custom-built modular engine, the platform supports various physics-based experiences with a focus on performance and tactile feedback.
 
@@ -6,7 +6,7 @@
 
 ### 1. Tahterevallis
 The flagship title where precision is key. 
-* **Status:** Fully Playable
+* **Status:** Playable
 * **Content:** 3 unique levels with increasing difficulty and complex obstacle configurations.
 * **Goal:** Navigate the ball to the green goal while avoiding red traps and falling off the edge.
 
@@ -17,13 +17,13 @@ A classic arcade experience reimagined for the web.
 
 ---
 
-## 📺 Gameplay Demo
+## Gameplay Demo
 Check out the Tahterevallis intro:
 **[Watch the Gameplay Intro on YouTube](https://www.youtube.com/watch?v=f4brBwoCj3E)**
 
 ---
 
-## 🚀 Key Technical Features
+## Key Technical Features
 * **Custom Game Engine:** Built on a modular architecture that allows for easy addition of new games (like the upcoming Pinball).
 * **High-Performance Physics:** Powered by **Rapier3d** (Rust-based physics for JS) for deterministic and stable simulations.
 * **Immersive 3D Rendering:** Developed with **Three.js**, featuring dynamic lighting, shadows, and optimized GLTF assets.
@@ -31,16 +31,24 @@ Check out the Tahterevallis intro:
 
 ---
 
-## 🛠️ Technical Stack
-* **Framework:** React (Next.js)
+## Technical Stack
+* **Framework:** React (Tanstackstart.js)
 * **3D Engine:** Three.js
 * **Physics Engine:** Rapier3d
 * **Event System:** Mitt
 * **Styling:** Tailwind CSS
+* **Modeling:** GLTF (Blender)
 
+## Music & Sound Credits
+
+The atmospheric background music in **Kuyu Games** is provided courtesy of **mobygratis.com**.
+
+* **Track:** All simple things ab oz inst
+* **Artist:** Moby
+* **Source:** [mobygratis.com](https://www.mobygratis.com)
 ---
 
-## 🏗️ Architecture
+## Architecture
 The project follows a **System-based Architecture** to keep the game logic decoupled from the rendering engine:
 * **BallSystem**: Handles physical entities and their properties.
 * **HoleSystem**: Goal/Trap detection and scoring logic.
@@ -49,8 +57,8 @@ The project follows a **System-based Architecture** to keep the game logic decou
 
 ---
 
-## 🛠️ Installation & Setup
+## Installation & Setup
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/yourusername/kuyu-games.git](https://github.com/yourusername/kuyu-games.git)
+   git clone [https://github.com/kuyucakli/kuyu-games-pwa.git](https://github.com/kuyucakli/kuyu-games-pwa.git)
