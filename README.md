@@ -32,7 +32,7 @@ Check out the Tahterevallis intro:
 ---
 
 ## Technical Stack
-* **Framework:** React (Tanstackstart.js)
+* **Framework:** React (Next.js)
 * **3D Engine:** Three.js
 * **Physics Engine:** Rapier3d
 * **Event System:** Mitt
