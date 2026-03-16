@@ -1,6 +1,6 @@
 # Kuyu Games
 
-**Kuyu Games** is a multi-game platform built to explore the intersection of web technologies and 3D physics. By leveraging a custom-built modular engine, the platform supports various physics-based experiences with a focus on performance and tactile feedback.
+**Kuyu Games** is a multi-game platform built to explore the intersection of web technologies and 3D physics. The platform supports various physics-based experiences with a focus on performance and tactile feedback.
 
 ## Featured Games
 
