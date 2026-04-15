@@ -157,7 +157,7 @@ export default function GameTahterevallis({
             "--y2": "calc(100% - var(--y1))",
           } as React.CSSProperties
         }
-        className="
+        className="opacity-25
     fixed w-dvw h-dvh touch-none pointer-events-none
    landscape:bg-[url(/assets/tahterevallis/images/bg-board-texture.png),url(/assets/tahterevallis/images/bg-board-colored-stencils.png),url(/assets/tahterevallis/images/bg-board-colored-stencils-2.png)]
     
