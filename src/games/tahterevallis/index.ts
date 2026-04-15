@@ -1,6 +1,6 @@
-import RAPIER from "@dimforge/rapier3d";
 import mitt from "mitt";
 import * as THREE from "three";
+import RAPIER from "@dimforge/rapier3d";
 import {
   type AssetLoaderEvent,
   AssetManager,
@@ -62,6 +62,7 @@ export type GameBusCommands = {
   play: void;
   pause: void;
   replay: void;
+  startGame: void;
 };
 
 //Command events that can be emitted by foreign code
@@ -185,6 +186,7 @@ export class Game {
 
     this.loadLevel(1);
 
+    gameBusCommands.on("startGame", () => this.startGame());
     gameBusCommands.on("play", () => this.resumeGame());
     gameBusCommands.on("pause", () => this.pauseGame());
     gameBusCommands.on("replay", () => {
@@ -197,19 +199,19 @@ export class Game {
     this.fitCameraToTable(this.mainCamera, this.table, w, h, 640);
     this.applyCameraOrientation(this.mainCamera);
 
-    window
-      .matchMedia("(orientation: portrait)")
-      .addEventListener("change", (e) => {
-        // const portrait = e.matches;
+    // window
+    //   .matchMedia("(orientation: portrait)")
+    //   .addEventListener("change", (e) => {
+    //     // const portrait = e.matches;
 
-        const { w, h } = this.engine.viewport;
+    //     const { w, h } = this.engine.viewport;
 
-        this.mainCamera.aspect = w / h;
-        this.mainCamera.updateProjectionMatrix();
+    //     this.mainCamera.aspect = w / h;
+    //     this.mainCamera.updateProjectionMatrix();
 
-        this.fitCameraToTable(this.mainCamera, this.table, w, h, 640);
-        this.applyCameraOrientation(this.mainCamera);
-      });
+    //     this.fitCameraToTable(this.mainCamera, this.table, w, h, 640);
+    //     this.applyCameraOrientation(this.mainCamera);
+    //   });
   }
 
   private register<T extends { dispose?: () => void }>(system: T): T {
@@ -370,16 +372,16 @@ export class Game {
 
     this.outOfBoundsSystem.reset();
 
-    const delay = level > 1 ? 2200 : 0;
-    setTimeout(() => {
-      this.timerSystem.start();
-      this.state = "playing";
-    }, delay);
+    // const delay = level > 1 ? 2200 : 0;
+    // setTimeout(() => {
+    //   this.timerSystem.start();
+    //   this.state = "playing";
+    // }, delay);
   }
 
   startGame() {
-    this.state = "playing";
     this.timerSystem.start();
+    this.state = "playing";
   }
 
   pauseGame() {

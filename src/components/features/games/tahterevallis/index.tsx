@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { Game, gameBusCommands } from "@/games/tahterevallis";
 import { HUDBox, HUDLayer } from "../shared/ui/heads-up-display";
 import { Engine } from "@/games/engine/core/engine";
@@ -12,6 +12,7 @@ import { LevelCompletedIntro } from "./components/intros/level-completed-intro";
 import { Property } from "@/lib/types/utils";
 import { LoadingIntro } from "./components/intros/loading-intro";
 import { AssetLoaderEvent } from "@/games/engine/assets/asset-manager";
+import { BtnGameStarter } from "./components/btn-game-starter";
 
 type GameTahterevallisProps = {
   width?: `${number}${"px" | "vw" | "dvw"}`;
@@ -26,10 +27,10 @@ export default function GameTahterevallis({
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] =
     useState<Property<AssetLoaderEvent, "progress">>();
-
-  const [gameState, setGameState] = useState<"failed" | "level-completed" | "">(
-    "",
-  );
+  const [showUrgentTimeAlert, setShowUrgentTimeAlert] = useState(false);
+  const [gameState, setGameState] = useState<
+    "failed" | "level-completed" | "" | "playing"
+  >("");
   const [level, setLevel] = useState(1);
   const [remainingTimeData, setRemainingTimeData] = useState<
     TahtervallisGameEventDataTypes["level:remaining-time"]
@@ -65,6 +66,7 @@ export default function GameTahterevallis({
       nextLevel,
     }: TahtervallisGameEventDataTypes["level:completed"]) => {
       setLevel(nextLevel);
+      setShowUrgentTimeAlert(false);
       setGameState("level-completed");
     };
 
@@ -77,6 +79,7 @@ export default function GameTahterevallis({
 
     const onFailed = () => {
       setGameState("failed");
+      setShowUrgentTimeAlert(false);
       setLevel(1);
     };
 
@@ -100,17 +103,29 @@ export default function GameTahterevallis({
     gameBusCommands.emit("pause");
   };
 
+  const requestStartGame = () => {
+    setGameState("playing");
+    setShowUrgentTimeAlert(true);
+    gameBusCommands.emit("startGame");
+  };
+
   const requestGameResume = () => {
     gameBusCommands.emit("play");
   };
 
   return (
     <>
+      {gameState === "" && <BtnGameStarter onClick={requestStartGame} />}
       <TahterevallisHUD
         loading={loading}
         progress={progress}
         level={level}
         remainingTimeData={remainingTimeData}
+        showUrgentTimeAlert={
+          showUrgentTimeAlert &&
+          remainingTimeData.seconds >= 0 &&
+          remainingTimeData.seconds <= 10
+        }
       />
       {gameState === "level-completed" && (
         <LevelCompletedIntro
@@ -127,6 +142,7 @@ export default function GameTahterevallis({
         style={{ width: `${width}`, height: `${height}` }}
         className="relative overflow-hidden "
       />
+
       <div
         style={
           {
@@ -159,16 +175,18 @@ const TahterevallisHUD = ({
   progress,
   level,
   remainingTimeData,
+  showUrgentTimeAlert,
 }: {
   loading: boolean;
   progress: Property<AssetLoaderEvent, "progress"> | undefined;
   level: number;
   remainingTimeData: TahtervallisGameEventDataTypes["level:remaining-time"];
+  showUrgentTimeAlert: boolean;
 }) => {
   return (
     <HUDLayer className="flex landscape:flex-col gap-2 p-2">
-      <HUDBox label="level" content={level + ""} />
-      {remainingTimeData.seconds >= 0 && remainingTimeData.seconds < 10 && (
+      <HUDBox label="level" content={`${level}`} />
+      {showUrgentTimeAlert && (
         <p className="fixed top-1/2 left-1/2 -translate-1/2 text-8xl animate-ping mix-blend-hard-light bg-red-400/75  size-45 flex justify-center items-center rounded-full">
           {remainingTimeData.seconds}
         </p>
@@ -183,6 +201,7 @@ const TahterevallisHUD = ({
         content={remainingTimeData.prettyFormatted}
         className={`bg-red-500!  animate-pulse`}
       />
+
       {loading && (
         <LoadingIntro>
           <p className="text-white">

@@ -126,8 +126,8 @@ export const LEVELS_CONFIG: LevelConfig[] = [
       trap: ["Hole_2", "Hole_3", "Hole_4", "Hole_5"],
     },
     balls: [
-      { ...defaultBall, initPosition: [-1.0, 10, 3.5] },
-      { ...defaultBall, initPosition: [-5.0, 10, -3.5] },
+      { ...defaultBall, initPosition: [0.3, 1.5, 0.0] },
+      { ...defaultBall, initPosition: [-0.5, 1.5, 0.0] },
     ],
     totalBalls: 2,
     timeLimit: 1000 * 30,
@@ -139,9 +139,9 @@ export const LEVELS_CONFIG: LevelConfig[] = [
       trap: ["Hole_4", "Hole_5", "Hole_1"],
     },
     balls: [
-      { ...defaultBall, initPosition: [5, 10, 5] },
-      { ...defaultBall, initPosition: [2, 10, 4] },
-      { ...defaultBall, initPosition: [-2, 10, 5] },
+      { ...defaultBall, initPosition: [0.3, 1.5, 0.0] },
+      { ...defaultBall, initPosition: [-0.5, 1.5, 0.0] },
+      { ...defaultBall, initPosition: [-0.5, 1.5, -0.8] },
     ],
     obstacles: [
       {
