@@ -144,15 +144,6 @@ export default function GameTahterevallis({
           />
         </BaseIntro>
       )}
-      {/* {gameState === "level-completed" && (
-        <LevelCompletedIntro
-          level={level}
-          onIntroEnded={() => setGameState("")}
-        />
-      )} */}
-      {/* {gameState === "failed" && (
-        <GameOverIntro onRequestGameReplay={requestGameReplay} />
-      )} */}
 
       <div
         ref={containerRef}
@@ -204,7 +195,7 @@ const TahterevallisHUD = ({
     <HUDLayer className="flex landscape:flex-col gap-2 p-2">
       <HUDBox label="level" content={`${level}`} />
       {showUrgentTimeAlert && (
-        <p className="fixed top-1/2 left-1/2 -translate-1/2 text-8xl animate-ping mix-blend-hard-light bg-red-400/75  size-45 flex justify-center items-center rounded-full">
+        <p className="fixed top-1/2 left-1/2 -translate-1/2 text-5xl animate-pulse mix-blend-hard-light bg-red-400/75  size-24 flex justify-center items-center rounded-full">
           {remainingTimeData.seconds}
         </p>
       )}
