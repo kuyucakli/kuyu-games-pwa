@@ -4,7 +4,9 @@ import { VIDEO_CONFIG } from "@/games/tahterevallis/config";
 export function VideoMovieIntros({
   playMarker = "intro",
   className,
-}: HTMLAttributes<HTMLVideoElement> & { playMarker?: string }) {
+}: HTMLAttributes<HTMLVideoElement> & {
+  playMarker?: keyof typeof VIDEO_CONFIG;
+}) {
   const videoElRef = useRef<HTMLVideoElement | null>(null);
   const [activeMarker, setActiveMarker] = useState(playMarker);
 
@@ -27,10 +29,6 @@ export function VideoMovieIntros({
         if (config.loop) {
           // Instant loop back to start of section
           video.currentTime = config.start;
-        } else if (config.next) {
-          // Transition to the next logical state
-          //   currentSection = config.next;
-          //   video.currentTime = VIDEO_CONFIG[currentSection].start;
         } else {
           video.pause();
         }
