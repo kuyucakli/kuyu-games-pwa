@@ -74,9 +74,9 @@
   height: 32px;
   /* background-color: var(--color-neutral-800) !important; */
   border-radius: 50%;
-  color: rgb(255, 255, 0);
-
-  background-color: rgba(83, 62, 0, 0.221);
+  color: rgb(255, 238, 0);
+  border: 2px solid rgba(163, 180, 216, 0.4);
+  background-color: rgba(16, 21, 31, 0.6);
 }
 
 .LoaderIconContainer {

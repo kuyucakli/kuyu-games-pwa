@@ -10,9 +10,9 @@ export function ButtonSelectGame() {
   return (
     <LinkButtonRounded
       href="/select-game"
-      className={`${isSelectGamePage ? "pointer-events-none opacity-40" : ""}`}
+      className={`${isSelectGamePage ? "pointer-events-none opacity-40" : ""} `}
     >
-      <IconGameList size="24px" />
+      <IconGameList size="20px" />
     </LinkButtonRounded>
   );
 }

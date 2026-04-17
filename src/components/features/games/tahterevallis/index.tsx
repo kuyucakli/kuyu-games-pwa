@@ -194,7 +194,7 @@ const TahterevallisHUD = ({
       <HUDBox
         label="score"
         content={"0"}
-        className=" border-amber-100! text-orange-500! bg-amber-300!"
+        className=" border-amber-100! text-emerald-100! bg-emerald-300/50!"
       />
       <HUDBox
         label="time left"
