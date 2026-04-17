@@ -2,6 +2,12 @@ export const TABLE_WIDTH = 12; // world units (X)
 export const TABLE_HEIGHT = 18; // world units (Z)
 export const TABLE_ASPECT_RATIO = TABLE_WIDTH / TABLE_HEIGHT;
 
+export const VIDEO_CONFIG = {
+  intro: { start: 0, end: 2.2, loop: true },
+  levelCompleted: { start: 2.4, end: 5.4, loop: true },
+  gameOver: { start: 6.0, end: 7.5, loop: true },
+};
+
 export const COLLISION_GROUPS = {
   ACTIVE_BALL: 0x00010001, // Group 0, interacts with group 0
   CAPTURED_BALL: 0x00020000, // Group 1, interacts with nothing

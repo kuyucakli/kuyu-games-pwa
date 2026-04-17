@@ -9,7 +9,6 @@ import {
 import styles from "./intros.module.css";
 
 import { ButtonDefault } from "@/components/ui/buttons";
-import { StarShape } from "../shapes";
 
 type introState = "start" | "end" | "idle" | "startAndAutoEnd";
 type BaseIntroProps = PropsWithChildren<{
@@ -18,6 +17,7 @@ type BaseIntroProps = PropsWithChildren<{
   startAndAutoEnd?: boolean;
   actionButtonLabel?: string;
   themeColor?: string;
+  textContent?: string;
 }>;
 
 export function BaseIntro({
@@ -26,7 +26,7 @@ export function BaseIntro({
   onCloseAction,
   startAndAutoEnd,
   actionButtonLabel,
-  themeColor = "text-red-500",
+  textContent,
 }: BaseIntroProps) {
   const containerRef = useRef(null);
   const [state, setState] = useState<introState>(
@@ -54,15 +54,9 @@ export function BaseIntro({
       ${state === "startAndAutoEnd" ? styles.IntroStartAndAutoEnd : ""}
       `}
     >
-      <StarShape
-        className={`${styles.ShapeImage} ${themeColor} ${
-          state === "start" ? styles.ShapeImageIn : ""
-        } 
-      ${state === "end" ? styles.ShapeImageOut : ""}
-        ${state === "startAndAutoEnd" ? styles.ShapeImageAutoInAndOut : ""} `}
-      />
-
+      {" "}
       {children}
+      {textContent && <h2 className="text-9xl relative z-50">{textContent}</h2>}
       {actionButtonLabel && (
         <div className="my-8">
           <ButtonDefault

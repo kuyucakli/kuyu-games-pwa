@@ -7,12 +7,13 @@ import {
   gameEvents as tahterevallisEvents,
   GameEvents as TahtervallisGameEventDataTypes,
 } from "@/games/tahterevallis";
-import { GameOverIntro } from "./components/intros/game-over-intro";
-import { LevelCompletedIntro } from "./components/intros/level-completed-intro";
+
 import { Property } from "@/lib/types/utils";
 import { AssetLoaderEvent } from "@/games/engine/assets/asset-manager";
 import { LoadingIntro } from "./components/intros/loading-intro";
 import { BtnGameStarter } from "./components/btn-game-starter";
+import { VideoMovieIntros } from "../../motion-intros/video-movie-intros";
+import { BaseIntro } from "./components/intros/base-intro";
 
 type GameTahterevallisProps = {
   width?: `${number}${"px" | "vw" | "dvw"}`;
@@ -115,7 +116,9 @@ export default function GameTahterevallis({
 
   return (
     <>
-      {gameState === "" && <BtnGameStarter onClick={requestStartGame} />}
+      {(gameState === "" || gameState === "level-completed") && (
+        <BtnGameStarter onClick={requestStartGame} />
+      )}
       <TahterevallisHUD
         loading={loading}
         progress={progress}
@@ -127,15 +130,29 @@ export default function GameTahterevallis({
           remainingTimeData.seconds <= 10
         }
       />
-      {gameState === "level-completed" && (
+      {gameState !== "playing" && gameState !== "" && (
+        <BaseIntro
+          className="z-50"
+          actionButtonLabel={gameState === "failed" ? "Replay" : undefined}
+          onCloseAction={gameState === "failed" ? requestGameReplay : undefined}
+          startAndAutoEnd={gameState === "level-completed" && true}
+          textContent={gameState === "level-completed" ? `${level}` : undefined}
+        >
+          <VideoMovieIntros
+            className="mix-blend-normal"
+            playMarker={gameState === "failed" ? "gameOver" : "levelCompleted"}
+          />
+        </BaseIntro>
+      )}
+      {/* {gameState === "level-completed" && (
         <LevelCompletedIntro
           level={level}
           onIntroEnded={() => setGameState("")}
         />
-      )}
-      {gameState === "failed" && (
+      )} */}
+      {/* {gameState === "failed" && (
         <GameOverIntro onRequestGameReplay={requestGameReplay} />
-      )}
+      )} */}
 
       <div
         ref={containerRef}
@@ -194,7 +211,7 @@ const TahterevallisHUD = ({
       <HUDBox
         label="score"
         content={"0"}
-        className=" border-amber-100! text-emerald-100! bg-emerald-300/50!"
+        className=" border-amber-100! text-emerald-100! bg-[#486059]!"
       />
       <HUDBox
         label="time left"

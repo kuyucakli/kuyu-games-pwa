@@ -1,12 +1,12 @@
 "use client";
 
-import Image from "next/image";
-import styles from "./select-game-intro.module.css";
-import { threeAudioEngine } from "@/audio/three-audio-engine";
 import { useEffect, useState } from "react";
 import { appAudioManager } from "@/audio/app-audio-manager";
-import { useAudioSession } from "@/store/audio-session";
+import { threeAudioEngine } from "@/audio/three-audio-engine";
 import { Progress } from "@/components/ui/progress";
+import { useAudioSession } from "@/store/audio-session";
+import styles from "./select-game-intro.module.css";
+import { VideoMovieIntros } from "./video-movie-intros";
 
 export function SelectGameIntro({
   exit = false,
@@ -75,19 +75,7 @@ export function SelectGameIntro({
           <span className="text-xs">Loading audio...</span>
         </div>
       )}
-
-      <video
-        autoPlay
-        playsInline
-        muted
-        loop
-        className="fixed border-2 w-full h-full object-cover mix-blend-color-dodge"
-      >
-        <source
-          src="/assets/tahterevallis/videos/ball-rolling-movie-inside-the-game.mp4"
-          type="video/mp4"
-        />
-      </video>
+      <VideoMovieIntros />
       {/* <div className={`${styles.MovingBallContainer}`}>
         <Image
           src="/assets/tahterevallis/images/intro-ball.png"
