@@ -28,7 +28,7 @@ export function SelectGameIntro({
 
       await appAudioManager.load(
         "select-game",
-        "/assets/tahterevallis/audio/select-game-intro-v4.wav",
+        "/assets/tahterevallis/audio/select-game-intro.wav",
         ctx,
         (percent) => {
           if (!cancelled) {
@@ -76,7 +76,18 @@ export function SelectGameIntro({
         </div>
       )}
 
-      <div className={`${styles.MovingBallContainer}`}>
+      <video
+        autoPlay
+        muted
+        loop
+        className="fixed border-2 w-full h-full object-cover mix-blend-color-dodge"
+      >
+        <source
+          src="/assets/tahterevallis/videos/ball-rolling-movie-inside-the-game.mp4"
+          type="video/mp4"
+        />
+      </video>
+      {/* <div className={`${styles.MovingBallContainer}`}>
         <Image
           src="/assets/tahterevallis/images/intro-ball.png"
           alt="intro ball"
@@ -93,7 +104,7 @@ export function SelectGameIntro({
           className={styles.MovingBallTrail}
           loading="eager"
         />
-      </div>
+      </div> */}
     </div>
   );
 }

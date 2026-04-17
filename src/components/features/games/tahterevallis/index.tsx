@@ -1,5 +1,5 @@
 "use client";
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Game, gameBusCommands } from "@/games/tahterevallis";
 import { HUDBox, HUDLayer } from "../shared/ui/heads-up-display";
 import { Engine } from "@/games/engine/core/engine";
@@ -10,8 +10,8 @@ import {
 import { GameOverIntro } from "./components/intros/game-over-intro";
 import { LevelCompletedIntro } from "./components/intros/level-completed-intro";
 import { Property } from "@/lib/types/utils";
-import { LoadingIntro } from "./components/intros/loading-intro";
 import { AssetLoaderEvent } from "@/games/engine/assets/asset-manager";
+import { LoadingIntro } from "./components/intros/loading-intro";
 import { BtnGameStarter } from "./components/btn-game-starter";
 
 type GameTahterevallisProps = {

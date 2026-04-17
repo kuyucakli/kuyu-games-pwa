@@ -129,6 +129,7 @@ export const LEVELS_CONFIG: LevelConfig[] = [
       { ...defaultBall, initPosition: [0.3, 1.5, 0.0] },
       { ...defaultBall, initPosition: [-0.5, 1.5, 0.0] },
     ],
+
     totalBalls: 2,
     timeLimit: 1000 * 30,
   },
