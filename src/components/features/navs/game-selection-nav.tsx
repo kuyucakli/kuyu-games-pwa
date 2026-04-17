@@ -57,7 +57,7 @@ export function GameSelectionNav() {
                   setPath("/tahterevallis");
                 }}
                 icon={<IconPlay fill="white" />}
-                className={buttonStyles.ButtonShimmer}
+                className={`${buttonStyles.ButtonShimmer} transition-all duration-300 ease-out hover:scale-105`}
               >
                 Play Tahterevallis
               </ButtonDefault>
