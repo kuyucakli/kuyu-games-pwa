@@ -78,6 +78,7 @@ export function SelectGameIntro({
 
       <video
         autoPlay
+        playsInline
         muted
         loop
         className="fixed border-2 w-full h-full object-cover mix-blend-color-dodge"
