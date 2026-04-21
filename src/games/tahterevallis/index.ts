@@ -269,6 +269,7 @@ export class Game {
         "tableTextureLevel2",
         "/assets/tahterevallis/images/table-texture-level-2.jpg",
       ),
+
       this.assets.loadTexture(
         "tableTextureLevel3",
         "/assets/tahterevallis/images/table-texture-level-3.jpg",
@@ -291,8 +292,8 @@ export class Game {
   }
 
   private setupLights() {
-    const light = new THREE.DirectionalLight(0xffffff, 1.2);
-    light.position.set(0, 8, -2);
+    const light = new THREE.DirectionalLight(0xffffff, 3.4);
+    light.position.set(-3, 6, -4);
     light.castShadow = true;
     // --- Increase shadow map resolution ---
     light.shadow.mapSize.width = 1024 * 2;

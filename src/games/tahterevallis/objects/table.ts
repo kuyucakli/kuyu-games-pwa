@@ -57,9 +57,9 @@ export class Table {
     if (!texture) return;
     const material = this.mesh.material as THREE.MeshStandardMaterial;
     if (!material) return;
-
-    // If we pass null, or if Level 1 is active, revert to default
+    texture.colorSpace = THREE.SRGBColorSpace;
     material.map = texture;
+
     material.needsUpdate = true;
   }
 
