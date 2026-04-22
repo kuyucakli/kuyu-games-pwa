@@ -165,11 +165,11 @@ export default function GameTahterevallis({
             "--y2": "calc(100% - var(--y1))",
           } as React.CSSProperties
         }
-        className="opacity-25
+        className="opacity-90
     fixed w-dvw h-dvh touch-none pointer-events-none
    landscape:bg-[url(/assets/tahterevallis/images/bg-board-texture.png),url(/assets/tahterevallis/images/bg-board-colored-stencils.png),url(/assets/tahterevallis/images/bg-board-colored-stencils-2.png)]
     
-    bg-position-[center,center_left,bottom_right] bg-size-[cover,auto,auto] bg-no-repeat
+    bg-position-[center,center_left,center_right] bg-size-[cover,auto,auto] bg-no-repeat
     
     [clip-path:polygon(0%_0%,100%_0%,100%_100%,0%_100%,0%_0%,var(--x1)_var(--y1),var(--x1)_var(--y2),var(--x2)_var(--y2),var(--x2)_var(--y1),var(--x1)_var(--y1))]
   "
