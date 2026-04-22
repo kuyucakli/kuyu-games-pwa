@@ -70,7 +70,7 @@ export function SelectGameIntro({
       onAnimationEnd={() => onExit()}
     >
       {!ready && (
-        <div className="p-1 fixed w-full">
+        <div className="p-1 fixed w-full  z-40">
           <Progress value={progress} id="load-audio" />
           <span className="text-xs">Loading audio...</span>
         </div>
