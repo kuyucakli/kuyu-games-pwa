@@ -10,7 +10,7 @@ export function GameOverIntro({
 }) {
   return (
     <BaseIntro
-      className={`${styles.GameOverContainer} bg-[url(/assets/tahterevallis/images/bg-board-texture.png)] bg-cover  bg-no-repeat z-50`}
+      className={`${styles.GameOverContainer}  z-50`}
       onCloseAction={onRequestGameReplay}
       actionButtonLabel="Replay"
     >

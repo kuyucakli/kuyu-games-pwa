@@ -66,7 +66,7 @@ export function SelectGameIntro({
 
   return (
     <div
-      className={`${styles.SelectGameIntro} ${exit ? styles.Exit : ""} bg-[url(/assets/tahterevallis/images/bg-select-game.jpg)] bg-cover bg-center bg-no-repeat `}
+      className={`${styles.SelectGameIntro} ${exit ? styles.Exit : ""} `}
       onAnimationEnd={() => onExit()}
     >
       {!ready && (

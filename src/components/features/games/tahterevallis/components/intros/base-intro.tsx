@@ -62,7 +62,7 @@ export function BaseIntro({
           <ButtonDefault
             type="button"
             onClick={() => setState("end")}
-            className="bg-transparent! border-4"
+            className="relative border-3 w-22! h-22! min-w-auto! rounded-full!"
           >
             <span className="text-lg">{actionButtonLabel}</span>
           </ButtonDefault>

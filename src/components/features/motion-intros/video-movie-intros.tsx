@@ -43,7 +43,7 @@ export function VideoMovieIntros({
       playsInline
       muted
       //   loop
-      className={`fixed border-2 w-full h-full object-cover mix-blend-color-dodge ${className}`}
+      className={`fixed border-2 w-full h-full object-cover  ${className}`}
     >
       <source
         src="/assets/tahterevallis/videos/ball-rolling-movie-inside-the-game.mp4"
