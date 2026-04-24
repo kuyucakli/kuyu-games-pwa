@@ -56,7 +56,11 @@ export function BaseIntro({
     >
       {" "}
       {children}
-      {textContent && <h2 className="text-9xl relative z-50">{textContent}</h2>}
+      {textContent && (
+        <h2 className="text-9xl relative z-50 blur-xs mix-blend-plus-lighter">
+          {textContent}
+        </h2>
+      )}
       {actionButtonLabel && (
         <div className="my-8">
           <ButtonDefault
