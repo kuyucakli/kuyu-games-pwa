@@ -12,7 +12,7 @@ export function GameOverIntro({
     <BaseIntro
       className={`${styles.GameOverContainer}  z-50`}
       onCloseAction={onRequestGameReplay}
-      actionButtonLabel="Replay"
+      actionButtonLabel="Restart"
     >
       <h1 className="text-5xl blur-[1px]">Game Over</h1>
     </BaseIntro>
